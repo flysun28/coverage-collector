@@ -1,0 +1,21 @@
+environment1:
+  pandora-user-biz:
+    ip: 10.177.88.241
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-user-biz
+  pandora-common-biz:
+    ip: 10.177.89.11
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-common-biz
+environment2:
+  pandora-user-biz:
+    ip: 10.177.88.241
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-user-biz
+  pandora-common-biz:
+    ip: 10.177.89.11
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-common-biz
+environment3:
+  pandora-user-biz:
+    ip: 10.177.88.241
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-user-biz
+  pandora-common-biz:
+    ip: 10.177.89.11
+    sourceDirectory: D:\\code\\pandora\\pandora-server\\pandora-common-biz
