@@ -1,11 +1,11 @@
-package com.oppo.test.jacocoreport.utils;
+package com.oppo.jacocoreport.coverage.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.oppo.test.jacocoreport.cloud.AppDeployInfo;
-import com.oppo.test.jacocoreport.cloud.AppVersionResponse;
+import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
+import com.oppo.jacocoreport.coverage.cloud.AppVersionResponse;
 import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.Mac;

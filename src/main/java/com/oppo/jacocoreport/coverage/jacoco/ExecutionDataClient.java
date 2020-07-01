@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.jacoco;
+package com.oppo.jacocoreport.coverage.jacoco;
 
 import org.jacoco.core.data.ExecutionDataWriter;
 import org.jacoco.core.runtime.RemoteControlReader;

@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.utils;
+package com.oppo.jacocoreport.coverage.utils;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;

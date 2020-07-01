@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.yaml;
+package com.oppo.jacocoreport.coverage.yaml;
 
 import org.yaml.snakeyaml.Yaml;
 

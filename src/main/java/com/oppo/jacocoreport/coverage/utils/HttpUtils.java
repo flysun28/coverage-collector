@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.utils;
+package com.oppo.jacocoreport.coverage.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

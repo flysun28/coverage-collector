@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.maven;
+package com.oppo.jacocoreport.coverage.maven;
 
 import org.apache.maven.shared.invoker.*;
 

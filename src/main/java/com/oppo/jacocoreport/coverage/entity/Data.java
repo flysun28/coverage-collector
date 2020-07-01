@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.entity;
+package com.oppo.jacocoreport.coverage.entity;
 
 public class Data {
 

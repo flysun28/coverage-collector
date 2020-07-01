@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.utils;
+package com.oppo.jacocoreport.coverage.utils;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

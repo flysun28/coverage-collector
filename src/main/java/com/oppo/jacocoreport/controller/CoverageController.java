@@ -1,7 +1,8 @@
-package com.oppo.test.jacocoreport.controller;
+package com.oppo.jacocoreport.controller;
 
-import com.oppo.test.jacocoreport.entity.ApplicationCodeInfo;
-import com.oppo.test.jacocoreport.entity.Data;
+import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
+import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
+import com.oppo.jacocoreport.coverage.entity.Data;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CoverageController {
 
-    @GetMapping("/startcoverage")
-    public Data say(ApplicationCodeInfo applicationCodeInfo){
+    @GetMapping("/startcoveragetask")
+    public Data startcoveragetask(ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
     }
 
@@ -31,6 +32,8 @@ public class CoverageController {
         if(StringUtils.isEmpty(environment)){
             return new Data().setCode(-4).setResult("environment can not be blank");
         }
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,testedBranch,basicBranch,"","");
+        reportGeneratorCov.startCoverageTask();
          return new Data().setCode(200).setResult(gitPath);
     }
 }

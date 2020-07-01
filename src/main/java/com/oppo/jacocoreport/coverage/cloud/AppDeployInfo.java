@@ -1,4 +1,4 @@
-package com.oppo.test.jacocoreport.cloud;
+package com.oppo.jacocoreport.coverage.cloud;
 
 import java.io.Serializable;
 

@@ -9,7 +9,7 @@
  *    Marc R. Hoffmann - initial API and implementation
  *
  *******************************************************************************/
-package com.oppo.test.jacocoreport.jacoco;
+package com.oppo.jacocoreport.coverage.jacoco;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.IClassCoverage;

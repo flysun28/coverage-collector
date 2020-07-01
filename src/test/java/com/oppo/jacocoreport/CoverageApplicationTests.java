@@ -1,10 +1,10 @@
-package com.oppo.test.jacocoreport;
+package com.oppo.jacocoreport;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class CoverageApplicationTests {
 
     @Test
     void contextLoads() {
