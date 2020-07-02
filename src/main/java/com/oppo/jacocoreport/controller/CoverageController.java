@@ -5,13 +5,16 @@ import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CoverageController {
 
-    @GetMapping("/startcoveragetask")
-    public Data startcoveragetask(ApplicationCodeInfo applicationCodeInfo){
+    //@GetMapping("/startcoveragetask")
+    @PostMapping("/startcoveragetask")
+    public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
     }
 
