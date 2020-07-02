@@ -8,8 +8,18 @@ public class ApplicationCodeInfo {
     private String basicBranch;
     private String testedCommitId;
     private String basicCommitId;
-    private String environment;
+
+    private String versionName;
     private String deployId;
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
 
     public Long getId() {
         return id;
@@ -57,14 +67,6 @@ public class ApplicationCodeInfo {
 
     public void setBasicCommitId(String basicCommitId) {
         this.basicCommitId = basicCommitId;
-    }
-
-    public String getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(String environment) {
-        this.environment = environment;
     }
 
     public String getDeployId() {

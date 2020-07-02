@@ -19,7 +19,7 @@ public class CoverageController {
          String gitPath = applicationCodeInfo.getGitPath();
          String testedBranch = applicationCodeInfo.getTestedBranch();
          String basicBranch = applicationCodeInfo.getBasicBranch();
-         String environment = applicationCodeInfo.getEnvironment();
+         String versionname = applicationCodeInfo.getVersionName();
          if(StringUtils.isEmpty(gitPath)){
              return new Data().setCode(-1).setResult("gitpath can not be blank");
          }
@@ -29,10 +29,10 @@ public class CoverageController {
         if(StringUtils.isEmpty(basicBranch)){
             return new Data().setCode(-3).setResult("basicBranch can not be blank");
         }
-        if(StringUtils.isEmpty(environment)){
+        if(StringUtils.isEmpty(versionname)){
             return new Data().setCode(-4).setResult("environment can not be blank");
         }
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,testedBranch,basicBranch,"","");
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,versionname,testedBranch,basicBranch,"","");
         reportGeneratorCov.startCoverageTask();
          return new Data().setCode(200).setResult(gitPath);
     }

@@ -79,9 +79,9 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    public static AppDeployInfo getApplicationIP(String versionName, String environmentName) {
-        List<AppDeployInfo> appDeployInfos = null;
-        AppDeployInfo appDeployInfo = null;
+    public static StringBuffer getAppDeployInfoList(String versionName) {
+        ArrayList<AppDeployInfo> appDeployInfos = null;
+        StringBuffer iplist = new StringBuffer();
         try {
             String ret = null;
             Gson gson = new Gson();
@@ -92,39 +92,21 @@ public class ColumbusUtils {
                 JsonArray jsonArray = listJsonObject.getAsJsonArray("result");
                 appDeployInfos = new Gson().fromJson(jsonArray.toString(), new TypeToken<List<AppDeployInfo>>() {
                 }.getType());
-                //对查询出来的Deploy数据做倒序排列，优先对比最新发布的测试环境地址
-                Collections.reverse(appDeployInfos);
-                for (AppDeployInfo appDeployInfo1 : appDeployInfos) {
-                    if (environmentName.equals(appDeployInfo1.getConfEnv())) {
-                        System.out.println(appDeployInfo1.getIp() + appDeployInfo1.getConfEnv() + appDeployInfo1.getAppVersion());
-                        return appDeployInfo1;
-                    }
-                }
             }
-            return appDeployInfo;
+            for(AppDeployInfo appDeployInfo: appDeployInfos){
+                iplist.append(appDeployInfo.getIp());
+                iplist.append(",");
+
+            }
+            return iplist;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static String getAppDeployInfoFromBuildVersionList(String appID, String branchName, String environmentName) {
-        String applicationIP = null;
-        AppDeployInfo appDeployInfo = null;
-        AppVersionResponse appVersionResponse = ColumbusUtils.getBuildVersionList(appID, branchName);
-        if (null != appVersionResponse) {
-            System.out.println("searched source" + appVersionResponse.getSourceBranch() + appVersionResponse.getVersionName());
-            appDeployInfo = ColumbusUtils.getApplicationIP(appVersionResponse.getVersionName(), environmentName);
-            if (appDeployInfo != null && appDeployInfo.getIp() != null && appDeployInfo.getIp() != "") {
-                applicationIP = appDeployInfo.getIp();
-                return applicationIP;
-            }
-        }
-        return applicationIP;
-    }
-
     public static void main(String[] args) {
-        ColumbusUtils.getAppDeployInfoFromBuildVersionList("pandora-server-web", "test-platform3.5-20200508", "test2");
+        ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
 //        ColumbusUtils.getApplicationIP("pandora-server-web_20200604145728","test2");
 
     }

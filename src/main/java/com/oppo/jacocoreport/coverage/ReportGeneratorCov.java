@@ -1,5 +1,6 @@
 package com.oppo.jacocoreport.coverage;
 
+import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
@@ -33,6 +34,7 @@ public class ReportGeneratorCov {
     private  String oldBranchName = "";
     private  String newTag = "";
     private  String oldTag = "";
+    private String versionname = "";
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
 
@@ -43,14 +45,15 @@ public class ReportGeneratorCov {
      *
      * @param
      */
-    public ReportGeneratorCov(String gitUtl,String newBranchName,String oldBranchName,String newTag,String oldTag) {
+    public ReportGeneratorCov(String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
         this.port = Config.Port;
         this.gitName = Config.GitName;
         this.gitPassword = Config.GitPassword;
-        this.applicationgitlabUrl = gitUtl;
+        this.applicationgitlabUrl = applicationgitlabUrl;
         this.newBranchName = newBranchName;
         this.oldBranchName = oldBranchName;
+        this.versionname = versionname;
         this.newTag = newTag;
         this.oldTag = oldTag;
 
@@ -195,15 +198,20 @@ public class ReportGeneratorCov {
                     ArrayList<File> sourceDirectoryList = new ArrayList<>();
                     for (String key : applicationMap.keySet()) {
                         String projectDirectoryStr = ((Map)applicationMap.get(key)).getOrDefault("sourceDirectory","").toString();
-                        String addressIP = ((Map)applicationMap.get(key)).getOrDefault("ip","").toString();
+                        String addressIPList = ((Map)applicationMap.get(key)).getOrDefault("ip","").toString();
                         File projectDirectory = new File(projectDirectoryStr);
 
-                        executionDataFile = new File(coverageReportPath, key+"_jacoco.exec");//第一步生成的exec的文件
+
                         classesDirectory = new File(projectDirectory,"target/classes");//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
                         sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
-
-                        //获取覆盖率生成数据
-                        executionDataClient.getExecutionData(addressIP, port, executionDataFile.toString());
+                        String[] iplist = addressIPList.split(",");
+                        for(String serverip : iplist) {
+                            //获取覆盖率生成数据
+                            if(!serverip.isEmpty()) {
+                                executionDataFile = new File(coverageReportPath, serverip+key+"_jacoco.exec");//第一步生成的exec的文件
+                                executionDataClient.getExecutionData(serverip, port, executionDataFile.toString());
+                            }
+                        }
                         if(classesDirectory.exists()) {
                             classesDirectoryList.add(classesDirectory);
                             sourceDirectoryList.add(sourceDirectory);
@@ -248,23 +256,14 @@ public class ReportGeneratorCov {
         return localPath;
     }
 
-    private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String branchName,String environmentname,String isApollo){
+    private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname){
         HashMap<String,HashMap> applicationNameMap = new HashMap<String ,HashMap>();
         for(File applicationPath : applicationNames){
             HashMap<String,Object> applicationInfo = new HashMap<>();
-            if (isApollo.equals("1")){
-                applicationInfo.put("ip","127.0.0.2");
-                applicationInfo.put("sourceDirectory",applicationPath.toString());
-                applicationNameMap.put(applicationPath.getName(),applicationInfo);
-            }else {
-                String applicationIP = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationPath.getName(), branchName, environmentname);
-                if (applicationIP != null && applicationIP != "") {
-                    applicationInfo.put("ip", applicationIP);
-                    applicationInfo.put("sourceDirectory",applicationPath.toString());
-                    applicationNameMap.put(applicationPath.getName(),applicationInfo);
-                }
-            }
-
+            StringBuffer iplist = ColumbusUtils.getAppDeployInfoList(versionname);
+            applicationInfo.put("ip", iplist.toString());
+            applicationInfo.put("sourceDirectory",applicationPath.toString());
+            applicationNameMap.put(applicationPath.getName(),applicationInfo);
         }
         return applicationNameMap;
     }
@@ -276,21 +275,19 @@ public class ReportGeneratorCov {
         //clone代码到本地
         cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName);
         //读取应用列表,并写入yaml配置文件
-        System.out.println("读取应用列表,并写入yaml配置文件");
-        Map<String, Object> applicationMap = ReadYml.getInstance().getValuesByRootKey(Config.ResourceName, projectName);
-        if(applicationMap.size() == 0) {
-            ArrayList filelist = new ArrayList();
-            ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
-            Map applicationNameMap = getApplicationIPMap(applicationNames, newBranchName, projectName, "0");
-            ReadYml.getInstance().setValueByMap(resourceName, projectName, applicationNameMap);
-        }
-        //检查应用测试环境是否配置
-        applicationMap = ReadYml.getInstance().getValuesByRootKey(resourceName, projectName);
-        boolean ipNeedUpdata = checkApplicationsIP(applicationMap);
-        if(ipNeedUpdata){
-            System.out.println("请先修改 "+resourceName+"  "+projectName+"下的测试环境IP地址");
-            return;
-        }
+//        System.out.println("读取应用列表,并写入yaml配置文件");
+//        Map<String, Object> applicationMap = ReadYml.getInstance().getValuesByRootKey(Config.ResourceName, projectName);
+//        if(applicationMap.size() == 0) {
+//            ArrayList filelist = new ArrayList();
+//            ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
+//            Map applicationNameMap = getApplicationIPMap(applicationNames, versionname);
+//            ReadYml.getInstance().setValueByMap(resourceName, projectName, applicationNameMap);
+//        }
+//        //检查应用测试环境是否配置
+//        applicationMap = ReadYml.getInstance().getValuesByRootKey(resourceName, projectName);
+        ArrayList filelist = new ArrayList();
+        ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
+        Map applicationNameMap = getApplicationIPMap(applicationNames, versionname);
         //编译项目源代码生成classes文件
         File pompath = new File(localPath.toString(), "pom.xml");
         if (!pompath.exists()) {
@@ -301,7 +298,7 @@ public class ReportGeneratorCov {
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathBySysTime();
         this.coverageReportPath = coverageReportPath;
-        timerTask(applicationMap);
+        timerTask(applicationNameMap);
 
     }
     /**
@@ -313,75 +310,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
+        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
+        String testedBranch = "release/fin-2.0";
+        String newTag = "8e0221c3";
+        String oldTag = "cd0f23f4";
+        String versionName = "fin-loan-api-20200624143903-126";
 
-        String f = "setting.properties";
-        Properties props = new Properties();
-        props.load(new java.io.FileInputStream(f));
-        String resourceName = props.getProperty("resourceName","");
-        String environment = props.getProperty("environment","");
-        int port = Integer.parseInt(props.getProperty("port",""));
-        String gitName = props.getProperty("gitName","");
-        String gitPassword = props.getProperty("gitPassword","");
-        String newBranchName = props.getProperty("newBranchName","");
-        String oldBranchName = props.getProperty("oldBranchName","");
-        String newTag = props.getProperty("newTag","");
-        String oldTag = props.getProperty("oldTag","");
-        String mavenhome= props.getProperty("mavenhome","");
-        String codePath = props.getProperty("codepath","");
-        String gitUrl = props.getProperty("gitUrl","");
-        String isApollo = props.getProperty("isApollo","0");
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,testedBranch,versionName,"",newTag,oldTag);
+        reportGeneratorCov.startCoverageTask();
 
-
-        System.out.println("resourceName : "+resourceName);
-        System.out.println("environment : "+environment);
-        System.out.println("port : "+port);
-        System.out.println("gitName : "+gitName);
-        System.out.println("gitPassword : "+gitPassword);
-        System.out.println("oldBranchName : "+oldBranchName);
-        System.out.println("mavenhome : "+mavenhome);
-
-
-        if(newBranchName == ""){
-            System.out.println("please set new branch name");
-            return;
-        }
-        if(!new File(mavenhome).exists()){
-            System.out.println("Maven Home目录未设置");
-            return;
-        }
-//        String projectName = GitUtil.getLastUrlString(gitUrl);
-//        File localPath = new File(codePath,projectName);
-//
-//        //clone代码到本地
-//        ReportGeneratorCov.cloneCodeSource(gitName, gitPassword, gitUrl, codePath,newBranchName,oldBranchName);
-//        //读取应用列表,并写入yaml配置文件
-//        System.out.println("读取应用列表,并写入yaml配置文件");
-//        Map<String, Object> applicationMap = ReadYml.getInstance().getValuesByRootKey(resourceName, environment);
-//        if(applicationMap.size() == 0) {
-//            ArrayList filelist = new ArrayList();
-//            ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
-//            Map applicationNameMap = ReportGeneratorCov.getApplicationIPMap(applicationNames, newBranchName, environment, isApollo);
-//            ReadYml.getInstance().setValueByMap(resourceName, environment, applicationNameMap);
-//
-//        }
-//        //检查应用测试环境是否配置
-//        applicationMap = ReadYml.getInstance().getValuesByRootKey(resourceName, environment);
-//        boolean ipNeedUpdata = ReportGeneratorCov.checkApplicationsIP(applicationMap);
-//        if(ipNeedUpdata){
-//            System.out.println("请先修改 "+resourceName+"  "+environment+"下的测试环境IP地址");
-//            return;
-//        }
-//        //编译项目源代码生成classes文件
-//        File pompath = new File(localPath.toString(), "pom.xml");
-//        if (!pompath.exists()) {
-//            System.out.println("请检查项目pom.xml地址是否存在");
-//            return;
-//        }
-//        Maveninvoker.buildMaven(pompath, mavenhome);
-//        //创建测试报告文件名
-//        File coverageReportPath = ReportGeneratorCov.createCoverageReportPathBySysTime();
-//        //获取应用配置信息
-//        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationMap,port, gitName, gitPassword, localPath.toString(), newBranchName, oldBranchName, newTag, oldTag, coverageReportPath);
-//        reportGeneratorCov.timerTask();
     }
 }
