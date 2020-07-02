@@ -42,8 +42,8 @@ public class CoverageController {
          return new Data().setCode(200).setData("");
     }
 
-    @GetMapping("/getcoveragereport")
-    public Data getcoveragereport(@RequestParam Long taskid){
+    @GetMapping("/getcoveragedata")
+    public Data getcoveragedata(@RequestParam Long taskid){
         String taskID = taskid.toString();
         String coveragepercent = "";
         String diffcoveragepercent = "";
