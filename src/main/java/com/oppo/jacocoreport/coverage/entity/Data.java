@@ -3,7 +3,7 @@ package com.oppo.jacocoreport.coverage.entity;
 public class Data {
 
     private int code;
-    private String result;
+    private String data;
 
     public int getCode() {
         return code;
@@ -14,16 +14,20 @@ public class Data {
         return this;
     }
 
-    public String getResult() {
-        return result;
+    public String getData() {
+        return data;
     }
 
-    public Data setResult(String result) {
-        this.result = result;
+    public Data setData(String data) {
+        this.data = data;
         return this;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "Data{" +
+                "code=" + code +
+                ", data='" + data + '\'' +
+                '}';
+    }
 }

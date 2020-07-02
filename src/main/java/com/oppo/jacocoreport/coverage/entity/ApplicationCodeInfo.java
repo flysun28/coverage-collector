@@ -10,7 +10,7 @@ public class ApplicationCodeInfo {
     private String basicCommitId;
 
     private String versionName;
-    private String deployId;
+    private String deployKey;
 
     public String getVersionName() {
         return versionName;
@@ -69,12 +69,12 @@ public class ApplicationCodeInfo {
         this.basicCommitId = basicCommitId;
     }
 
-    public String getDeployId() {
-        return deployId;
+    public String getDeployKey() {
+        return deployKey;
     }
 
-    public void setDeployId(String deployId) {
-        this.deployId = deployId;
+    public void setDeployKey(String deployKey) {
+        this.deployKey = deployKey;
     }
 
 }

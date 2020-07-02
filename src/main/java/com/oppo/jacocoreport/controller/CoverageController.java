@@ -4,7 +4,6 @@ import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,19 +23,19 @@ public class CoverageController {
          String basicBranch = applicationCodeInfo.getBasicBranch();
          String versionname = applicationCodeInfo.getVersionName();
          if(StringUtils.isEmpty(gitPath)){
-             return new Data().setCode(-1).setResult("gitpath can not be blank");
+             return new Data().setCode(-1).setData("gitpath can not be blank");
          }
         if(StringUtils.isEmpty(testedBranch)){
-            return new Data().setCode(-2).setResult("testedBranch can not be blank");
+            return new Data().setCode(-2).setData("testedBranch can not be blank");
         }
         if(StringUtils.isEmpty(basicBranch)){
-            return new Data().setCode(-3).setResult("basicBranch can not be blank");
+            return new Data().setCode(-3).setData("basicBranch can not be blank");
         }
         if(StringUtils.isEmpty(versionname)){
-            return new Data().setCode(-4).setResult("environment can not be blank");
+            return new Data().setCode(-4).setData("environment can not be blank");
         }
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,versionname,testedBranch,basicBranch,"","");
         reportGeneratorCov.startCoverageTask();
-         return new Data().setCode(200).setResult(gitPath);
+         return new Data().setCode(200).setData(gitPath);
     }
 }
