@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 生成覆盖率报告主入口
+ */
+
 public class ReportGeneratorCov {
     private  int port = 0;
     private  String gitName = "";
@@ -256,6 +260,13 @@ public class ReportGeneratorCov {
         return localPath;
     }
 
+    /**
+     * 解析应用模块对应的代码路径和部署的IP地址
+     * {"applicationname":{"ip":"127.0.0.1","sourceDirectory":"D://codecoverage//applicationmodule//src"}}
+     * @param applicationNames
+     * @param versionname
+     * @return
+     */
     private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname){
         HashMap<String,HashMap> applicationNameMap = new HashMap<String ,HashMap>();
         for(File applicationPath : applicationNames){
@@ -268,25 +279,17 @@ public class ReportGeneratorCov {
         return applicationNameMap;
     }
     public void startCoverageTask(){
+        //通过git url地址解析应用名
         String projectName = GitUtil.getLastUrlString(this.applicationgitlabUrl);
+        //生成开发git代码本地路径
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
-        String  resourceName = Config.ResourceName;
         //clone代码到本地
         cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName);
-        //读取应用列表,并写入yaml配置文件
-//        System.out.println("读取应用列表,并写入yaml配置文件");
-//        Map<String, Object> applicationMap = ReadYml.getInstance().getValuesByRootKey(Config.ResourceName, projectName);
-//        if(applicationMap.size() == 0) {
-//            ArrayList filelist = new ArrayList();
-//            ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
-//            Map applicationNameMap = getApplicationIPMap(applicationNames, versionname);
-//            ReadYml.getInstance().setValueByMap(resourceName, projectName, applicationNameMap);
-//        }
-//        //检查应用测试环境是否配置
-//        applicationMap = ReadYml.getInstance().getValuesByRootKey(resourceName, projectName);
         ArrayList filelist = new ArrayList();
+        //解析工程中各个模块路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
+        //模块绑定source地址，以及对应部署的服务地址
         Map applicationNameMap = getApplicationIPMap(applicationNames, versionname);
         //编译项目源代码生成classes文件
         File pompath = new File(localPath.toString(), "pom.xml");
@@ -298,6 +301,7 @@ public class ReportGeneratorCov {
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathBySysTime();
         this.coverageReportPath = coverageReportPath;
+        //开始生成覆盖率报告任务
         timerTask(applicationNameMap);
 
     }
