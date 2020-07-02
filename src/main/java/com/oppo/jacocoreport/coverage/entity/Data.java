@@ -1,9 +1,9 @@
 package com.oppo.jacocoreport.coverage.entity;
 
-public class Data {
+public class Data<T> {
 
     private int code;
-    private String data;
+    private T data;
 
     public int getCode() {
         return code;
@@ -14,11 +14,11 @@ public class Data {
         return this;
     }
 
-    public String getData() {
+    public T getData() {
         return data;
     }
 
-    public Data setData(String data) {
+    public Data setData(T data) {
         this.data = data;
         return this;
     }

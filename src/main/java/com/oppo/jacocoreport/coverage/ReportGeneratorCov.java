@@ -1,12 +1,15 @@
 package com.oppo.jacocoreport.coverage;
 
 import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
+import com.oppo.jacocoreport.coverage.entity.CoverageData;
+import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
 import com.oppo.jacocoreport.coverage.utils.ColumbusUtils;
 import com.oppo.jacocoreport.coverage.utils.Config;
 import com.oppo.jacocoreport.coverage.utils.GitUtil;
+import com.oppo.jacocoreport.coverage.utils.Jsouphtml;
 import com.oppo.jacocoreport.coverage.yaml.ReadYml;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -29,6 +32,7 @@ import java.util.*;
  */
 
 public class ReportGeneratorCov {
+    private String taskId = "";
     private  int port = 0;
     private  String gitName = "";
     private  String gitPassword = "";
@@ -49,8 +53,9 @@ public class ReportGeneratorCov {
      *
      * @param
      */
-    public ReportGeneratorCov(String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
+    public ReportGeneratorCov(String taskId,String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
+        this.taskId = taskId;
         this.port = Config.Port;
         this.gitName = Config.GitName;
         this.gitPassword = Config.GitPassword;
@@ -305,6 +310,7 @@ public class ReportGeneratorCov {
         timerTask(applicationNameMap);
 
     }
+
     /**
      * Starts the report generation process
      *
@@ -314,13 +320,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
+        String taskID = "123456789";
         String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
         String testedBranch = "release/fin-2.0";
         String newTag = "8e0221c3";
         String oldTag = "cd0f23f4";
         String versionName = "fin-loan-api-20200624143903-126";
 
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,testedBranch,versionName,"",newTag,oldTag);
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,"",newTag,oldTag);
         reportGeneratorCov.startCoverageTask();
 
     }

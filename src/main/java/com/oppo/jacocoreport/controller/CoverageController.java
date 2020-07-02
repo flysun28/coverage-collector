@@ -2,11 +2,13 @@ package com.oppo.jacocoreport.controller;
 
 import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
+import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
+import com.oppo.jacocoreport.coverage.utils.Jsouphtml;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
 
 @RestController
 public class CoverageController {
@@ -18,6 +20,7 @@ public class CoverageController {
     }
 
     private Data dealWith(ApplicationCodeInfo applicationCodeInfo){
+         String taskId = applicationCodeInfo.getId().toString();
          String gitPath = applicationCodeInfo.getGitPath();
          String testedBranch = applicationCodeInfo.getTestedBranch();
          String basicBranch = applicationCodeInfo.getBasicBranch();
@@ -34,8 +37,33 @@ public class CoverageController {
         if(StringUtils.isEmpty(versionname)){
             return new Data().setCode(-4).setData("environment can not be blank");
         }
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(gitPath,versionname,testedBranch,basicBranch,"","");
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,versionname,testedBranch,basicBranch,"","");
         reportGeneratorCov.startCoverageTask();
-         return new Data().setCode(200).setData(gitPath);
+         return new Data().setCode(200).setData("");
     }
+
+    @GetMapping("/getcoveragereport")
+    public Data getcoveragereport(@RequestParam Long taskid){
+        String taskID = taskid.toString();
+        String coveragepercent = "";
+        String diffcoveragepercent = "";
+        File coveragereport = new File(taskID,"coveragereport");
+        coveragereport = new File(coveragereport,"index.html");
+        if(coveragereport.exists()){
+            Jsouphtml coveragehtml = new Jsouphtml(coveragereport);
+            coveragepercent = coveragehtml.getCoverageReport();
+        }
+        File diffcoveragereport = new File(taskID,"diffcoveragereport");
+        diffcoveragereport = new File(diffcoveragereport,"index.html");
+        if(diffcoveragereport.exists()){
+            Jsouphtml diffcoveragehtml = new Jsouphtml(diffcoveragereport);
+            diffcoveragepercent = diffcoveragehtml.getCoverageReport();
+        }
+
+
+        CoverageData coverageData = new CoverageData(coveragepercent,diffcoveragepercent);
+        return new Data().setCode(200).setData(coverageData);
+    }
+
+
 }
