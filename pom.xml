@@ -58,31 +58,43 @@
             <groupId>org.jacoco</groupId>
             <artifactId>agent</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/jacocoagent.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>jgit</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/org.eclipse.jgit.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.jacoco.agent-0.8.4</groupId>
             <artifactId>agent</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.agent-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.jacoco.ant-0.8.4</groupId>
             <artifactId>ant</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.ant-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.jacoco.core-0.8.4</groupId>
             <artifactId>core</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.core-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.jacoco.report-0.8.4</groupId>
             <artifactId>report</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.report-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
@@ -122,6 +134,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
