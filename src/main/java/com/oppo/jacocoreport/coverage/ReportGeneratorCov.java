@@ -85,6 +85,17 @@ public class ReportGeneratorCov {
         System.out.println("创建成功"+fileName);
         return file;
     }
+    private static File createCoverageReportPathByTaskid(String taskId){
+
+        File file = new File(taskId);
+        if(!file.exists()){
+            if(!file.mkdir()){
+                System.out.println("当前路径不存在，创建失败");
+            }
+        }
+        System.out.println("创建成功"+taskId);
+        return file;
+    }
     /**
      * Create the report.
      *
@@ -304,7 +315,7 @@ public class ReportGeneratorCov {
         }
         Maveninvoker.buildMaven(pompath, Config.MAVENPATH);
         //创建测试报告文件名
-        File coverageReportPath = createCoverageReportPathBySysTime();
+        File coverageReportPath = createCoverageReportPathByTaskid(this.taskId);
         this.coverageReportPath = coverageReportPath;
         //开始生成覆盖率报告任务
         timerTask(applicationNameMap);

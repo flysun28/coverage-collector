@@ -45,23 +45,20 @@ public class CoverageController {
     @GetMapping("/getcoveragedata")
     public Data getcoveragedata(@RequestParam Long taskid){
         String taskID = taskid.toString();
-        String coveragepercent = "";
-        String diffcoveragepercent = "";
+        CoverageData coverageData = new CoverageData();
         File coveragereport = new File(taskID,"coveragereport");
         coveragereport = new File(coveragereport,"index.html");
-        if(coveragereport.exists()){
-            Jsouphtml coveragehtml = new Jsouphtml(coveragereport);
-            coveragepercent = coveragehtml.getCoverageReport();
+        if(!coveragereport.exists()){
+            return new Data().setCode(200).setData(coverageData);
         }
         File diffcoveragereport = new File(taskID,"diffcoveragereport");
         diffcoveragereport = new File(diffcoveragereport,"index.html");
-        if(diffcoveragereport.exists()){
-            Jsouphtml diffcoveragehtml = new Jsouphtml(diffcoveragereport);
-            diffcoveragepercent = diffcoveragehtml.getCoverageReport();
+        if(!diffcoveragereport.exists()){
+            return new Data().setCode(200).setData(coverageData);
         }
 
-
-        CoverageData coverageData = new CoverageData(coveragepercent,diffcoveragepercent);
+        Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
+        coverageData = jsouphtml.getCoverageData();
         return new Data().setCode(200).setData(coverageData);
     }
 
