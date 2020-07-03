@@ -17,7 +17,7 @@ public class Jsouphtml {
       this.diffhtmlreport = diffhtmlreport;
     }
 
-    public CoverageData getCoverageData(){
+    public CoverageData getCoverageData(Long taskid){
         CoverageData coverageData = null;
         try {
             //解析整体覆盖率报告
@@ -37,7 +37,7 @@ public class Jsouphtml {
             int diffmissedmethod = Integer.parseInt(elements.get(9).text());
             int diffmethod = Integer.parseInt(elements.get(10).text());
             float diffmethodpercent = (float)diffmissedmethod / (float)diffmethod;
-            coverageData = new CoverageData(totalinstructions,totalbranches,methodpercent+"",diffinstructions,diffbranches,diffmethodpercent+"");
+            coverageData = new CoverageData(taskid,totalinstructions,totalbranches,methodpercent+"",diffinstructions,diffbranches,diffmethodpercent+"");
             return coverageData;
         }catch (Exception e){
             e.printStackTrace();
@@ -47,7 +47,7 @@ public class Jsouphtml {
 
     public static void main(String[] args){
         Jsouphtml jsouphtml = new Jsouphtml(new File("D:\\jacocoCov\\20200630211850\\coveragereport\\index.html"),new File("D:\\jacocoCov\\20200630211850\\coveragediffreport\\index.html"));
-        System.out.println(jsouphtml.getCoverageData());
+        System.out.println(jsouphtml.getCoverageData(Long.parseLong("20200630211850")));
 
     }
 }

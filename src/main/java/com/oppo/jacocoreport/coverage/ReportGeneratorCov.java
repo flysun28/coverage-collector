@@ -332,11 +332,12 @@ public class ReportGeneratorCov {
      */
     public static void main(final String[] args) throws Exception {
         String taskID = "123456789";
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/fin-2.0";
-        String newTag = "8e0221c3";
-        String oldTag = "cd0f23f4";
-        String versionName = "fin-loan-api-20200624143903-126";
+        String gitPath = "git@gitlab.os.adc.com:cql/CIdemo.git";
+        String testedBranch = "master";
+        String basicBranch = "master";
+        String newTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
+        String oldTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
+        String versionName = "ci-demo-20200701110714-23";
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,"",newTag,oldTag);
         reportGeneratorCov.startCoverageTask();

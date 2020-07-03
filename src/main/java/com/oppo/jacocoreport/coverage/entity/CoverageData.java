@@ -2,6 +2,15 @@ package com.oppo.jacocoreport.coverage.entity;
 
 public class CoverageData {
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    private long id;
     //整体语句覆盖率
     private String totalInstructions = "";
     //整体分支覆盖率
@@ -88,7 +97,8 @@ public class CoverageData {
 
     }
 
-    public CoverageData(String totalInstructions,String totalBranches,String totalMethods,String diffInstructions,String difflBranches,String diffMethods){
+    public CoverageData(long id,String totalInstructions,String totalBranches,String totalMethods,String diffInstructions,String difflBranches,String diffMethods){
+        this.id = id;
        this.totalInstructions = totalInstructions;
        this.totalBranches = totalBranches;
        this.totalMethods = totalMethods;

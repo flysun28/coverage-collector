@@ -58,7 +58,7 @@ public class CoverageController {
         }
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
-        coverageData = jsouphtml.getCoverageData();
+        coverageData = jsouphtml.getCoverageData(taskid);
         return new Data().setCode(200).setData(coverageData);
     }
 

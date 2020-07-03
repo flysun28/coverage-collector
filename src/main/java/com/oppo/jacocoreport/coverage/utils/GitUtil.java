@@ -1,9 +1,15 @@
 package com.oppo.jacocoreport.coverage.utils;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.util.FS;
 import org.jacoco.core.internal.diff.GitAdapter;
 
 import java.io.File;
@@ -14,10 +20,49 @@ public class GitUtil {
     private String gitPassword;
 
 
+    public GitUtil(){
+
+    }
     public GitUtil(String gitName,String gitPassword){
         this.gitName = gitName;
         this.gitPassword = gitPassword;
 
+    }
+    final SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+        @Override
+        protected void configure(OpenSshConfig.Host host, Session session) {
+            session.setConfig("StrictHostKeyChecking","no");
+        }
+
+        @Override
+        protected JSch createDefaultJSch(FS fs) throws JSchException {
+            JSch jSch = super.createDefaultJSch(fs);
+            jSch.addIdentity("C:\\Users\\80289528\\.ssh\\id_rsa");
+            jSch.setKnownHosts("C:\\Users\\80289528\\.ssh\\known_hosts");
+            return super.createDefaultJSch(fs);
+
+        }
+    };
+
+    public String cloneRepositoryBySSH(String url,File localPath){
+         CloneCommand cloneCommand = Git.cloneRepository();
+         cloneCommand.setTransportConfigCallback(new TransportConfigCallback() {
+                                                     @Override
+                                                     public void configure(Transport transport) {
+                                                         SshTransport sshTransport = (SshTransport) transport;
+                                                         sshTransport.setSshSessionFactory(sshSessionFactory);
+                                                     }
+                                                 }
+
+         );
+         cloneCommand.setURI(url);
+        cloneCommand.setDirectory(localPath);
+        try{
+            cloneCommand.call().checkout();
+        }catch (GitAPIException e){
+            e.printStackTrace();
+        }
+    return "success";
     }
 
     public  String cloneRepository(String url,File localPath)
@@ -88,16 +133,14 @@ public class GitUtil {
     }
 
     public static void main(String[] args){
-        GitUtil gitUtil = new GitUtil("80289528","Zhc_172520");
-        String urlString = "git@gitlab.os.adc.com:financeTestTechGroup/luckymonkey.git";
-        String projectName = gitUtil.getLastUrlString(urlString);
-        System.out.println(projectName);
-        File projectPath = new File("D:\\codeCoverage",projectName);
-        gitUtil.cloneRepository(urlString,projectPath);
+//        GitUtil gitUtil = new GitUtil("80289528","Zhc_172520");
+//        String urlString = "git@gitlab.os.adc.com:financeTestTechGroup/luckymonkey.git";
+//        String projectName = gitUtil.getLastUrlString(urlString);
+//        System.out.println(projectName);
+//        File projectPath = new File("D:\\codeCoverage",projectName);
+//        gitUtil.cloneRepository(urlString,projectPath);
 
-//        ArrayList filelist = new ArrayList();
-//        ArrayList applicationNames = GitUtil.getApplicationNames(projectPath,filelist);
-//        gitUtil.checkoutBranch(projectPath.toString(),"daily","master");
-//        System.out.println(filelist);
+        GitUtil gitUtil1 = new GitUtil();
+        gitUtil1.cloneRepositoryBySSH("git@gitlab.os.adc.com:cql/CIdemo.git",new File("D:\\codeCoverage\\CIdemo"));
     }
 }
