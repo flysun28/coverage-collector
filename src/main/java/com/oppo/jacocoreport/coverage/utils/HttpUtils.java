@@ -1,5 +1,11 @@
 package com.oppo.jacocoreport.coverage.utils;
 
+import com.oppo.jacocoreport.coverage.entity.CoverageData;
+import com.oppo.jacocoreport.coverage.entity.Data;
+import org.springframework.http.*;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -65,5 +71,18 @@ public class HttpUtils {
         in.close();
 
         System.out.println(response.toString());
+    }
+
+    public static Data sendPostRequest(String url, Object obj){
+        RestTemplate client = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        //以表单的方式提交
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //将请求头部和参数合成一个请求
+        HttpEntity<Object> requestEntity = new HttpEntity<>(obj,headers);
+        //执行HTTP请求，将返回的结构格式化
+        ResponseEntity<Data> response = client.postForEntity(url,requestEntity,Data.class);
+
+        return response.getBody();
     }
 }

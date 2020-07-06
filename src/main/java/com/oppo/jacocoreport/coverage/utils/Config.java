@@ -7,4 +7,5 @@ public class Config {
     public final  static String GitName = "80289528";
     public final  static String GitPassword = "Zhc_172520";
     public final  static String ResourceName = "testenvironment.yml";
+    public final static String SEND_COVERAGE_URL = "/apiq/execution/result";
 }

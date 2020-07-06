@@ -6,10 +6,7 @@ import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
-import com.oppo.jacocoreport.coverage.utils.ColumbusUtils;
-import com.oppo.jacocoreport.coverage.utils.Config;
-import com.oppo.jacocoreport.coverage.utils.GitUtil;
-import com.oppo.jacocoreport.coverage.utils.Jsouphtml;
+import com.oppo.jacocoreport.coverage.utils.*;
 import com.oppo.jacocoreport.coverage.yaml.ReadYml;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -21,6 +18,7 @@ import org.jacoco.report.FileMultiReportOutput;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.MultiSourceFileLocator;
 import org.jacoco.report.html.HTMLFormatter;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +30,7 @@ import java.util.*;
  */
 
 public class ReportGeneratorCov {
-    private String taskId = "";
+    private Long taskId = 0L;
     private  int port = 0;
     private  String gitName = "";
     private  String gitPassword = "";
@@ -53,7 +51,7 @@ public class ReportGeneratorCov {
      *
      * @param
      */
-    public ReportGeneratorCov(String taskId,String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
+    public ReportGeneratorCov(Long taskId,String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
         this.taskId = taskId;
         this.port = Config.Port;
@@ -202,6 +200,30 @@ public class ReportGeneratorCov {
         return coverageBuilder.getBundle(title);
     }
 
+    /**
+     * 上传覆盖率报告
+     */
+    public void sendcoveragedata(){
+        String taskID = taskId+"";
+        CoverageData coverageData = new CoverageData();
+        File coveragereport = new File(taskID,"coveragereport");
+        coveragereport = new File(coveragereport,"index.html");
+        if(!coveragereport.exists()){
+            return;
+        }
+        File diffcoveragereport = new File(taskID,"diffcoveragereport");
+        diffcoveragereport = new File(diffcoveragereport,"index.html");
+        if(!diffcoveragereport.exists()){
+            return;
+        }
+
+        Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
+        coverageData = jsouphtml.getCoverageData(taskId);
+
+        String requstUrl = Config.SEND_COVERAGE_URL;
+        Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
+        System.out.println(data.getCode());
+    }
     private void timerTask(Map<String,Object> applicationMap) {
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
         new Timer().schedule(new TimerTask() {
@@ -245,6 +267,9 @@ public class ReportGeneratorCov {
                     createAll(allexecutionDataFile,classesDirectoryList,reportAllCovDirectory,coverageReportPath.getName(),sourceDirectoryList);
                     createDiff(classesDirectoryList,reportDiffDirectory,sourceDirectoryList,coverageReportPath.getName());
                     Thread.sleep(1000);
+                    //上传覆盖率报告
+                    sendcoveragedata();
+
                 }catch (Exception e){
                     e.getStackTrace();
                 }
@@ -315,7 +340,7 @@ public class ReportGeneratorCov {
         }
         Maveninvoker.buildMaven(pompath, Config.MAVENPATH);
         //创建测试报告文件名
-        File coverageReportPath = createCoverageReportPathByTaskid(this.taskId);
+        File coverageReportPath = createCoverageReportPathByTaskid(this.taskId+"");
         this.coverageReportPath = coverageReportPath;
         //开始生成覆盖率报告任务
         timerTask(applicationNameMap);
@@ -331,13 +356,13 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        String taskID = "123456789";
+        Long taskID = 123456789L;
         String gitPath = "git@gitlab.os.adc.com:cql/CIdemo.git";
-        String testedBranch = "master";
+        String testedBranch = "feature/cov";
         String basicBranch = "master";
-        String newTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
+        String newTag = "463e9574257c3d28693c4780688b18f1b7918dc2";
         String oldTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
-        String versionName = "ci-demo-20200701110714-23";
+        String versionName = "ci-demo-20200703154236-28";
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,"",newTag,oldTag);
         reportGeneratorCov.startCoverageTask();
