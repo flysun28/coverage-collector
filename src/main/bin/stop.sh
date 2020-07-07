@@ -1,5 +1,5 @@
 #!/bin/sh
-server_name=demo1
+server_name=jacococoverage
 get_pid() {
     STR=$1
     PID=$2
