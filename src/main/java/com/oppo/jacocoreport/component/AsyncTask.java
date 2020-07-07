@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 @Async
 public class AsyncTask {
     public void startCoverageTask(ApplicationCodeInfo applicationCodeInfo){
-        String taskId = applicationCodeInfo.getId().toString();
+        Long taskId = applicationCodeInfo.getId();
         String gitPath = applicationCodeInfo.getGitPath();
         String testedBranch = applicationCodeInfo.getTestedBranch();
         String basicBranch = applicationCodeInfo.getBasicBranch();

@@ -121,7 +121,9 @@ public class ReportGeneratorCov {
         //差异化代码覆盖率
         if(gitName !=""&& gitPassword !="") {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
-            createReport(bundleCoverageDiff, reportDiffDirectory,sourceDirectoryList);
+            if(bundleCoverageDiff.getClassCounter().getTotalCount() > 0) {
+                createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
+            }
         }
     }
 
@@ -185,17 +187,18 @@ public class ReportGeneratorCov {
         //本地Git路径，新分支 第三个参数不传时默认比较maser，传参数为待比较的基线分支
         //"D:\\tools\\JacocoTest","daily","master"
         GitAdapter.setCredentialsProvider(gitName, gitPassword);
-        if(!oldBranchName.equals("")){
+        if(!oldBranchName.trim().equals("")){
             coverageBuilder = new CoverageBuilder(gitlocalPath,newBranchName,oldBranchName);
         }else{
             //基于Tag比较的覆盖 参数1：本地仓库，参数2：代码分支，参数3：新Tag(预发版本)，参数4：基线Tag（变更前的版本）
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
             coverageBuilder = new CoverageBuilder(gitlocalPath,newBranchName,newTag,oldTag);
         }
-
-        final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
-        for(File classesDirectory: classesDirectoryList) {
-            analyzer.analyzeAll(classesDirectory);
+        if(coverageBuilder.getClasses().size() > 0) {
+            final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
+            for (File classesDirectory : classesDirectoryList) {
+                analyzer.analyzeAll(classesDirectory);
+            }
         }
         return coverageBuilder.getBundle(title);
     }
@@ -364,7 +367,7 @@ public class ReportGeneratorCov {
         String oldTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
         String versionName = "ci-demo-20200703154236-28";
 
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,"",newTag,oldTag);
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
         reportGeneratorCov.startCoverageTask();
 
     }

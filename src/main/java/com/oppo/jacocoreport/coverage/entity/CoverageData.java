@@ -107,5 +107,8 @@ public class CoverageData {
        this.diffMethods = diffMethods;
     }
 
-
+    @Override
+    public String toString() {
+        return this.totalInstructions+" "+this.totalMethods+" "+this.totalBranches+" "+this.diffInstructions+" "+this.difflBranches+" "+this.diffMethods;
+    }
 }
