@@ -2,13 +2,7 @@ package com.oppo.jacocoreport.coverage.entity;
 
 public class CoverageData {
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     private long id;
     //整体语句覆盖率
@@ -28,6 +22,14 @@ public class CoverageData {
     private String totalcoverageReportPath = "";
     //差异化覆盖率报告路径
     private String diffcoverageReportPath = "";
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getTotalInstructions() {
         return totalInstructions;
