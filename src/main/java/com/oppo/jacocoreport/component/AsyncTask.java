@@ -17,7 +17,7 @@ public class AsyncTask {
         String basicBranch = applicationCodeInfo.getBasicBranch();
         String versionname = applicationCodeInfo.getVersionName();
         System.out.println("start coverage test");
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,versionname,testedBranch,basicBranch,"","");
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,testedBranch,versionname,basicBranch,"","");
         reportGeneratorCov.startCoverageTask();
     }
 }
