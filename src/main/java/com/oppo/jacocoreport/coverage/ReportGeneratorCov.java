@@ -229,9 +229,9 @@ public class ReportGeneratorCov {
     }
     private void timerTask(Map<String,Object> applicationMap) {
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
                 try {
                     File executionDataFile = null;
                     File classesDirectory = null;
@@ -277,8 +277,8 @@ public class ReportGeneratorCov {
                     e.getStackTrace();
                 }
             }
-        },0,60000);
-    }
+//        },0,60000);
+//    }
     private Boolean checkApplicationsIP(Map<String,Object> applicationMap){
 
         for (String key : applicationMap.keySet()) {
