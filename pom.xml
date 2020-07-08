@@ -76,25 +76,19 @@
             <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.agent-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.jacoco.ant-0.8.4</groupId>
+            <groupId>org.jacoco.ant-1.0</groupId>
             <artifactId>ant</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.ant-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.jacoco.core-0.8.4</groupId>
+            <groupId>org.jacoco.core-1.0</groupId>
             <artifactId>core</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.core-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.jacoco.report-0.8.4</groupId>
+            <groupId>org.jacoco.report-1.0</groupId>
             <artifactId>report</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.report-0.8.4.201910110746.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
@@ -143,23 +137,25 @@
                     <!--<includeSystemScope>true</includeSystemScope>-->
                 <!--</configuration>-->
             <!--</plugin>-->
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>./</classpathPrefix>
-                            <mainClass>com.oppo.jacocoreport.CoverageApplication</mainClass>
-                        </manifest>
-                    </archive>
-
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>./</classpathPrefix>-->
+                            <!--<mainClass>com.oppo.jacocoreport.CoverageApplication</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                     <finalName>
                         ${project.name}
                     </finalName>
@@ -167,7 +163,15 @@
                     <descriptors>
                         <descriptor>src/main/assembly/assembly.xml</descriptor>
                     </descriptors>
-
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>
+                                com.oppo.jacocoreport.CoverageApplication
+                            </mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
                 <executions>
                     <execution>
@@ -177,17 +181,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>
-                                        com.oppo.jacocoreport.CoverageApplication
-                                    </mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
+                    </configuration>
                     </execution>
                 </executions>
             </plugin>
