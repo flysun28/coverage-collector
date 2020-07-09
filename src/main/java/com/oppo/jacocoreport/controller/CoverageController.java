@@ -36,11 +36,8 @@ public class CoverageController {
         if(StringUtils.isEmpty(testedBranch)){
             return new Data().setCode(-2).setData("testedBranch can not be blank");
         }
-        if(StringUtils.isEmpty(basicBranch)){
-            return new Data().setCode(-3).setData("basicBranch can not be blank");
-        }
         if(StringUtils.isEmpty(versionname)){
-            return new Data().setCode(-4).setData("environment can not be blank");
+            return new Data().setCode(-4).setData("versionname can not be blank");
         }
         //异步执行覆盖率任务
         asyncTask.startCoverageTask(applicationCodeInfo);

@@ -12,11 +12,13 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 
+import static com.oppo.jacocoreport.coverage.utils.Config.CLOUD_URL;
+
 public class ColumbusUtils {
     private static String url = "http://columbus.os.adc.com";
     private static String API_VERSION_INFO = "/openapi/version_info";
     private static String app_code = "";
-    private static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
+
 
     public static AppVersionResponse getBuildVersionList(String appId, String branchName) {
         Map<String, String> params = new HashMap<>();
