@@ -209,7 +209,7 @@ public class ReportGeneratorCov {
         CoverageData coverageData = new CoverageData();
         File coveragereport = new File(taskID,"coveragereport");
         coveragereport = new File(coveragereport,"index.html");
-        File diffcoveragereport = new File(taskID,"diffcoveragereport");
+        File diffcoveragereport = new File(taskID,"coveragediffreport");
         diffcoveragereport = new File(diffcoveragereport,"index.html");
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
