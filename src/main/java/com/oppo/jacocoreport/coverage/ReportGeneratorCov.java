@@ -119,12 +119,10 @@ public class ReportGeneratorCov {
 
     private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws IOException {
         //差异化代码覆盖率
-        if(gitName !=""&& gitPassword !="") {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
-            if(bundleCoverageDiff.getClassCounter().getTotalCount() > 0) {
+//            if(bundleCoverageDiff.getClassCounter().getTotalCount() > 0) {
                 createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
-            }
-        }
+//            }
     }
 
     private void createReport(final IBundleCoverage bundleCoverage,File reportDir,ArrayList<File> sourceDirectoryList)
@@ -194,12 +192,12 @@ public class ReportGeneratorCov {
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
             coverageBuilder = new CoverageBuilder(gitlocalPath,newBranchName,newTag,oldTag);
         }
-        if(coverageBuilder.getClasses().size() > 0) {
+//        if(coverageBuilder.getClasses().size() > 0) {
             final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
             for (File classesDirectory : classesDirectoryList) {
                 analyzer.analyzeAll(classesDirectory);
             }
-        }
+//        }
         return coverageBuilder.getBundle(title);
     }
 
@@ -211,14 +209,8 @@ public class ReportGeneratorCov {
         CoverageData coverageData = new CoverageData();
         File coveragereport = new File(taskID,"coveragereport");
         coveragereport = new File(coveragereport,"index.html");
-//        if(!coveragereport.exists()){
-//            return;
-//        }
         File diffcoveragereport = new File(taskID,"diffcoveragereport");
         diffcoveragereport = new File(diffcoveragereport,"index.html");
-//        if(!diffcoveragereport.exists()){
-//            return;
-//        }
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
         coverageData = jsouphtml.getCoverageData(taskId);
