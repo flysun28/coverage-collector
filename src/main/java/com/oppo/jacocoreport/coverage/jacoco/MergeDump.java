@@ -69,9 +69,9 @@ public class MergeDump {
                   continue;
               }
               try{
-                  System.out.println("Loading execution data file " +inputFile.getAbsolutePath());
+//                  System.out.println("Loading execution data file " +inputFile.getAbsolutePath());
                   loader.load(inputFile);
-                  System.out.println(loader.getExecutionDataStore().getContents());
+//                  System.out.println(loader.getExecutionDataStore().getContents());
               }catch (final IOException e){
                   e.printStackTrace();
               }
