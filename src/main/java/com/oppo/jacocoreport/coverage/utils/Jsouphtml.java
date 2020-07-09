@@ -19,26 +19,36 @@ public class Jsouphtml {
 
     public CoverageData getCoverageData(Long taskid){
         CoverageData coverageData = null;
+        String totalinstructions = "";
+        String totalbranches = "";
+        String methodpercentStr = "";
+        String diffinstructions = "";
+        String diffbranches = "";
+        String diffmethodpercentStr = "";
         try {
             //解析整体覆盖率报告
-            Document document = Jsoup.parse(this.totalhtmlreport, "UTF-8");
-            Elements elements = document.select("tfoot").select("td");
-            String totalinstructions = elements.get(2).text();
-            String totalbranches = elements.get(4).text();
-            int totalmissedmethod = Integer.parseInt(elements.get(9).text());
-            int totalmethod = Integer.parseInt(elements.get(10).text());
-            float methodpercent = (float)totalmissedmethod*100 / (float)totalmethod;
-            String methodpercentStr = String.format("%.2f",methodpercent)+"%";
+            if(this.totalhtmlreport.exists()) {
+                Document document = Jsoup.parse(this.totalhtmlreport, "UTF-8");
+                Elements elements = document.select("tfoot").select("td");
+                totalinstructions = elements.get(2).text();
+                totalbranches = elements.get(4).text();
+                int totalmissedmethod = Integer.parseInt(elements.get(9).text());
+                int totalmethod = Integer.parseInt(elements.get(10).text());
+                float methodpercent = (float) totalmissedmethod * 100 / (float) totalmethod;
+                methodpercentStr = String.format("%.2f", methodpercent) + "%";
+            }
 
             //解析差异化覆盖率
-            Document diffdocument = Jsoup.parse(this.diffhtmlreport, "UTF-8");
-            Elements diffelements = diffdocument.select("tfoot").select("td");
-            String diffinstructions = diffelements.get(2).text();
-            String diffbranches = diffelements.get(4).text();
-            int diffmissedmethod = Integer.parseInt(diffelements.get(9).text());
-            int diffmethod = Integer.parseInt(diffelements.get(10).text());
-            float diffmethodpercent = (float)diffmissedmethod*100 / (float)diffmethod;
-            String diffmethodpercentStr = String.format("%.2f",diffmethodpercent)+"%";
+            if(this.diffhtmlreport.exists()) {
+                Document diffdocument = Jsoup.parse(this.diffhtmlreport, "UTF-8");
+                Elements diffelements = diffdocument.select("tfoot").select("td");
+                diffinstructions = diffelements.get(2).text();
+                diffbranches = diffelements.get(4).text();
+                int diffmissedmethod = Integer.parseInt(diffelements.get(9).text());
+                int diffmethod = Integer.parseInt(diffelements.get(10).text());
+                float diffmethodpercent = (float) diffmissedmethod * 100 / (float) diffmethod;
+                diffmethodpercentStr = String.format("%.2f", diffmethodpercent) + "%";
+            }
             coverageData = new CoverageData(taskid,totalinstructions,totalbranches,methodpercentStr,diffinstructions,diffbranches,diffmethodpercentStr);
             return coverageData;
         }catch (Exception e){

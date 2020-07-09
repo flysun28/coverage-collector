@@ -211,14 +211,14 @@ public class ReportGeneratorCov {
         CoverageData coverageData = new CoverageData();
         File coveragereport = new File(taskID,"coveragereport");
         coveragereport = new File(coveragereport,"index.html");
-        if(!coveragereport.exists()){
-            return;
-        }
+//        if(!coveragereport.exists()){
+//            return;
+//        }
         File diffcoveragereport = new File(taskID,"diffcoveragereport");
         diffcoveragereport = new File(diffcoveragereport,"index.html");
-        if(!diffcoveragereport.exists()){
-            return;
-        }
+//        if(!diffcoveragereport.exists()){
+//            return;
+//        }
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
         coverageData = jsouphtml.getCoverageData(taskId);
@@ -269,7 +269,7 @@ public class ReportGeneratorCov {
                     //生成整体覆盖率报告
                     createAll(allexecutionDataFile,classesDirectoryList,reportAllCovDirectory,coverageReportPath.getName(),sourceDirectoryList);
                     createDiff(classesDirectoryList,reportDiffDirectory,sourceDirectoryList,coverageReportPath.getName());
-                    Thread.sleep(1000);
+//                    Thread.sleep(1000);
                     //上传覆盖率报告
                     sendcoveragedata();
 
