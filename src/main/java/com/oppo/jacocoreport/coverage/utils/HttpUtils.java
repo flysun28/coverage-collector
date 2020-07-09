@@ -76,12 +76,17 @@ public class HttpUtils {
     public static Data sendPostRequest(String url, Object obj){
         RestTemplate client = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Data> response = null;
         //以表单的方式提交
         headers.setContentType(MediaType.APPLICATION_JSON);
         //将请求头部和参数合成一个请求
         HttpEntity<Object> requestEntity = new HttpEntity<>(obj,headers);
-        //执行HTTP请求，将返回的结构格式化
-        ResponseEntity<Data> response = client.postForEntity(url,requestEntity,Data.class);
+        try {
+            //执行HTTP请求，将返回的结构格式化
+            response = client.postForEntity(url, requestEntity, Data.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return response.getBody();
     }
