@@ -214,7 +214,7 @@ public class ReportGeneratorCov {
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
         coverageData = jsouphtml.getCoverageData(taskId);
-
+        System.out.println("coverage data"+coverageData.getTotalBranches()+" "+coverageData.getTotalInstructions());
         String requstUrl = Config.SEND_COVERAGE_URL;
         Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
         System.out.println("send coveragedata"+data.getCode());
