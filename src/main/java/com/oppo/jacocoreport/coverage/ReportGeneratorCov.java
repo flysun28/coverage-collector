@@ -225,7 +225,7 @@ public class ReportGeneratorCov {
 
         String requstUrl = Config.SEND_COVERAGE_URL;
         Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
-        System.out.println(data.getCode());
+        System.out.println("send coveragedata"+data.getCode());
     }
     private void timerTask(Map<String,Object> applicationMap) {
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
