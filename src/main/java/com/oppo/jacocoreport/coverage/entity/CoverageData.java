@@ -13,8 +13,17 @@ public class CoverageData {
     private String totalMethods = "";
     //差异化语句覆盖率
     private String diffInstructions = "";
+
+    public String getDiffBranches() {
+        return diffBranches;
+    }
+
+    public void setDiffBranches(String diffBranches) {
+        this.diffBranches = diffBranches;
+    }
+
     //差异化分支覆盖率
-    private String difflBranches = "";
+    private String diffBranches = "";
     //差异化方法覆盖率
     private String diffMethods = "";
 
@@ -63,14 +72,6 @@ public class CoverageData {
         this.diffInstructions = diffInstructions;
     }
 
-    public String getDifflBranches() {
-        return difflBranches;
-    }
-
-    public void setDifflBranches(String difflBranches) {
-        this.difflBranches = difflBranches;
-    }
-
     public String getDiffMethods() {
         return diffMethods;
     }
@@ -99,18 +100,18 @@ public class CoverageData {
 
     }
 
-    public CoverageData(long id,String totalInstructions,String totalBranches,String totalMethods,String diffInstructions,String difflBranches,String diffMethods){
+    public CoverageData(long id,String totalInstructions,String totalBranches,String totalMethods,String diffInstructions,String diffBranches,String diffMethods){
         this.id = id;
        this.totalInstructions = totalInstructions;
        this.totalBranches = totalBranches;
        this.totalMethods = totalMethods;
        this.diffInstructions = diffInstructions;
-       this.difflBranches = difflBranches;
+       this.diffBranches = diffBranches;
        this.diffMethods = diffMethods;
     }
 
     @Override
     public String toString() {
-        return this.totalInstructions+" "+this.totalMethods+" "+this.totalBranches+" "+this.diffInstructions+" "+this.difflBranches+" "+this.diffMethods;
+        return this.totalInstructions+" "+this.totalMethods+" "+this.totalBranches+" "+this.diffInstructions+" "+this.diffBranches+" "+this.diffMethods;
     }
 }
