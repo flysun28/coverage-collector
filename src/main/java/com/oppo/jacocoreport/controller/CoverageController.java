@@ -28,7 +28,6 @@ public class CoverageController {
          String taskId = applicationCodeInfo.getId().toString();
          String gitPath = applicationCodeInfo.getGitPath();
          String testedBranch = applicationCodeInfo.getTestedBranch();
-         String basicBranch = applicationCodeInfo.getBasicBranch();
          String versionname = applicationCodeInfo.getVersionName();
          if(StringUtils.isEmpty(gitPath)){
              return new Data().setCode(-1).setData("gitpath can not be blank");

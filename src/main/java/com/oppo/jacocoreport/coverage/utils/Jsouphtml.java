@@ -25,6 +25,8 @@ public class Jsouphtml {
         String diffinstructions = "";
         String diffbranches = "";
         String diffmethodpercentStr = "";
+        String totalcoverageReportPath  = "";
+        String diffcoverageReportPath  = "";
         try {
             //解析整体覆盖率报告
             if(this.totalhtmlreport.exists()) {
@@ -36,6 +38,7 @@ public class Jsouphtml {
                 int totalmethod = Integer.parseInt(elements.get(10).text());
                 float methodpercent = (float) totalmissedmethod * 100 / (float) totalmethod;
                 methodpercentStr = String.format("%.2f", methodpercent) + "%";
+                totalcoverageReportPath = Config.ReportBasePath+"/"+taskid+"/coveragereport/index.html";
             }
 
             //解析差异化覆盖率
@@ -48,8 +51,9 @@ public class Jsouphtml {
                 int diffmethod = Integer.parseInt(diffelements.get(10).text());
                 float diffmethodpercent = (float) diffmissedmethod * 100 / (float) diffmethod;
                 diffmethodpercentStr = String.format("%.2f", diffmethodpercent) + "%";
+                diffcoverageReportPath = Config.ReportBasePath+"/"+taskid+"/coveragediffreport/index.html";
             }
-            coverageData = new CoverageData(taskid,totalinstructions,totalbranches,methodpercentStr,diffinstructions,diffbranches,diffmethodpercentStr);
+            coverageData = new CoverageData(taskid,totalinstructions,totalbranches,totalcoverageReportPath,methodpercentStr,diffinstructions,diffbranches,diffmethodpercentStr,diffcoverageReportPath);
             return coverageData;
         }catch (Exception e){
             e.printStackTrace();

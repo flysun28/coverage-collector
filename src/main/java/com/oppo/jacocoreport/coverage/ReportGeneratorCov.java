@@ -43,6 +43,7 @@ public class ReportGeneratorCov {
     private String versionname = "";
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
+    private String taskIdPath = "";
 
     private ExecFileLoader execFileLoader;
 
@@ -85,7 +86,7 @@ public class ReportGeneratorCov {
     }
     private static File createCoverageReportPathByTaskid(String taskId){
 
-        File file = new File(taskId);
+        File file = new File(Config.ReportBasePath,taskId);
         if(!file.exists()){
             if(!file.mkdir()){
                 System.out.println("当前路径不存在，创建失败");
@@ -205,17 +206,18 @@ public class ReportGeneratorCov {
      * 上传覆盖率报告
      */
     public void sendcoveragedata(){
-        String taskID = taskId+"";
         CoverageData coverageData = new CoverageData();
-        File coveragereport = new File(taskID,"coveragereport");
+        File coveragereport = new File(this.coverageReportPath,"coveragereport");
         coveragereport = new File(coveragereport,"index.html");
-        File diffcoveragereport = new File(taskID,"coveragediffreport");
+        File diffcoveragereport = new File(this.coverageReportPath,"coveragediffreport");
         diffcoveragereport = new File(diffcoveragereport,"index.html");
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
         coverageData = jsouphtml.getCoverageData(taskId);
         System.out.println("TotalBranches: "+coverageData.getTotalBranches()+"TotalInstructions: "+coverageData.getTotalInstructions()+"TotalMethods: "+coverageData.getTotalMethods());
+        System.out.println("TotalcoverageReportPath: "+coverageData.getTotalcoverageReportPath());
         System.out.println("DiffBranches: "+coverageData.getDiffBranches()+"DiffInstructions: "+coverageData.getDiffInstructions()+"DiffMethods: "+coverageData.getDiffMethods());
+        System.out.println("DiffcoverageReportPath: "+coverageData.getDiffcoverageReportPath());
         String requstUrl = Config.SEND_COVERAGE_URL;
         Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
         System.out.println("send coveragedata"+data.getCode());

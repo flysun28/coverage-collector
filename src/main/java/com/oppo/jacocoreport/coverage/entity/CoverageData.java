@@ -100,7 +100,9 @@ public class CoverageData {
 
     }
 
-    public CoverageData(long id,String totalInstructions,String totalBranches,String totalMethods,String diffInstructions,String diffBranches,String diffMethods){
+    public CoverageData(long id,String totalInstructions,String totalBranches,String totalcoverageReportPath,
+                        String totalMethods,String diffInstructions,String diffBranches,String diffMethods,
+                        String diffcoverageReportPath){
         this.id = id;
        this.totalInstructions = totalInstructions;
        this.totalBranches = totalBranches;
@@ -108,6 +110,8 @@ public class CoverageData {
        this.diffInstructions = diffInstructions;
        this.diffBranches = diffBranches;
        this.diffMethods = diffMethods;
+       this.totalcoverageReportPath = totalcoverageReportPath;
+       this.diffcoverageReportPath = diffcoverageReportPath;
     }
 
     @Override
