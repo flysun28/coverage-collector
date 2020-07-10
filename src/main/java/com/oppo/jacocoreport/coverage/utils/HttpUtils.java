@@ -93,7 +93,7 @@ public class HttpUtils {
 
     public static void main(String[] args){
         String requstUrl = Config.SEND_COVERAGE_URL;
-        CoverageData coverageData = new CoverageData(19,"19.3%","19.3%","19.3%","19.3%","19.3%","19.3%");
+        CoverageData coverageData = new CoverageData(19,"19.3%","19.3%","","19.3%","19.3%","19.3%","19.3%","");
         Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
         System.out.println(data.getCode());
     }
