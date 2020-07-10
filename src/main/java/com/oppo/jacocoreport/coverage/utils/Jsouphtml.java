@@ -38,7 +38,7 @@ public class Jsouphtml {
                 int totalmethod = Integer.parseInt(elements.get(10).text());
                 float methodpercent = (float) totalmissedmethod * 100 / (float) totalmethod;
                 methodpercentStr = String.format("%.2f", methodpercent) + "%";
-                totalcoverageReportPath = Config.ReportBasePath+"/"+taskid+"/coveragereport/index.html";
+                totalcoverageReportPath = Config.ReportBaseUrl+taskid+"/coveragereport/index.html";
             }
 
             //解析差异化覆盖率
@@ -51,7 +51,7 @@ public class Jsouphtml {
                 int diffmethod = Integer.parseInt(diffelements.get(10).text());
                 float diffmethodpercent = (float) diffmissedmethod * 100 / (float) diffmethod;
                 diffmethodpercentStr = String.format("%.2f", diffmethodpercent) + "%";
-                diffcoverageReportPath = Config.ReportBasePath+"/"+taskid+"/coveragediffreport/index.html";
+                diffcoverageReportPath = Config.ReportBaseUrl+taskid+"/coveragediffreport/index.html";
             }
             coverageData = new CoverageData(taskid,totalinstructions,totalbranches,totalcoverageReportPath,methodpercentStr,diffinstructions,diffbranches,diffmethodpercentStr,diffcoverageReportPath);
             return coverageData;
