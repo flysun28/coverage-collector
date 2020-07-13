@@ -14,13 +14,7 @@ public class CoverageData {
     //差异化语句覆盖率
     private String diffInstructions = "";
 
-    public String getDiffBranches() {
-        return diffBranches;
-    }
 
-    public void setDiffBranches(String diffBranches) {
-        this.diffBranches = diffBranches;
-    }
 
     //差异化分支覆盖率
     private String diffBranches = "";
@@ -28,9 +22,27 @@ public class CoverageData {
     private String diffMethods = "";
 
     //整体覆盖率报告路径
-    private String totalcoverageReportPath = "";
+    private String totalCoverageReportPath = "";
     //差异化覆盖率报告路径
-    private String diffcoverageReportPath = "";
+    private String diffCoverageReportPath = "";
+
+    public String getTotalCoverageReportPath() {
+        return totalCoverageReportPath;
+    }
+
+    public void setTotalCoverageReportPath(String totalCoverageReportPath) {
+        this.totalCoverageReportPath = totalCoverageReportPath;
+    }
+
+    public String getDiffCoverageReportPath() {
+        return diffCoverageReportPath;
+    }
+
+    public void setDiffCoverageReportPath(String diffCoverageReportPath) {
+        this.diffCoverageReportPath = diffCoverageReportPath;
+    }
+
+
 
     public long getId() {
         return id;
@@ -80,22 +92,15 @@ public class CoverageData {
         this.diffMethods = diffMethods;
     }
 
-
-    public String getTotalcoverageReportPath() {
-        return totalcoverageReportPath;
+    public String getDiffBranches() {
+        return diffBranches;
     }
 
-    public void setTotalcoverageReportPath(String totalcoverageReportPath) {
-        this.totalcoverageReportPath = totalcoverageReportPath;
+    public void setDiffBranches(String diffBranches) {
+        this.diffBranches = diffBranches;
     }
 
-    public String getDiffcoverageReportPath() {
-        return diffcoverageReportPath;
-    }
 
-    public void setDiffcoverageReportPath(String diffcoverageReportPath) {
-        this.diffcoverageReportPath = diffcoverageReportPath;
-    }
     public CoverageData(){
 
     }
@@ -110,8 +115,8 @@ public class CoverageData {
        this.diffInstructions = diffInstructions;
        this.diffBranches = diffBranches;
        this.diffMethods = diffMethods;
-       this.totalcoverageReportPath = totalcoverageReportPath;
-       this.diffcoverageReportPath = diffcoverageReportPath;
+       this.totalCoverageReportPath = totalcoverageReportPath;
+       this.diffCoverageReportPath = diffcoverageReportPath;
     }
 
     @Override
