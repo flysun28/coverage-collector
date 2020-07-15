@@ -206,22 +206,26 @@ public class ReportGeneratorCov {
      * 上传覆盖率报告
      */
     public void sendcoveragedata(){
-        CoverageData coverageData = new CoverageData();
-        File coveragereport = new File(this.coverageReportPath,"coveragereport");
-        if(coveragereport.exists()) {
-            coveragereport = new File(coveragereport, "index.html");
-        }
-        File diffcoveragereport = new File(this.coverageReportPath,"coveragediffreport");
-        if(diffcoveragereport.exists()) {
-            diffcoveragereport = new File(diffcoveragereport, "index.html");
-        }
+        try {
+            CoverageData coverageData = new CoverageData();
+            File coveragereport = new File(this.coverageReportPath, "coveragereport");
+            if (coveragereport.exists()) {
+                coveragereport = new File(coveragereport, "index.html");
+            }
+            File diffcoveragereport = new File(this.coverageReportPath, "coveragediffreport");
+            if (diffcoveragereport.exists()) {
+                diffcoveragereport = new File(diffcoveragereport, "index.html");
+            }
 
-        Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
-        coverageData = jsouphtml.getCoverageData(taskId);
-        System.out.println(coverageData.toString());
-        String requstUrl = Config.SEND_COVERAGE_URL;
-        Data data = HttpUtils.sendPostRequest(requstUrl,coverageData);
-        System.out.println("send coveragedata"+data.getCode());
+            Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
+            coverageData = jsouphtml.getCoverageData(taskId);
+            System.out.println(coverageData.toString());
+            String requstUrl = Config.SEND_COVERAGE_URL;
+            Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);
+            System.out.println("send coveragedata" + data.getCode());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     private void timerTask(Map<String,Object> applicationMap) {
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
