@@ -208,9 +208,13 @@ public class ReportGeneratorCov {
     public void sendcoveragedata(){
         CoverageData coverageData = new CoverageData();
         File coveragereport = new File(this.coverageReportPath,"coveragereport");
-        coveragereport = new File(coveragereport,"index.html");
+        if(coveragereport.exists()) {
+            coveragereport = new File(coveragereport, "index.html");
+        }
         File diffcoveragereport = new File(this.coverageReportPath,"coveragediffreport");
-        diffcoveragereport = new File(diffcoveragereport,"index.html");
+        if(diffcoveragereport.exists()) {
+            diffcoveragereport = new File(diffcoveragereport, "index.html");
+        }
 
         Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
         coverageData = jsouphtml.getCoverageData(taskId);

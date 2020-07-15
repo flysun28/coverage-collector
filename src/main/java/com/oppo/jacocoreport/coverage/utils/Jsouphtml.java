@@ -99,8 +99,6 @@ public class Jsouphtml {
                 totalClasses = elements.get(12).text().replace(",","");
                 coverageData.setTotalClasses(totalClasses);
 
-
-
                 totalCoverageReportPath = Config.ReportBaseUrl+taskid+"/coveragereport/index.html";
                 coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
 
