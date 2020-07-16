@@ -213,12 +213,10 @@ public class ReportGeneratorCov {
             if (coveragereport.exists()) {
                 coveragereport = new File(coveragereport, "index.html");
             }
-            System.out.println("coveragereport path"+coveragereport.toString());
             File diffcoveragereport = new File(this.coverageReportPath, "coveragediffreport");
             if (diffcoveragereport.exists()) {
                 diffcoveragereport = new File(diffcoveragereport, "index.html");
             }
-            System.out.println("diffcoveragereport path"+diffcoveragereport.toString());
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
             coverageData = jsouphtml.getCoverageData(taskId);
             System.out.println(coverageData.toString());
@@ -270,13 +268,10 @@ public class ReportGeneratorCov {
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
                     File allexecutionDataFile =  mergeDump.executeMerge();
                     //生成整体覆盖率报告
-                    System.out.println("begin product total coverage report");
                     createAll(allexecutionDataFile,classesDirectoryList,reportAllCovDirectory,coverageReportPath.getName(),sourceDirectoryList);
-                    System.out.println("begin product diff coverage report");
                     createDiff(classesDirectoryList,reportDiffDirectory,sourceDirectoryList,coverageReportPath.getName());
 //                    Thread.sleep(1000);
                     //上传覆盖率报告
-                    System.out.println("begin upload coveragedata");
                     sendcoveragedata();
 
                 }catch (Exception e){
