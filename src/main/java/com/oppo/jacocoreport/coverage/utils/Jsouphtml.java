@@ -102,7 +102,6 @@ public class Jsouphtml {
 
                 totalCoverageReportPath = Config.ReportBaseUrl+taskid+"/coveragereport/index.html";
                 coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
-                System.out.println("coveragedata "+coverageData.toString());
 
             }
 
@@ -141,7 +140,6 @@ public class Jsouphtml {
 
                 diffCoverageReportPath = Config.ReportBaseUrl+taskid+"/coveragediffreport/index.html";
                 coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
-                System.out.println("diffcoveragedata "+coverageData.toString());
             }
             return coverageData;
         }catch (Exception e){
@@ -153,7 +151,7 @@ public class Jsouphtml {
      * 上传覆盖率报告
      */
     public static void sendcoveragedata(){
-        File coverageReportPath = new File("D:\\jacocoreport\\20200702102328");
+        File coverageReportPath = new File("D:\\jacocoCov\\9");
         try {
             CoverageData coverageData = new CoverageData();
             File coveragereport = new File(coverageReportPath, "coveragereport");
@@ -166,7 +164,7 @@ public class Jsouphtml {
             }
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(20200702102328L);
+            coverageData = jsouphtml.getCoverageData(9L);
             System.out.println(coverageData.toString());
             String requstUrl = Config.SEND_COVERAGE_URL;
             Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);
