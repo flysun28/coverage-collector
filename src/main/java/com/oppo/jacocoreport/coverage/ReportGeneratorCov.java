@@ -118,7 +118,7 @@ public class ReportGeneratorCov {
 
     }
 
-    private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws IOException {
+    private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws Exception {
         //差异化代码覆盖率
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
 //            if(bundleCoverageDiff.getClassCounter().getTotalCount() > 0) {
