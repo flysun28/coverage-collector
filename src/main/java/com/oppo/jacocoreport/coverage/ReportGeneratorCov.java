@@ -100,7 +100,7 @@ public class ReportGeneratorCov {
      *
      * @throws IOException
      */
-    private void createAll(File executionDataFile,ArrayList<File> classesDirectoryList,File reportAllCovDirectory,String title,ArrayList<File> sourceDirectoryList) throws IOException {
+    private void createAll(File executionDataFile,ArrayList<File> classesDirectoryList,File reportAllCovDirectory,String title,ArrayList<File> sourceDirectoryList) throws Exception {
 
         // Read the jacoco.exec file. Multiple data files could be merged
         // at this point
@@ -127,7 +127,7 @@ public class ReportGeneratorCov {
     }
 
     private void createReport(final IBundleCoverage bundleCoverage,File reportDir,ArrayList<File> sourceDirectoryList)
-            throws IOException {
+            throws Exception {
 
         // Create a concrete report visitor based on some supplied
         // configuration. In this case we use the defaults
@@ -158,12 +158,12 @@ public class ReportGeneratorCov {
 
     }
 
-    private void loadExecutionData(File executionDataFile) throws IOException {
+    private void loadExecutionData(File executionDataFile) throws Exception {
         execFileLoader = new ExecFileLoader();
         execFileLoader.load(executionDataFile);
     }
 
-    private IBundleCoverage analyzeStructure(ArrayList<File> classesDirectoryList,String title) throws IOException {
+    private IBundleCoverage analyzeStructure(ArrayList<File> classesDirectoryList,String title) throws Exception {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
         final Analyzer analyzer = new Analyzer(
                 execFileLoader.getExecutionDataStore(), coverageBuilder);
@@ -268,7 +268,9 @@ public class ReportGeneratorCov {
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
                     File allexecutionDataFile =  mergeDump.executeMerge();
                     //生成整体覆盖率报告
+                    System.out.println("begin product total coverage report");
                     createAll(allexecutionDataFile,classesDirectoryList,reportAllCovDirectory,coverageReportPath.getName(),sourceDirectoryList);
+                    System.out.println("begin product diff coverage report");
                     createDiff(classesDirectoryList,reportDiffDirectory,sourceDirectoryList,coverageReportPath.getName());
 //                    Thread.sleep(1000);
                     //上传覆盖率报告
