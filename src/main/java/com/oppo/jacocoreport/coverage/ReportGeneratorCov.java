@@ -177,7 +177,7 @@ public class ReportGeneratorCov {
      * @return
      * @throws IOException
      */
-    private IBundleCoverage analyzeStructureDiff(ArrayList<File> classesDirectoryList,String title) throws IOException {
+    private IBundleCoverage analyzeStructureDiff(ArrayList<File> classesDirectoryList,String title) throws Exception {
         //全量覆盖
 //		final CoverageBuilder coverageBuilder = new CoverageBuilder();
 
