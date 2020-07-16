@@ -196,9 +196,7 @@ public class ReportGeneratorCov {
         }
 //        if(coverageBuilder.getClasses().size() > 0) {
             final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
-           System.out.println("classesDirectoryList "+classesDirectoryList.size());
             for (File classesDirectory : classesDirectoryList) {
-                System.out.println(classesDirectory.toString());
                 analyzer.analyzeAll(classesDirectory);
             }
 //        }
