@@ -81,7 +81,7 @@ public class GitUtil {
             return "error";
         }
     }
-    public void checkoutBranch(String gitPath,String newBranchName,String oldBranchName){
+    public void checkoutBranch(String gitPath,String newBranchName,String oldBranchName,String newTag){
         try {
             GitAdapter.setCredentialsProvider(gitName, gitPassword);
             GitAdapter gitAdapter = new GitAdapter(gitPath);
@@ -92,6 +92,7 @@ public class GitUtil {
             }
 
             gitAdapter.checkOutAndPull(localBranchRef, newBranchName);
+            gitAdapter.getGit().checkout().setName(newTag).call();
         }catch (Exception e) {
             e.printStackTrace();
         }

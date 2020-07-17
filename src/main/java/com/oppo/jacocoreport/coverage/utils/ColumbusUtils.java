@@ -82,7 +82,7 @@ public class ColumbusUtils {
     }
 
     public static StringBuffer getAppDeployInfoList(String versionName) {
-        ArrayList<AppDeployInfo> appDeployInfos = null;
+        ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
             String ret = null;

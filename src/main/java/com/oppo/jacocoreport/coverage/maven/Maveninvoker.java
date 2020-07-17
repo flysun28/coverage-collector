@@ -12,7 +12,7 @@ public class Maveninvoker {
         System.out.println("开始编译源文件");
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(pomFile);
-        request.setGoals(Collections.singletonList("compile"));
+        request.setGoals(Collections.singletonList("clean compile"));
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome(new File(mavenhome));
         invoker.setLogger(new PrintStreamLogger(System.err, InvokerLogger.ERROR) {

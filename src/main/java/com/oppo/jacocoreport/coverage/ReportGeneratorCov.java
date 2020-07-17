@@ -290,7 +290,7 @@ public class ReportGeneratorCov {
         }
         return false;
     }
-    private File cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName){
+    private File cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag){
 
         GitUtil gitUtil = new GitUtil(gitName,gitPassword);
         String projectName = gitUtil.getLastUrlString(urlString);
@@ -301,7 +301,7 @@ public class ReportGeneratorCov {
             gitUtil.cloneRepository(urlString, localPath);
         }
         //checkout分支代码
-        gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName);
+        gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName,newTag);
         return localPath;
     }
 
@@ -330,7 +330,7 @@ public class ReportGeneratorCov {
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
         //clone代码到本地
-        cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName);
+        cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
