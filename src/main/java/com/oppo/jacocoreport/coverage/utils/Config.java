@@ -13,4 +13,5 @@ public class Config {
 //    public final static String SEND_COVERAGE_URL = "http://172.17.169.157:25896/execution/result";
     public static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
 //    public static String CLOUD_URL = "http://dev-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
+    public static String SEND_ERRORMESSAGE_URL = "http://atms.itest.adc.com/api/codeCoverage/execution/failed";
 }

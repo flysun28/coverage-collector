@@ -3,6 +3,7 @@ package com.oppo.jacocoreport.coverage;
 import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
+import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
@@ -220,11 +221,14 @@ public class ReportGeneratorCov {
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
             coverageData = jsouphtml.getCoverageData(taskId);
             System.out.println(coverageData.toString());
-            String requstUrl = Config.SEND_COVERAGE_URL;
-            Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);
+            Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
             System.out.println("send coveragedata" + data.getCode());
         }catch (Exception e){
             e.printStackTrace();
+            ErrorMsg errorMsg = new ErrorMsg();
+            errorMsg.setId(taskId);
+            errorMsg.setMsg(e.getMessage());
+            HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
         }
     }
     private void timerTask(Map<String,Object> applicationMap) {
@@ -241,22 +245,25 @@ public class ReportGeneratorCov {
 
                     ArrayList<File> classesDirectoryList = new ArrayList<>();
                     ArrayList<File> sourceDirectoryList = new ArrayList<>();
-                    for (String key : applicationMap.keySet()) {
-                        String projectDirectoryStr = ((Map)applicationMap.get(key)).getOrDefault("sourceDirectory","").toString();
-                        String addressIPList = ((Map)applicationMap.get(key)).getOrDefault("ip","").toString();
+
+                    String addressIPList = applicationMap.getOrDefault("ip","").toString();
+                    //获取覆盖率生成数据
+                    String[] iplist = addressIPList.split(",");
+                    for(String serverip : iplist) {
+                        //获取覆盖率生成数据
+                        if(!serverip.isEmpty()) {
+                            executionDataFile = new File(coverageReportPath, serverip+"_jacoco.exec");//第一步生成的exec的文件
+                            executionDataClient.getExecutionData(serverip, port, executionDataFile.toString());
+                        }
+                    }
+                    Map<String ,Object> sourceapplications = (Map)applicationMap.get("sourceapplications");
+                    for (String key : sourceapplications.keySet()) {
+                        String projectDirectoryStr = ((Map)sourceapplications.get(key)).getOrDefault("sourceDirectory","").toString();
                         File projectDirectory = new File(projectDirectoryStr);
 
 
                         classesDirectory = new File(projectDirectory,"target/classes");//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
                         sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
-                        String[] iplist = addressIPList.split(",");
-                        for(String serverip : iplist) {
-                            //获取覆盖率生成数据
-                            if(!serverip.isEmpty()) {
-                                executionDataFile = new File(coverageReportPath, serverip+key+"_jacoco.exec");//第一步生成的exec的文件
-                                executionDataClient.getExecutionData(serverip, port, executionDataFile.toString());
-                            }
-                        }
                         if(classesDirectory.exists()) {
                             System.out.println("classesDirectory"+classesDirectory.toString());
                             classesDirectoryList.add(classesDirectory);
@@ -313,15 +320,17 @@ public class ReportGeneratorCov {
      * @return
      */
     private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname){
-        HashMap<String,HashMap> applicationNameMap = new HashMap<String ,HashMap>();
+        HashMap applicationNameMap = new HashMap();
+        HashMap projectMap = new HashMap();
+        StringBuffer iplist = ColumbusUtils.getAppDeployInfoList(versionname);
+        projectMap.put("ip",iplist.toString());
         for(File applicationPath : applicationNames){
             HashMap<String,Object> applicationInfo = new HashMap<>();
-            StringBuffer iplist = ColumbusUtils.getAppDeployInfoList(versionname);
-            applicationInfo.put("ip", iplist.toString());
             applicationInfo.put("sourceDirectory",applicationPath.toString());
             applicationNameMap.put(applicationPath.getName(),applicationInfo);
         }
-        return applicationNameMap;
+        projectMap.put("sourceapplications",applicationNameMap);
+        return projectMap;
     }
     public void startCoverageTask(){
         //通过git url地址解析应用名

@@ -44,25 +44,5 @@ public class CoverageController {
          return new Data().setCode(200).setData("");
     }
 
-//    @GetMapping("/getcoveragedata")
-//    public Data getcoveragedata(@RequestParam Long taskid){
-//        String taskID = taskid.toString();
-//        CoverageData coverageData = new CoverageData();
-//        File coveragereport = new File(taskID,"coveragereport");
-//        coveragereport = new File(coveragereport,"index.html");
-//        if(!coveragereport.exists()){
-//            return new Data().setCode(200).setData(coverageData);
-//        }
-//        File diffcoveragereport = new File(taskID,"diffcoveragereport");
-//        diffcoveragereport = new File(diffcoveragereport,"index.html");
-//        if(!diffcoveragereport.exists()){
-//            return new Data().setCode(200).setData(coverageData);
-//        }
-//
-//        Jsouphtml jsouphtml = new Jsouphtml(coveragereport,diffcoveragereport);
-//        coverageData = jsouphtml.getCoverageData(taskid);
-//        return new Data().setCode(200).setData(coverageData);
-//    }
-
 
 }
