@@ -269,6 +269,10 @@ public class ReportGeneratorCov {
         //合并代码覆盖率
         MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
         File allexecutionDataFile = mergeDump.executeMerge();
+        if(!allexecutionDataFile.exists()){
+            System.out.println("获取测试环境覆盖率文件失败");
+            throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+        }
         //生成整体覆盖率报告
         System.out.println("生成整体覆盖率报告");
         createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);

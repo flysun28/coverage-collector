@@ -6,7 +6,8 @@ public enum ErrorEnum {
     GET_EVIRONMENTIP(1002,"获取测试环境IP失败"),
     BUILD_MAVEN(1003,"MAVEN编译项目代码失败"),
     PRODUCT_REPORT(1004,"生成覆盖率报告失败"),
-    OTHER_ERROR(1005,"其他异常"),
+    JACOCO_EXEC_FAILED(1005,"获取测试环境覆盖率文件失败"),
+    OTHER_ERROR(1006,"其他异常"),
     ;
     private Integer errorCode;
     private String errorMsg;
