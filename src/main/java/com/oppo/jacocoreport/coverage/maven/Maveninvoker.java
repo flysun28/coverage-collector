@@ -1,5 +1,7 @@
 package com.oppo.jacocoreport.coverage.maven;
 
+import com.oppo.jacocoreport.response.DefinitionException;
+import com.oppo.jacocoreport.response.ErrorEnum;
 import org.apache.maven.shared.invoker.*;
 
 import java.io.File;
@@ -8,7 +10,7 @@ import java.util.Collections;
 
 public class Maveninvoker {
 
-    public static void buildMaven(File pomFile, String mavenhome) {
+    public static void buildMaven(File pomFile, String mavenhome) throws DefinitionException {
         System.out.println("开始编译源文件");
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(pomFile);
@@ -29,16 +31,18 @@ public class Maveninvoker {
             invoker.execute(request);
         } catch (MavenInvocationException e) {
             e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),e.getMessage());
         }
 
         try {
             if (invoker.execute(request).getExitCode() == 0) {
                 System.out.println("success");
             } else {
-                System.err.println("error");
+                throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),ErrorEnum.BUILD_MAVEN.getErrorMsg());
             }
         } catch (MavenInvocationException e) {
             e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),e.getMessage());
         }
     }
 

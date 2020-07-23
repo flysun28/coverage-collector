@@ -41,7 +41,7 @@ public class CoverageController {
         //异步执行覆盖率任务
         asyncTask.startCoverageTask(applicationCodeInfo);
         System.out.println(gitPath);
-         return new Data().setCode(200).setData("");
+         return new Data().setCode(200).setData("sucess");
     }
 
 

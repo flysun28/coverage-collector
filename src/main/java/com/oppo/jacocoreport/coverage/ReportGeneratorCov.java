@@ -9,6 +9,8 @@ import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
 import com.oppo.jacocoreport.coverage.utils.*;
 import com.oppo.jacocoreport.coverage.yaml.ReadYml;
+import com.oppo.jacocoreport.response.DefinitionException;
+import com.oppo.jacocoreport.response.ErrorEnum;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
@@ -225,18 +227,14 @@ public class ReportGeneratorCov {
             System.out.println("send coveragedata" + data.getCode());
         }catch (Exception e){
             e.printStackTrace();
-            ErrorMsg errorMsg = new ErrorMsg();
-            errorMsg.setId(taskId);
-            errorMsg.setMsg(e.getMessage());
-            HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
+            throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),e.getMessage());
         }
     }
-    private void timerTask(Map<String,Object> applicationMap) {
+    private void timerTask(Map<String,Object> applicationMap) throws Exception {
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
 //        new Timer().schedule(new TimerTask() {
 //            @Override
 //            public void run() {
-                try {
                     File executionDataFile = null;
                     File classesDirectory = null;
                     File sourceDirectory = null;
@@ -280,10 +278,6 @@ public class ReportGeneratorCov {
 //                    Thread.sleep(1000);
                     //上传覆盖率报告
                     sendcoveragedata();
-
-                }catch (Exception e){
-                    e.getStackTrace();
-                }
             }
 //        },0,60000);
 //    }
@@ -297,7 +291,7 @@ public class ReportGeneratorCov {
         }
         return false;
     }
-    private File cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag){
+    private File cloneCodeSource(Long taskID,String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
         GitUtil gitUtil = new GitUtil(gitName,gitPassword);
         String projectName = gitUtil.getLastUrlString(urlString);
@@ -308,7 +302,7 @@ public class ReportGeneratorCov {
             gitUtil.cloneRepository(urlString, localPath);
         }
         //checkout分支代码
-        gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName,newTag);
+        gitUtil.checkoutBranch(taskID,localPath.toString(),newBranchName,oldBranchName,newTag);
         return localPath;
     }
 
@@ -319,7 +313,7 @@ public class ReportGeneratorCov {
      * @param versionname
      * @return
      */
-    private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname){
+    private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname) throws DefinitionException{
         HashMap applicationNameMap = new HashMap();
         HashMap projectMap = new HashMap();
         StringBuffer iplist = ColumbusUtils.getAppDeployInfoList(versionname);
@@ -332,14 +326,14 @@ public class ReportGeneratorCov {
         projectMap.put("sourceapplications",applicationNameMap);
         return projectMap;
     }
-    public void startCoverageTask(){
+    public void startCoverageTask() throws Exception{
         //通过git url地址解析应用名
         String projectName = GitUtil.getLastUrlString(this.applicationgitlabUrl);
         //生成开发git代码本地路径
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
         //clone代码到本地
-        cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
+        cloneCodeSource(taskId,Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);

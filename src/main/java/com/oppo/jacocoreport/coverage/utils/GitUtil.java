@@ -3,6 +3,9 @@ package com.oppo.jacocoreport.coverage.utils;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
+import com.oppo.jacocoreport.response.DefinitionException;
+import com.oppo.jacocoreport.response.ErrorEnum;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
@@ -81,7 +84,7 @@ public class GitUtil {
             return "error";
         }
     }
-    public void checkoutBranch(String gitPath,String newBranchName,String oldBranchName,String newTag){
+    public void checkoutBranch(Long taskId,String gitPath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
         try {
             GitAdapter.setCredentialsProvider(gitName, gitPassword);
             GitAdapter gitAdapter = new GitAdapter(gitPath);
@@ -95,6 +98,8 @@ public class GitUtil {
             gitAdapter.getGit().checkout().setName(newTag).call();
         }catch (Exception e) {
             e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.CLONE_FAILED.getErrorCode(),e.getMessage());
+
         }
     }
     public static String getLastUrlString(String strUrl){

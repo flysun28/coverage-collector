@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.cloud.AppVersionResponse;
+import com.oppo.jacocoreport.response.DefinitionException;
+import com.oppo.jacocoreport.response.ErrorEnum;
 import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.Mac;
@@ -81,7 +83,7 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    public static StringBuffer getAppDeployInfoList(String versionName) {
+    public static StringBuffer getAppDeployInfoList(String versionName) throws DefinitionException {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
@@ -103,11 +105,11 @@ public class ColumbusUtils {
             return iplist;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(),e.getMessage());
         }
-        return null;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
 //        ColumbusUtils.getApplicationIP("pandora-server-web_20200604145728","test2");
 

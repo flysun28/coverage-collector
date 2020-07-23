@@ -2,6 +2,7 @@ package com.oppo.jacocoreport.coverage.utils;
 
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
+import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
 import org.springframework.http.*;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -73,6 +74,12 @@ public class HttpUtils {
         System.out.println(response.toString());
     }
 
+    public static void sendErrorMSG(Long taskID,String msg){
+        ErrorMsg errorMsg = new ErrorMsg();
+        errorMsg.setId(taskID);
+        errorMsg.setMsg(msg);
+        HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
+    }
     public static Data sendPostRequest(String url, Object obj){
         RestTemplate client = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
