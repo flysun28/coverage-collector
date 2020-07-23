@@ -261,7 +261,6 @@ public class ReportGeneratorCov {
             classesDirectory = new File(projectDirectory, "target/classes");//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
             sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
             if (classesDirectory.exists()) {
-                System.out.println("classesDirectory" + classesDirectory.toString());
                 classesDirectoryList.add(classesDirectory);
                 sourceDirectoryList.add(sourceDirectory);
             }
@@ -271,7 +270,9 @@ public class ReportGeneratorCov {
         MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
         File allexecutionDataFile = mergeDump.executeMerge();
         //生成整体覆盖率报告
+        System.out.println("生成整体覆盖率报告");
         createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+        System.out.println("生成差异化覆盖率报告");
         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
         //上传覆盖率报告
         sendcoveragedata();

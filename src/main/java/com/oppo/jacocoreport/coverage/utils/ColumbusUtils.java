@@ -102,6 +102,10 @@ public class ColumbusUtils {
                 iplist.append(",");
 
             }
+            if(iplist.toString().equals("")){
+                System.out.println("test environment ip is null");
+                throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(),ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
+            }
             return iplist;
         } catch (Exception e) {
             e.printStackTrace();

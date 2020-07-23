@@ -38,6 +38,7 @@ public class Maveninvoker {
             if (invoker.execute(request).getExitCode() == 0) {
                 System.out.println("success");
             } else {
+                System.out.println("maven build failed");
                 throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),ErrorEnum.BUILD_MAVEN.getErrorMsg());
             }
         } catch (MavenInvocationException e) {
