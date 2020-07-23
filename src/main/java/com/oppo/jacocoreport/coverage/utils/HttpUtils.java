@@ -78,7 +78,8 @@ public class HttpUtils {
         ErrorMsg errorMsg = new ErrorMsg();
         errorMsg.setId(taskID);
         errorMsg.setMsg(msg);
-        HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
+        Data data = HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
+        System.out.println("上报错误信息完成"+data.toString());
     }
     public static Data sendPostRequest(String url, Object obj){
         RestTemplate client = new RestTemplate();
