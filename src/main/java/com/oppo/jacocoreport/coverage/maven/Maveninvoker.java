@@ -31,7 +31,7 @@ public class Maveninvoker {
             invoker.execute(request);
         } catch (MavenInvocationException e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),e.getMessage());
+            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),ErrorEnum.BUILD_MAVEN.getErrorMsg());
         }
 
         try {
@@ -42,7 +42,7 @@ public class Maveninvoker {
             }
         } catch (MavenInvocationException e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),e.getMessage());
+            throw new DefinitionException(ErrorEnum.BUILD_MAVEN.getErrorCode(),ErrorEnum.BUILD_MAVEN.getErrorMsg());
         }
     }
 

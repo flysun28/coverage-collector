@@ -84,7 +84,7 @@ public class GitUtil {
             return "error";
         }
     }
-    public void checkoutBranch(Long taskId,String gitPath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
+    public void checkoutBranch(String gitPath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
         try {
             GitAdapter.setCredentialsProvider(gitName, gitPassword);
             GitAdapter gitAdapter = new GitAdapter(gitPath);
@@ -98,7 +98,7 @@ public class GitUtil {
             gitAdapter.getGit().checkout().setName(newTag).call();
         }catch (Exception e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.CLONE_FAILED.getErrorCode(),e.getMessage());
+            throw new DefinitionException(ErrorEnum.CLONE_FAILED.getErrorCode(),ErrorEnum.CLONE_FAILED.getErrorMsg());
 
         }
     }

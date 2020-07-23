@@ -105,7 +105,7 @@ public class ColumbusUtils {
             return iplist;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(),e.getMessage());
+            throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(),ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
         }
     }
 
