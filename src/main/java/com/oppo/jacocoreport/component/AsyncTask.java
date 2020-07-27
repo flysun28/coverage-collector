@@ -25,8 +25,7 @@ public class AsyncTask {
         try {
             reportGeneratorCov.startCoverageTask();
         }catch (DefinitionException e){
-            System.out.println(e.getErrorMsg());
-            HttpUtils.sendErrorMSG(taskId,e.getMessage());
+            HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
         }catch (Exception e){
             e.printStackTrace();
             HttpUtils.sendErrorMSG(taskId,"other error");
