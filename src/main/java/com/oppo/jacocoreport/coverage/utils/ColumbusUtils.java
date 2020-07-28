@@ -212,11 +212,11 @@ public class ColumbusUtils {
                             fileOperateUtil.unZipFiles(dependentPathJar,classFile.toString(),true);
                         }
                     }
-//                    fileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
+                    fileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
                 }
             }
 
-//            fileOperateUtil.delAllFile(basicPath);
+            fileOperateUtil.delAllFile(basicPath);
         }
         return classFile;
     }
