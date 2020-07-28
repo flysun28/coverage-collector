@@ -22,13 +22,19 @@ public class Execute {
             }
         }
     }
-    public String extractFile(File fileName){
+    public String extractFile(File fileName) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String sourceFilePath = fileName.getAbsolutePath();
         String name = fileName.getName();
-        String dirName = name.substring(0,name.length() -4);
+        String dirName = name.substring(0,name.length() -11);
         String resultPath = sourceFilePath.replace(name,dirName);
-        fileOperateUtil.unZipFiles(sourceFilePath,resultPath,true);
+        if(name.endsWith(".zip")){
+            fileOperateUtil.unZipFiles(sourceFilePath,resultPath,true);
+        }
+        else if(name.endsWith(".tar.gz")){
+            fileOperateUtil.unTarGz(fileName,resultPath);
+        }
+
         return resultPath;
     }
 
