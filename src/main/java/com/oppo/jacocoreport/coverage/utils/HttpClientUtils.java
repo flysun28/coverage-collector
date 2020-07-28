@@ -157,6 +157,7 @@ public class HttpClientUtils {
                         progress.onProgress((int) (totalRead * 100 / contentLength));
                     }
                 }
+                System.out.println("download finish");
                 FileOutputStream fos = new FileOutputStream(filePath);
                 output.writeTo(fos);
                 output.flush();
