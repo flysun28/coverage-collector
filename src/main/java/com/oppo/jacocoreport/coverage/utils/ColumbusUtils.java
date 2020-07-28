@@ -190,7 +190,7 @@ public class ColumbusUtils {
 
         File zipfile = new File(downloadZipFile);
         String resultPath = execute.extractFile(zipfile);
-        fileOperateUtil.copyFolder(resultPath+"\\lib",targetPath);
+        fileOperateUtil.copyFolder(resultPath+File.separator+"lib",targetPath);
         File targetPathFolder = new File(targetPath);
         File[] files = targetPathFolder.listFiles();
         File classFile = null;
@@ -212,11 +212,11 @@ public class ColumbusUtils {
                             fileOperateUtil.unZipFiles(dependentPathJar,classFile.toString(),true);
                         }
                     }
-                    fileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
+//                    fileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
                 }
             }
 
-            fileOperateUtil.delAllFile(basicPath);
+//            fileOperateUtil.delAllFile(basicPath);
         }
         return classFile;
     }
