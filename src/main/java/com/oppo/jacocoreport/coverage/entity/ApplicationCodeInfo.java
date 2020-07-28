@@ -12,6 +12,16 @@ public class ApplicationCodeInfo {
     private String versionName;
     private String deployKey;
 
+    public String getApplicationID() {
+        return applicationID;
+    }
+
+    public void setApplicationID(String applicationID) {
+        this.applicationID = applicationID;
+    }
+
+    private String applicationID;
+
     public String getVersionName() {
         return versionName;
     }

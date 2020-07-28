@@ -20,10 +20,11 @@ public class AsyncTask {
         String versionname = applicationCodeInfo.getVersionName();
         String newTag = applicationCodeInfo.getTestedCommitId();
         String oldTag = applicationCodeInfo.getBasicCommitId();
+        String applicationID = applicationCodeInfo.getApplicationID();
         System.out.println("start coverage test");
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,testedBranch,versionname,basicBranch,newTag,oldTag);
         try {
-            reportGeneratorCov.startCoverageTask();
+            reportGeneratorCov.startCoverageTask(applicationID);
         }catch (DefinitionException e){
             HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
         }catch (Exception e){

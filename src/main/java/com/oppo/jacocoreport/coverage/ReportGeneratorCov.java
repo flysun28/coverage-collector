@@ -258,14 +258,15 @@ public class ReportGeneratorCov {
             File projectDirectory = new File(projectDirectoryStr);
 
 
-            classesDirectory = new File(projectDirectory, "target/classes");//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
+//            classesDirectory = new File(projectDirectory, "target/classes");//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
             sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
-            if (classesDirectory.exists()) {
-                classesDirectoryList.add(classesDirectory);
+            if (sourceDirectory.exists()) {
+//                classesDirectoryList.add(classesDirectory);
                 sourceDirectoryList.add(sourceDirectory);
             }
 
         }
+        classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));
         //合并代码覆盖率
         MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
         File allexecutionDataFile = mergeDump.executeMerge();
@@ -281,16 +282,6 @@ public class ReportGeneratorCov {
         sendcoveragedata();
     }
 
-    private Boolean checkApplicationsIP(Map<String,Object> applicationMap){
-
-        for (String key : applicationMap.keySet()) {
-            String addressIP = ((Map)applicationMap.get(key)).getOrDefault("ip","").toString();
-            if(addressIP.equals("127.0.0.2")){
-                return true;
-            }
-        }
-        return false;
-    }
     private File cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
         GitUtil gitUtil = new GitUtil(gitName,gitPassword);
@@ -310,23 +301,19 @@ public class ReportGeneratorCov {
      * 解析应用模块对应的代码路径和部署的IP地址
      * {"applicationname":{"ip":"127.0.0.1","sourceDirectory":"D://codecoverage//applicationmodule//src"}}
      * @param applicationNames
-     * @param versionname
      * @return
      */
-    private HashMap getApplicationIPMap(ArrayList<File>  applicationNames,String versionname) throws DefinitionException{
-        HashMap applicationNameMap = new HashMap();
-        HashMap projectMap = new HashMap();
-        StringBuffer iplist = ColumbusUtils.getAppDeployInfoList(versionname);
-        projectMap.put("ip",iplist.toString());
+    public static HashMap getApplicationSourceDirectoryp(ArrayList<File>  applicationNames){
+        HashMap<String,HashMap> applicationNameMap = new HashMap<String ,HashMap>();
         for(File applicationPath : applicationNames){
             HashMap<String,Object> applicationInfo = new HashMap<>();
             applicationInfo.put("sourceDirectory",applicationPath.toString());
             applicationNameMap.put(applicationPath.getName(),applicationInfo);
         }
-        projectMap.put("sourceapplications",applicationNameMap);
-        return projectMap;
+        return applicationNameMap;
     }
-    public void startCoverageTask() throws Exception{
+    public void startCoverageTask(String applicationID) throws Exception{
+        HashMap<String, Object> projectMap = new HashMap<String, Object>();
         //通过git url地址解析应用名
         String projectName = GitUtil.getLastUrlString(this.applicationgitlabUrl);
         //生成开发git代码本地路径
@@ -334,23 +321,32 @@ public class ReportGeneratorCov {
         this.gitlocalPath = localPath.toString();
         //clone代码到本地
         cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
+
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
-        //模块绑定source地址，以及对应部署的服务地址
-        Map applicationNameMap = getApplicationIPMap(applicationNames, versionname);
-        //编译项目源代码生成classes文件
-        File pompath = new File(localPath.toString(), "pom.xml");
-        if (!pompath.exists()) {
-            System.out.println("请检查项目pom.xml地址是否存在");
-            return;
-        }
-        Maveninvoker.buildMaven(pompath, Config.MAVENPATH);
+        //模块绑定source地址
+        Map sourceapplicationsMap = getApplicationSourceDirectoryp(applicationNames);
+        projectMap.put("sourceapplications",sourceapplicationsMap);
+
+        HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,versionname);
+        String newBranchName = applicationHash.get("buildBranch").toString();
+        String newTag = applicationHash.get("commitID").toString();
+        String applicationIPList = applicationHash.get("applicationIP").toString();
+        String repositoryUrl = applicationHash.get("repositoryUrl").toString();
+
+        projectMap.put("ip",applicationIPList);
+
+        //获取下载buildversion.zip包
+        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl,localPath.toString());
+        //解压zip包获取class文件
+        File classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(localPath,"classes").toString(),applicationID,sourceapplicationsMap);
+        projectMap.put("classPath",classPath);
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskid(this.taskId+"");
         this.coverageReportPath = coverageReportPath;
         //开始生成覆盖率报告任务
-        timerTask(applicationNameMap);
+        timerTask(projectMap);
 
     }
 
@@ -372,7 +368,7 @@ public class ReportGeneratorCov {
         String versionName = "ci-demo-20200703154236-28";
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
-        reportGeneratorCov.startCoverageTask();
+        reportGeneratorCov.startCoverageTask("");
 
     }
 }
