@@ -176,7 +176,7 @@ public class ColumbusUtils {
         }
         return downloadFilePath.toString();
     }
-    public static  File extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
+    public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String basicPath = new File(downloadZipFile).getParentFile().getAbsolutePath();
         if("".equals(downloadZipFile) || downloadZipFile == null){
@@ -190,35 +190,72 @@ public class ColumbusUtils {
 
         File zipfile = new File(downloadZipFile);
         String resultPath = execute.extractFile(zipfile);
-        fileOperateUtil.copyFolder(resultPath+File.separator+"lib",targetPath);
-        File targetPathFolder = new File(targetPath);
-        File[] files = targetPathFolder.listFiles();
-        File classFile = null;
 
-        if(files != null){
-            int filesNum = files.length;
-            for(int i =0;i<filesNum;i++) {
-                String fileName = files[i].getName();
-                if (!fileName.endsWith("sources.jar")&& fileName.endsWith(".jar")) {
-                    String classPath = execute.extractFile(files[i]);
-                    File baseclassFile = new File(classPath, "BOOT-INF");
-                    classFile = new File(baseclassFile, "classes");
-                    String buildversionprex = fileName.substring(applicationID.length());
-                    for(String applicationsrcname :applicationsrclist.keySet()){
-                        if(!applicationID.equals(applicationsrcname)) {
-                            String dependentjar = applicationsrcname + buildversionprex;
-                            String dependentPathJar = classFile + File.separator + dependentjar;
-                            fileOperateUtil.copyFile(baseclassFile + File.separator + "lib" + File.separator + dependentjar, dependentPathJar);
-                            fileOperateUtil.unZipFiles(dependentPathJar,classFile.toString(),true);
-                        }
-                    }
-                    fileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
+        //遍历所有文件夹，找出应用的jar包，并解压
+        extractJartoClass(resultPath,basicPath,applicationsrclist);
+        //再对解压的文件夹里，遍历解压一次
+        extractJartoClass(basicPath,basicPath,applicationsrclist);
+        ArrayList<File> packageList = new ArrayList<File>();
+        packageList = getComPackagePath(new File(basicPath),packageList);
+        for(File packagePath: packageList){
+            fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
+        }
+        fileOperateUtil.delAllFile(basicPath);
+
+        return targetPath;
+    }
+    private static void extractJartoClass(String localpath,String targetPath,Map<String ,Map> applicationsrclist){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+        Execute execute = new Execute();
+        for(String applicationsrcname :applicationsrclist.keySet()){
+            File applicationJarPath = getapplicationJarPath(new File(localpath),applicationsrcname);
+            if(applicationJarPath!=null) {
+                fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+                execute.extractFiles(targetPath);
+            }
+        }
+    }
+    private static String getApplicationIDJarName(File filePath){
+        String folderName = filePath.getName();
+        return folderName.substring(0,folderName.indexOf("SNAPSHOT")+8)+".jar";
+    }
+    public static File getapplicationJarPath(File extractPath,String dependentjarname){
+        File[] fileList = extractPath.listFiles();
+        File denpentjarpath = null;
+        //遍历代码工程
+        for (File f : fileList) {
+            //判断是否文件夹目录
+            if (f.isDirectory()) {
+                //如果当前文件夹名== src
+                denpentjarpath = getapplicationJarPath(f,dependentjarname);
+                if(denpentjarpath != null){
+                    return denpentjarpath;
                 }
             }
-
-            fileOperateUtil.delAllFile(basicPath);
+            else{
+                if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar")){
+                    denpentjarpath = f;
+                }
+            }
         }
-        return classFile;
+        return denpentjarpath;
+    }
+    private static ArrayList getComPackagePath(File localPath,ArrayList<File> packageList){
+        File[] fileList = localPath.listFiles();
+        for (File f : fileList) {
+            //判断是否文件夹目录
+            if (f.isDirectory()) {
+                //如果当前文件夹名== com
+                if("com".equals(f.getName())){
+                    packageList.add(f.getParentFile());
+                    return packageList;
+                }else{
+                    getComPackagePath(f,packageList);
+                }
+            }
+        }
+        return packageList;
+
     }
     public static void main(String[] args) throws Exception {
         ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");

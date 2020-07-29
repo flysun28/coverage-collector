@@ -14,7 +14,6 @@ public class Execute {
 
                 if (!files[i].isDirectory() && (fileName.endsWith(".jar") || fileName.endsWith(".zip"))) { // 判断文件名是否以.jar结尾
                     String sourceFilePath = files[i].getAbsolutePath();
-                    fileOperateUtil.WriteStringToFile(fileOperateUtil.getLogPath(),"extract file:"+sourceFilePath);
                     String dirName = fileName.substring(0,fileName.length() -4);
                     String resultPath = sourceFilePath.replace(fileName,dirName);
                     fileOperateUtil.unZipFiles(sourceFilePath,resultPath,true);
@@ -22,17 +21,17 @@ public class Execute {
             }
         }
     }
+
     public String extractFile(File fileName) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String sourceFilePath = fileName.getAbsolutePath();
         String name = fileName.getName();
         String dirName = name.substring(0,name.length() -11);
         String resultPath = sourceFilePath.replace(name,dirName);
-        if(name.endsWith(".zip")){
-            fileOperateUtil.unZipFiles(sourceFilePath,resultPath,true);
-        }
-        else if(name.endsWith(".tar.gz")){
+        if(name.endsWith(".tar.gz")){
             fileOperateUtil.unTarGz(fileName,resultPath);
+        }else{
+            fileOperateUtil.unZipFiles(sourceFilePath,resultPath,true);
         }
 
         return resultPath;
