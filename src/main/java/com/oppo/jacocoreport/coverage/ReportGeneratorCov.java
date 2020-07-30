@@ -283,7 +283,7 @@ public class ReportGeneratorCov {
         sendcoveragedata();
     }
 
-    private File cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
+    private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
         GitUtil gitUtil = new GitUtil(gitName,gitPassword);
         String projectName = gitUtil.getLastUrlString(urlString);
@@ -294,8 +294,8 @@ public class ReportGeneratorCov {
             gitUtil.cloneRepository(urlString, localPath);
         }
         //checkout分支代码
-        gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName,newTag);
-        return localPath;
+        newBranchName = gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName,newTag);
+        return newBranchName;
     }
 
     /**
@@ -321,7 +321,7 @@ public class ReportGeneratorCov {
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
         //clone代码到本地
-        cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
+        newBranchName = cloneCodeSource(Config.GitName, Config.GitPassword, this.applicationgitlabUrl, Config.CodePath,newBranchName,oldBranchName,newTag);
 
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
@@ -331,8 +331,8 @@ public class ReportGeneratorCov {
         projectMap.put("sourceapplications",sourceapplicationsMap);
 
         HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,versionname);
-        String newBranchName = applicationHash.get("buildBranch").toString();
-        String newTag = applicationHash.get("commitID").toString();
+//        String newBranchName = applicationHash.get("buildBranch").toString();
+//        String newTag = applicationHash.get("commitID").toString();
         String applicationIPList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
 
