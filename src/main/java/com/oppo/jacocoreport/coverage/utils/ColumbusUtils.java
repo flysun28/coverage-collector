@@ -197,13 +197,14 @@ public class ColumbusUtils {
         extractJartoClass(resultPath,basicPath,applicationsrclist);
         //再对解压的文件夹里，遍历解压一次
         extractJartoClass(basicPath,basicPath,applicationsrclist);
+        fileOperateUtil.delAllFile(resultPath);
         ArrayList<File> packageList = new ArrayList<File>();
         packageList = getComPackagePath(new File(basicPath),packageList);
         for(File packagePath: packageList){
             fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
         }
         zipfile.delete();
-//        fileOperateUtil.delAllFile(resultPath);
+
 
         return targetPath;
     }

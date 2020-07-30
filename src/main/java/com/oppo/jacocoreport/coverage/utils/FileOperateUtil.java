@@ -135,7 +135,6 @@ public class FileOperateUtil {
      * @return
      */
     public boolean delAllFile(String path) {
-        System.out.println(path);
         boolean flag = false;
         File file = new File(path);
         if (!file.exists()) {
@@ -211,7 +210,6 @@ public class FileOperateUtil {
      * @param newPath String 复制后路径 如f:/fqf/ff
      */
     public void copyFolder(String oldPath, String newPath) {
-        System.out.println("copy path: " + oldPath);
         try {
             (new File(newPath)).mkdirs(); //如果文件夹不存在 则建立新文件夹
             File a = new File(oldPath);
