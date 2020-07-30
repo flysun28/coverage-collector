@@ -112,7 +112,7 @@ public class ColumbusUtils {
         }
     }
 
-    public static HashMap getAppDeployInfoFromBuildVersionList(String appID, String buildVersionName) {
+    public static HashMap getAppDeployInfoFromBuildVersionList(String appID, String buildVersionName) throws DefinitionException {
         StringBuffer applicationIP = new StringBuffer();
         HashMap<String,Object> hashMap = new HashMap<>();
         String commitID = "";
@@ -128,13 +128,15 @@ public class ColumbusUtils {
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
 
-
+            applicationIP = ColumbusUtils.getAppDeployInfoList(buildVersionName);
+            hashMap.put("applicationIP",applicationIP.toString());
+            hashMap.put("commitID",commitID);
+            hashMap.put("buildBranch",buildBranch);
+            hashMap.put("repositoryUrl",repositoryUrl);
+        }else{
+            throw new DefinitionException(ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorCode(),ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorMsg());
         }
-        applicationIP = ColumbusUtils.getAppDeployInfoList(buildVersionName);
-        hashMap.put("applicationIP",applicationIP.toString());
-        hashMap.put("commitID",commitID);
-        hashMap.put("buildBranch",buildBranch);
-        hashMap.put("repositoryUrl",repositoryUrl);
+
         return hashMap;
     }
     public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath){
@@ -234,7 +236,7 @@ public class ColumbusUtils {
                 }
             }
             else{
-                if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar")){
+                if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
                     denpentjarpath = f;
                 }
             }
@@ -259,8 +261,11 @@ public class ColumbusUtils {
 
     }
     public static void main(String[] args) throws Exception {
-        ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
+//        ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
 //        ColumbusUtils.getApplicationIP("pandora-server-web_20200604145728","test2");
-
+        ArrayList<AppVersionResponse> appVersionResponses = getBuildVersionList("fin-loan-api","fin-loan-api-20200716114808-179");
+       for(AppVersionResponse appVersionResponse: appVersionResponses){
+           System.out.println(appVersionResponse.getRepositoryUrl());
+       }
     }
 }
