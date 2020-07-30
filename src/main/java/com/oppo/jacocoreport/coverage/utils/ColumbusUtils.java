@@ -200,7 +200,8 @@ public class ColumbusUtils {
         for(File packagePath: packageList){
             fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
         }
-        fileOperateUtil.delAllFile(basicPath);
+        zipfile.delete();
+        fileOperateUtil.delAllFile(resultPath);
 
         return targetPath;
     }
