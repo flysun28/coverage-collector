@@ -339,9 +339,9 @@ public class ReportGeneratorCov {
         projectMap.put("ip",applicationIPList);
 
         //获取下载buildversion.zip包
-        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl,localPath.toString());
+        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl,coverageReportPath.toString());
         //解压zip包获取class文件
-        String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(localPath,"classes").toString(),applicationID,sourceapplicationsMap);
+        String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
         projectMap.put("classPath",classPath);
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskid(this.taskId+"");
