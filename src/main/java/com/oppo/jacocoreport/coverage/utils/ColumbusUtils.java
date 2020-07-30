@@ -178,7 +178,7 @@ public class ColumbusUtils {
     }
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
-        String basicPath = new File(downloadZipFile).getParentFile().getAbsolutePath();
+        String basicPath = new File(downloadZipFile).getParentFile().toString();
         if("".equals(downloadZipFile) || downloadZipFile == null){
             System.out.println("please input extract path:");
         }
