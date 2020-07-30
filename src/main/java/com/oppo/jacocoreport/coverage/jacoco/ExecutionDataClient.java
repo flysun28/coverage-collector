@@ -34,7 +34,7 @@ public class ExecutionDataClient {
             }
             socket.close();
         }catch (ConnectException e){
-            e.printStackTrace();
+            System.out.println(address+" cann't connect");
         }finally {
             localFile.close();
         }

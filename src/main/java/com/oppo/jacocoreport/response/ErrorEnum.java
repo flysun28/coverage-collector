@@ -8,7 +8,7 @@ public enum ErrorEnum {
     PRODUCT_REPORT(1004,"生成覆盖率报告失败"),
     JACOCO_EXEC_FAILED(1005,"获取测试环境覆盖率文件失败"),
     OTHER_ERROR(1006,"其他异常"),
-    GETDOWNLOADPACKAGE_RAILED(1007,"获取版本下载文件异常"),
+    GETDOWNLOADPACKAGE_RAILED(1007,"未找到本版本的部署包"),
     ;
     private Integer errorCode;
     private String errorMsg;

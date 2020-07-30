@@ -37,7 +37,7 @@ public class ColumbusUtils {
         try {
             String signature = HMAC_MD5_encode("123456789", sortedParams);
             String ret = null;
-            ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=20");
+            ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=50");
             appVersionResponses = new Gson().fromJson(ret, new TypeToken<List<AppVersionResponse>>() {
             }.getType());
             for (AppVersionResponse appVersionResponse : appVersionResponses) {
@@ -264,7 +264,7 @@ public class ColumbusUtils {
     public static void main(String[] args) throws Exception {
 //        ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
 //        ColumbusUtils.getApplicationIP("pandora-server-web_20200604145728","test2");
-        ArrayList<AppVersionResponse> appVersionResponses = getBuildVersionList("fin-loan-api","fin-loan-api-20200716114808-179");
+        ArrayList<AppVersionResponse> appVersionResponses = getBuildVersionList("fin-wealth-api","fin-wealth-api_20200723141019");
        for(AppVersionResponse appVersionResponse: appVersionResponses){
            System.out.println(appVersionResponse.getRepositoryUrl());
        }
