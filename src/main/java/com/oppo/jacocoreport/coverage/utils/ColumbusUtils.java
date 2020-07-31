@@ -178,6 +178,20 @@ public class ColumbusUtils {
         }
         return downloadFilePath.toString();
     }
+    public static String getdeployJarPrefix(String doanloadZipFile){
+        String[] applicationprelist = doanloadZipFile.split("-");
+        String applicationpre = "";
+        if(applicationprelist.length > 2){
+            if(applicationprelist[1].matches("\\d*")){
+                applicationpre = applicationprelist[0];
+            }else{
+                applicationpre = applicationprelist[0]+"-"+applicationprelist[1];
+            }
+        }else if(applicationprelist.length == 2){
+            applicationpre = applicationprelist[0];
+        }
+        return applicationpre;
+    }
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String basicPath = new File(downloadZipFile).getParentFile().toString();
@@ -187,23 +201,23 @@ public class ColumbusUtils {
         fileOperateUtil.delAllFile(targetPath);
 
         System.out.println("extract path:"+basicPath);
-
+        String deployJarprefix = getdeployJarPrefix(downloadZipFile);
         Execute execute = new Execute();
 
         File zipfile = new File(downloadZipFile);
         String resultPath = execute.extractFile(zipfile);
-
-        //遍历所有文件夹，找出应用的jar包，并解压
-        boolean existJar = extractJartoClass(resultPath,basicPath,applicationsrclist);
-        //再对解压的文件夹里，遍历解压一次
         ArrayList<File> packageList = new ArrayList<File>();
+        //遍历所有文件夹，找出应用的jar包，并解压
+        boolean existJar = extractJartoClass(resultPath,basicPath,deployJarprefix,applicationsrclist);
+        //再对解压的文件夹里，遍历解压一次
         if(existJar) {
-            extractJartoClass(basicPath, basicPath, applicationsrclist);
+            extractJartoClass(basicPath, basicPath, "",applicationsrclist);
 
             packageList = getComPackagePath(new File(basicPath), packageList);
         }else{
             packageList = getComPackagePath(new File(resultPath), packageList);
         }
+
         for(File packagePath: packageList){
             fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
         }
@@ -212,12 +226,22 @@ public class ColumbusUtils {
 
         return targetPath;
     }
-    private static boolean extractJartoClass(String localpath,String targetPath,Map<String ,Map> applicationsrclist){
+    private static boolean extractJartoClass(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         Execute execute = new Execute();
         boolean existJar = false;
+        File applicationJarPath = null;
         for(String applicationsrcname :applicationsrclist.keySet()){
-            File applicationJarPath = getapplicationJarPath(new File(localpath),applicationsrcname);
+            applicationJarPath = getapplicationJarPath(new File(localpath),applicationsrcname);
+            if(applicationJarPath!=null) {
+                existJar = true;
+                fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+                execute.extractFiles(targetPath);
+            }
+        }
+        //如果没有找到jar包，通过压缩包前缀再搜索一次
+        if(!existJar && !deployJarprefix.equals("")){
+            applicationJarPath = getapplicationJarPath(new File(localpath),deployJarprefix);
             if(applicationJarPath!=null) {
                 existJar = true;
                 fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
