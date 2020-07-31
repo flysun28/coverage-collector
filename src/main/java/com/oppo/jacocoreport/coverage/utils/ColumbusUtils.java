@@ -202,10 +202,11 @@ public class ColumbusUtils {
         fileOperateUtil.delAllFile(targetPath);
 
         System.out.println("extract path:"+basicPath);
-        String deployJarprefix = getdeployJarPrefix(downloadZipFile);
+
         Execute execute = new Execute();
 
         File zipfile = new File(downloadZipFile);
+        String deployJarprefix = getdeployJarPrefix(zipfile.getName());
         String resultPath = execute.extractFile(zipfile);
         ArrayList<File> packageList = new ArrayList<File>();
         //遍历所有文件夹，找出应用的jar包，并解压
