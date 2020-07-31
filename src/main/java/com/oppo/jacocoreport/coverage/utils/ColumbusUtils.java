@@ -190,6 +190,7 @@ public class ColumbusUtils {
         }else if(applicationprelist.length == 2){
             applicationpre = applicationprelist[0];
         }
+        System.out.println("prefix "+applicationpre);
         return applicationpre;
     }
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
@@ -296,9 +297,10 @@ public class ColumbusUtils {
     public static void main(String[] args) throws Exception {
 //        ColumbusUtils.getAppDeployInfoList("pandora-server-web_20200604145728");
 //        ColumbusUtils.getApplicationIP("pandora-server-web_20200604145728","test2");
-        ArrayList<AppVersionResponse> appVersionResponses = getBuildVersionList("fin-wealth-api","fin-wealth-api_20200723141019");
-       for(AppVersionResponse appVersionResponse: appVersionResponses){
-           System.out.println(appVersionResponse.getRepositoryUrl());
-       }
+//        ArrayList<AppVersionResponse> appVersionResponses = getBuildVersionList("fin-wealth-api","fin-wealth-api_20200723141019");
+//       for(AppVersionResponse appVersionResponse: appVersionResponses){
+//           System.out.println(appVersionResponse.getRepositoryUrl());
+//       }
+        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
     }
 }
