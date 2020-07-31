@@ -194,30 +194,38 @@ public class ColumbusUtils {
         String resultPath = execute.extractFile(zipfile);
 
         //遍历所有文件夹，找出应用的jar包，并解压
-        extractJartoClass(resultPath,basicPath,applicationsrclist);
+        boolean existJar = extractJartoClass(resultPath,basicPath,applicationsrclist);
         //再对解压的文件夹里，遍历解压一次
-        extractJartoClass(basicPath,basicPath,applicationsrclist);
-        fileOperateUtil.delAllFile(resultPath);
         ArrayList<File> packageList = new ArrayList<File>();
-        packageList = getComPackagePath(new File(basicPath),packageList);
+        if(existJar) {
+            extractJartoClass(basicPath, basicPath, applicationsrclist);
+
+            packageList = getComPackagePath(new File(basicPath), packageList);
+        }else{
+            packageList = getComPackagePath(new File(resultPath), packageList);
+        }
         for(File packagePath: packageList){
             fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
         }
         zipfile.delete();
-
+        fileOperateUtil.delAllFile(resultPath);
 
         return targetPath;
     }
-    private static void extractJartoClass(String localpath,String targetPath,Map<String ,Map> applicationsrclist){
+    private static boolean extractJartoClass(String localpath,String targetPath,Map<String ,Map> applicationsrclist){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         Execute execute = new Execute();
+        boolean existJar = false;
         for(String applicationsrcname :applicationsrclist.keySet()){
             File applicationJarPath = getapplicationJarPath(new File(localpath),applicationsrcname);
             if(applicationJarPath!=null) {
+                existJar = true;
                 fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
                 execute.extractFiles(targetPath);
             }
         }
+
+        return existJar;
     }
     private static String getApplicationIDJarName(File filePath){
         String folderName = filePath.getName();
