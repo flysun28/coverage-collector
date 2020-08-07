@@ -3,16 +3,16 @@ package com.oppo.jacocoreport.coverage.entity;
 public class ApplicationCodeInfo {
 
     private Long id;
-    private String gitPath;
-    private String testedBranch;
-    private String basicBranch;
-    private String testedCommitId;
-    private String basicCommitId;
+    private String gitPath = "";
+    private String testedBranch = "";
+    private String basicBranch = "";
+    private String testedCommitId = "";
+    private String basicCommitId = "";
 
-    private String versionName;
-    private String deployKey;
-    private String ignoreClass;
-    private String ignorePackage;
+    private String versionName = "";
+    private String deployKey = "";
+    private String ignoreClass = "";
+    private String ignorePackage = "";
 
     public String getIgnoreClass() {
         return ignoreClass;
