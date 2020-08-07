@@ -23,13 +23,13 @@ public class AsyncTask {
         String applicationID = applicationCodeInfo.getApplicationID();
         String ignoreclassStr = applicationCodeInfo.getIgnoreClass();
         String ignorepackageStr = applicationCodeInfo.getIgnorePackage();
-        String[] ignoreclassList = null;
-        String[] ignorepackageList = null;
+        String[] ignoreclassList = new String[]{};
+        String[] ignorepackageList = new String[]{};
 
-        if(!ignoreclassStr.equals("")){
+        if(ignoreclassStr != null && !ignoreclassStr.equals("")){
             ignoreclassList = ignoreclassStr.split(",");
         }
-        if(!ignorepackageStr.equals("")){
+        if(ignorepackageStr != null && !ignorepackageStr.equals("")){
             ignorepackageList = ignorepackageStr.split(",");
         }
         System.out.println("start coverage test");
