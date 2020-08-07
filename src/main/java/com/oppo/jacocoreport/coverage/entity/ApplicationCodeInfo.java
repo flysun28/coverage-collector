@@ -11,6 +11,24 @@ public class ApplicationCodeInfo {
 
     private String versionName;
     private String deployKey;
+    private String ignoreClass;
+    private String ignorePackage;
+
+    public String getIgnoreClass() {
+        return ignoreClass;
+    }
+
+    public void setIgnoreClass(String ignoreClass) {
+        this.ignoreClass = ignoreClass;
+    }
+
+    public String getIgnorePackage() {
+        return ignorePackage;
+    }
+
+    public void setIgnorePackage(String ignorePackage) {
+        this.ignorePackage = ignorePackage;
+    }
 
     public String getApplicationID() {
         return applicationID;

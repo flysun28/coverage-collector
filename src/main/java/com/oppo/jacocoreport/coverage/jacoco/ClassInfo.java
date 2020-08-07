@@ -74,7 +74,7 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String[] execfile = {"D:\\jacocoCov\\20200603112358\\luckymonkey\\jacoco.exec"};
+        String[] execfile = {"D:\\codeCoverage\\fin-loan\\classes\\com\\oppo\\fintech\\loan\\core\\service\\CommonAPIService.class"};
         new ClassInfo(System.out).execute(execfile);
     }
 

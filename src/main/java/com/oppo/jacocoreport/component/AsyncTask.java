@@ -21,10 +21,21 @@ public class AsyncTask {
         String newTag = applicationCodeInfo.getTestedCommitId();
         String oldTag = applicationCodeInfo.getBasicCommitId();
         String applicationID = applicationCodeInfo.getApplicationID();
+        String ignoreclassStr = applicationCodeInfo.getIgnoreClass();
+        String ignorepackageStr = applicationCodeInfo.getIgnorePackage();
+        String[] ignoreclassList = null;
+        String[] ignorepackageList = null;
+
+        if(!ignoreclassStr.equals("")){
+            ignoreclassList = ignoreclassStr.split(",");
+        }
+        if(!ignorepackageStr.equals("")){
+            ignorepackageList = ignorepackageStr.split(",");
+        }
         System.out.println("start coverage test");
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,testedBranch,versionname,basicBranch,newTag,oldTag);
         try {
-            reportGeneratorCov.startCoverageTask(applicationID);
+            reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
         }catch (DefinitionException e){
             HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
         }catch (Exception e){

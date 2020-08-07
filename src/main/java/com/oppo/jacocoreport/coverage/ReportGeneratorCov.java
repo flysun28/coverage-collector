@@ -169,8 +169,7 @@ public class ReportGeneratorCov {
 
     private IBundleCoverage analyzeStructure(ArrayList<File> classesDirectoryList,String title) throws Exception {
         final CoverageBuilder coverageBuilder = new CoverageBuilder();
-        final Analyzer analyzer = new Analyzer(
-                execFileLoader.getExecutionDataStore(), coverageBuilder);
+        final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
         for(File classesDirectory : classesDirectoryList) {
             analyzer.analyzeAll(classesDirectory);
         }
@@ -312,7 +311,7 @@ public class ReportGeneratorCov {
         }
         return applicationNameMap;
     }
-    public void startCoverageTask(String applicationID) throws Exception{
+    public void startCoverageTask(String applicationID,String[] ignoreclassList,String[] ignorepackageList) throws Exception{
         HashMap<String, Object> projectMap = new HashMap<String, Object>();
         //通过git url地址解析应用名
         String projectName = GitUtil.getLastUrlString(this.applicationgitlabUrl);
@@ -343,6 +342,8 @@ public class ReportGeneratorCov {
         String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl,coverageReportPath.toString());
         //解压zip包获取class文件
         String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
+        //过滤配置的ignore class,package文件
+        ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
         projectMap.put("classPath",classPath);
 
         //开始生成覆盖率报告任务
@@ -368,7 +369,7 @@ public class ReportGeneratorCov {
         String versionName = "ci-demo-20200703154236-28";
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
-        reportGeneratorCov.startCoverageTask("");
+//        reportGeneratorCov.startCoverageTask("");
 
     }
 }

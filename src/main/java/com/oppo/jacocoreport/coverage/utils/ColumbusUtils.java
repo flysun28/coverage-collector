@@ -14,6 +14,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
 
 public class ColumbusUtils {
     private static String url = "http://columbus.os.adc.com";
@@ -139,6 +140,19 @@ public class ColumbusUtils {
 
         return hashMap;
     }
+
+    public static void filterIgnoreClass(String[] classArrayList,String[] packageArrayList,File basePath){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+        for(String classname:classArrayList){
+            String classPath = classname.replaceAll("\\.", Matcher.quoteReplacement(File.separator))+".class";
+            new File(basePath,classPath).delete();
+        }
+        for(String packagename:packageArrayList){
+            String packagenamePath = packagename.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+            fileOperateUtil.delAllFile(new File(basePath,packagenamePath).toString());
+        }
+    }
+
     public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath){
         String fileName = "";
         File downloadFilePath = null;
