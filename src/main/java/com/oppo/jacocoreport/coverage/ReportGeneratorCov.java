@@ -196,7 +196,7 @@ public class ReportGeneratorCov {
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
             coverageBuilder = new CoverageBuilder(gitlocalPath, newBranchName, newTag, oldTag);
 //        }
-            final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
+        final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
             for (File classesDirectory : classesDirectoryList) {
                 analyzer.analyzeAll(classesDirectory);
             }

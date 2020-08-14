@@ -224,10 +224,10 @@ public class ColumbusUtils {
         String resultPath = execute.extractFile(zipfile);
         ArrayList<File> packageList = new ArrayList<File>();
         //遍历所有文件夹，找出应用的jar包，并解压
-        boolean existJar = extractJartoClass(resultPath,basicPath,deployJarprefix,applicationsrclist);
+        boolean existJar = extractJartoClass(resultPath,basicPath,deployJarprefix,applicationsrclist,applicationID);
         //再对解压的文件夹里，遍历解压一次
         if(existJar) {
-            extractJartoClass(basicPath, basicPath, "",applicationsrclist);
+            extractJartoClass(basicPath, basicPath, "",applicationsrclist,applicationID);
 
             packageList = getComPackagePath(new File(basicPath), packageList);
         }else{
@@ -242,7 +242,7 @@ public class ColumbusUtils {
 
         return targetPath;
     }
-    private static boolean extractJartoClass(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist){
+    private static boolean extractJartoClass(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist,String applicationID){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         Execute execute = new Execute();
         boolean existJar = false;
@@ -259,6 +259,15 @@ public class ColumbusUtils {
         if(!existJar && !deployJarprefix.equals("")){
             applicationJarPath = getapplicationJarPath(new File(localpath),deployJarprefix);
             if(applicationJarPath!=null) {
+                existJar = true;
+                fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+                execute.extractFiles(targetPath);
+            }
+        }
+        //还没有找到jar包，再通过应用前缀再搜索一次
+        if(!existJar){
+            applicationJarPath = getapplicationJarPath(new File(localpath),applicationID.substring(0,applicationID.lastIndexOf("-")));
+            if(applicationJarPath!=null){
                 existJar = true;
                 fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
                 execute.extractFiles(targetPath);
