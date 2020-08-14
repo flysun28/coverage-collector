@@ -228,7 +228,6 @@ public class ColumbusUtils {
         //再对解压的文件夹里，遍历解压一次
         if(existJar) {
             extractJartoClass(basicPath, basicPath, "",applicationsrclist,applicationID);
-
             packageList = getComPackagePath(new File(basicPath), packageList);
         }else{
             packageList = getComPackagePath(new File(resultPath), packageList);
