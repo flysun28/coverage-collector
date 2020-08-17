@@ -3,23 +3,21 @@ package com.oppo.jacocoreport.coverage.utils;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
 import com.oppo.jacocoreport.response.DefinitionException;
-import com.oppo.jacocoreport.response.ErrorEnum;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.util.FS;
 import org.jacoco.core.internal.diff.GitAdapter;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class GitUtil {
     private String gitName;
@@ -90,24 +88,34 @@ public class GitUtil {
     public String checkoutBranch(String gitPath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
         GitAdapter.setCredentialsProvider(gitName, gitPassword);
         GitAdapter gitAdapter = new GitAdapter(gitPath);
+        Git git = gitAdapter.getGit();
         //默认master分支，如果不存在，取release分支
         try {
             System.out.println(gitAdapter.getGit().getRepository().getBranch());
             Ref localMasterRef = gitAdapter.getRepository().exactRef("refs/heads/" + oldBranchName);
             gitAdapter.checkOutAndPull(localMasterRef, oldBranchName);
-
-            Iterable<RevCommit> iterable = gitAdapter.getGit().log().call();
-            Iterator<RevCommit> iter = iterable.iterator();
-            RevCommit commit = null;
+            gitAdapter.checkOut(oldBranchName);
+            git.pull().call();
 
 
             Ref localBranchRef = gitAdapter.getRepository().exactRef("refs/heads/" + newBranchName);
             gitAdapter.checkOutAndPull(localBranchRef, newBranchName);
-            gitAdapter.getGit().checkout().setName(newTag).call();
+            gitAdapter.checkOut(newBranchName);
+            git.pull().call();
+
+            ObjectId head = gitAdapter.getRepository().resolve(newTag + "^{tree}");
+            //Instanciate a reader to read the data from the Git database
+            ObjectReader reader = gitAdapter.getRepository().newObjectReader();
+            CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+            newTreeIter.reset(reader, head);
 
         }catch (RefNotFoundException rfnf){
             try {
-                gitAdapter.getGit().checkout().setName(newTag).call();
+                ObjectId head = gitAdapter.getRepository().resolve(newTag + "^{tree}");
+                //Instanciate a reader to read the data from the Git database
+                ObjectReader reader = gitAdapter.getRepository().newObjectReader();
+                CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+                newTreeIter.reset(reader, head);
                 newBranchName = oldBranchName;
             }catch (Exception ep){
                 ep.printStackTrace();
@@ -118,6 +126,7 @@ public class GitUtil {
         }
         return newBranchName;
     }
+
     public static String getLastUrlString(String strUrl){
         String[] splitStr = strUrl.split("/");
         int len = splitStr.length;
