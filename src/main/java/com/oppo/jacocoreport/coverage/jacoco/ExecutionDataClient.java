@@ -13,7 +13,8 @@ import java.net.Socket;
 public class ExecutionDataClient {
 
 
-    public void getExecutionData(String address, int port, String destfile) throws IOException {
+    public boolean getExecutionData(String address, int port, String destfile) throws IOException {
+        boolean getedExecData = false;
         System.out.println("exec文件路径" + destfile);
         final FileOutputStream localFile = new FileOutputStream(destfile);
         final ExecutionDataWriter localWriter = new ExecutionDataWriter(localFile);
@@ -33,11 +34,13 @@ public class ExecutionDataClient {
                 }
             }
             socket.close();
+            getedExecData = true;
         }catch (ConnectException e){
             System.out.println(address+" cann't connect");
         }finally {
             localFile.close();
         }
+        return getedExecData;
     }
 
     /**

@@ -2,44 +2,41 @@ package com.oppo.jacocoreport.coverage.jacoco;
 
 import org.jacoco.core.data.*;
 import org.jacoco.core.runtime.RemoteControlReader;
-import org.jacoco.core.runtime.RemoteControlWriter;
-import org.jacoco.core.tools.ExecFileLoader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Set;
 
 public class AnalyExecData {
-    private static final String EXECFILE = "jacoco-server.exec";
-    private static final String ALLEXEC = "D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec";
+    //    private static final String EXECFILE = "jacoco-server.exec";
+//    private static final String ALLEXEC = "D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec";
+    private String filteredExec;
+    private String originExec;
 
-    public static void main(final String[] args) throws IOException {
-        final ExecutionDataWriter fileWriter = new ExecutionDataWriter(
-                new FileOutputStream(EXECFILE));
-
-//        while (true) {
-            final Handler handler = new Handler(fileWriter);
-            new Thread(handler).start();
-//        }
+    public AnalyExecData(String filteredExec,String originExec){
+        this.filteredExec = filteredExec;
+        this.originExec = originExec;
     }
 
-    private static class Handler implements Runnable, ISessionInfoVisitor,
+    private class Handler implements Runnable, ISessionInfoVisitor,
             IExecutionDataVisitor {
 
 
         private final RemoteControlReader reader;
 
         private final ExecutionDataWriter fileWriter;
+        private Set<String> classIDSet;
 
-        Handler(final ExecutionDataWriter fileWriter)
+        Handler(final ExecutionDataWriter fileWriter,String classPath)
                 throws IOException {
             this.fileWriter = fileWriter;
+            this.classIDSet = new ClassInfo().execute(classPath);
 
             // Just send a valid header:
 //            new RemoteControlWriter(new FileOutputStream(ALLEXEC));
 
-            reader = new RemoteControlReader(new FileInputStream(ALLEXEC));
+            reader = new RemoteControlReader(new FileInputStream(originExec));
             reader.setSessionInfoVisitor(this);
             reader.setExecutionDataVisitor(this);
 
@@ -66,9 +63,25 @@ public class AnalyExecData {
         }
 
         public void visitClassExecution(final ExecutionData data) {
-            synchronized (fileWriter) {
-                fileWriter.visitClassExecution(data);
+            if(classIDSet.contains(Long.toHexString(data.getId()))) {
+                synchronized (fileWriter) {
+                    fileWriter.visitClassExecution(data);
+                }
             }
         }
+    }
+
+    public void filterOldExecData(String classPath) throws IOException{
+        final ExecutionDataWriter fileWriter = new ExecutionDataWriter(
+                new FileOutputStream(filteredExec));
+        final Handler handler = new Handler(fileWriter,classPath);
+        new Thread(handler).start();
+    }
+    public void findNewBuildVersion(String classPath,String execFile) throws IOException{
+       Set<String> classIDSet = new ClassInfo().execute(classPath);
+    }
+    public static void main(final String[] args) throws IOException {
+        AnalyExecData analyExecData = new  AnalyExecData("jacoco-server.exec","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");
+        analyExecData.filterOldExecData("D:\\codeCoverage\\fin-loan\\classes");
     }
 }

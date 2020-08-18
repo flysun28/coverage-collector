@@ -19,6 +19,7 @@ import org.jacoco.core.data.ExecutionDataStore;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.*;
 
 /**
  * This example reads Java class files, directories or JARs given as program
@@ -26,16 +27,15 @@ import java.io.PrintStream;
  */
 public final class ClassInfo implements ICoverageVisitor {
 
-    private final PrintStream out;
     private final Analyzer analyzer;
+    private Set<String> classSet;
 
     /**
      * Creates a new example instance printing to the given stream.
      *
-     * @param out stream for outputs
      */
-    public ClassInfo(final PrintStream out) {
-        this.out = out;
+    public ClassInfo() {
+        this.classSet = new HashSet();
         analyzer = new Analyzer(new ExecutionDataStore(), this);
     }
 
@@ -43,30 +43,35 @@ public final class ClassInfo implements ICoverageVisitor {
     /**
      * Run this example with the given parameters.
      *
-     * @param args command line parameters
+     * @param classpath command line parameters
      * @throws IOException in case of error reading a input file
      */
-    public void execute(final String[] args) throws IOException {
-        for (final String file : args) {
-            analyzer.analyzeAll(new File(file));
-        }
+    public Set execute(final String classpath) throws IOException {
+//        for (final String file : args) {
+        analyzer.analyzeAll(new File(classpath));
+        return this.classSet;
+//        }
     }
 
     public void visitCoverage(final IClassCoverage coverage) {
-        out.printf("class name:   %s%n", coverage.getName());
-        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
-        out.printf("instructions: %s%n", Integer.valueOf(coverage
-                .getInstructionCounter().getTotalCount()));
-        out.printf("branches:     %s%n",
-                Integer.valueOf(coverage.getBranchCounter().getTotalCount()));
-        out.printf("lines:        %s%n",
-                Integer.valueOf(coverage.getLineCounter().getTotalCount()));
-        out.printf("methods:      %s%n",
-                Integer.valueOf(coverage.getMethodCounter().getTotalCount()));
-        out.printf("complexity:   %s%n%n", Integer.valueOf(coverage
-                .getComplexityCounter().getTotalCount()));
+//        out.printf("class name:   %s%n", coverage.getName());
+//        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
+        this.classSet.add(Long.toHexString(coverage.getId()));
+//        out.printf("instructions: %s%n", Integer.valueOf(coverage
+//                .getInstructionCounter().getTotalCount()));
+//        out.printf("branches:     %s%n",
+//                Integer.valueOf(coverage.getBranchCounter().getTotalCount()));
+//        out.printf("lines:        %s%n",
+//                Integer.valueOf(coverage.getLineCounter().getTotalCount()));
+//        out.printf("methods:      %s%n",
+//                Integer.valueOf(coverage.getMethodCounter().getTotalCount()));
+//        out.printf("complexity:   %s%n%n", Integer.valueOf(coverage
+//                .getComplexityCounter().getTotalCount()));
     }
 
+    public Set getClassSet() {
+        return classSet;
+    }
     /**
      * Entry point to run this examples as a Java application.
      *
@@ -74,8 +79,12 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String[] execfile = {"D:\\codeCoverage\\fin-loan\\classes"};
-        new ClassInfo(System.out).execute(execfile);
+        String execfile = "D:\\codeCoverage\\fin-loan\\classes";
+        Set<String> set = new ClassInfo().execute(execfile);
+        Iterator iterator = set.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next().toString());
+        }
     }
 
 }
