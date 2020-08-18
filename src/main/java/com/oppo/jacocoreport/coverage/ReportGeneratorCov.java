@@ -237,7 +237,6 @@ public class ReportGeneratorCov {
             public void run() {
                 try {
                     File executionDataFile = null;
-                    File classesDirectory = null;
                     File sourceDirectory = null;
                     File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
                     File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
@@ -259,6 +258,7 @@ public class ReportGeneratorCov {
                                 Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
                                 //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
                                 if(newversion){
+                                    System.out.println("exist new version");
                                     executionDataFile.delete();
                                     cancel();
                                 }
@@ -302,7 +302,7 @@ public class ReportGeneratorCov {
                     e.getStackTrace();
                 }
             }
-        }, 0, 300000);
+        }, 0, 60000);
     }
 
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
