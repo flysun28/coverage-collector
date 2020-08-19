@@ -298,7 +298,7 @@ public class ReportGeneratorCov {
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
                     //上传覆盖率报告
-//                    sendcoveragedata();
+                    sendcoveragedata();
                     Thread.sleep(1000);
                 } catch (Exception e) {
                     e.getStackTrace();
