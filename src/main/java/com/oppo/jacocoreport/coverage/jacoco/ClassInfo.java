@@ -28,14 +28,18 @@ import java.util.*;
 public final class ClassInfo implements ICoverageVisitor {
 
     private final Analyzer analyzer;
-    private Set<String> classSet;
+    private Set<String> classIDSet;
+    private Set<String> classNameSet;
+    private String classpath;
 
     /**
      * Creates a new example instance printing to the given stream.
      *
      */
-    public ClassInfo() {
-        this.classSet = new HashSet();
+    public ClassInfo(final String classpath) {
+        this.classIDSet = new HashSet();
+        this.classNameSet = new HashSet<>();
+        this.classpath = classpath;
         analyzer = new Analyzer(new ExecutionDataStore(), this);
     }
 
@@ -43,20 +47,17 @@ public final class ClassInfo implements ICoverageVisitor {
     /**
      * Run this example with the given parameters.
      *
-     * @param classpath command line parameters
      * @throws IOException in case of error reading a input file
      */
-    public Set execute(final String classpath) throws IOException {
-//        for (final String file : args) {
-        analyzer.analyzeAll(new File(classpath));
-        return this.classSet;
-//        }
+    public void execute() throws IOException {
+        analyzer.analyzeAll(new File(this.classpath));
     }
 
     public void visitCoverage(final IClassCoverage coverage) {
 //        out.printf("class name:   %s%n", coverage.getName());
 //        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
-        this.classSet.add(Long.toHexString(coverage.getId()));
+        this.classIDSet.add(Long.toHexString(coverage.getId()));
+        this.classNameSet.add(coverage.getName());
 //        out.printf("instructions: %s%n", Integer.valueOf(coverage
 //                .getInstructionCounter().getTotalCount()));
 //        out.printf("branches:     %s%n",
@@ -69,8 +70,11 @@ public final class ClassInfo implements ICoverageVisitor {
 //                .getComplexityCounter().getTotalCount()));
     }
 
-    public Set getClassSet() {
-        return classSet;
+    public Set<String> getClassNameSet() {
+        return classNameSet;
+    }
+    public Set<String> getClassIDSet() {
+        return classIDSet;
     }
     /**
      * Entry point to run this examples as a Java application.
@@ -79,9 +83,10 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String execfile = "D:\\codeCoverage\\fin-loan\\classes";
-        Set<String> set = new ClassInfo().execute(execfile);
-        Iterator iterator = set.iterator();
+        String execfile = "D:\\codeCoverage\\10010\\classes";
+        ClassInfo classInfo = new ClassInfo(execfile);
+        classInfo.execute();
+        Iterator iterator = classInfo.getClassNameSet().iterator();
         while(iterator.hasNext()){
             System.out.println(iterator.next().toString());
         }

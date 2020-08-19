@@ -4,6 +4,7 @@ import org.jacoco.core.data.ExecutionDataWriter;
 import org.jacoco.core.runtime.RemoteControlReader;
 import org.jacoco.core.runtime.RemoteControlWriter;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -13,9 +14,9 @@ import java.net.Socket;
 public class ExecutionDataClient {
 
 
-    public boolean getExecutionData(String address, int port, String destfile) throws IOException {
+    public boolean getExecutionData(String address, int port, File destfile) throws IOException {
         boolean getedExecData = false;
-        System.out.println("exec文件路径" + destfile);
+        System.out.println("exec文件路径" + destfile.toString());
         final FileOutputStream localFile = new FileOutputStream(destfile);
         final ExecutionDataWriter localWriter = new ExecutionDataWriter(localFile);
 
@@ -37,6 +38,9 @@ public class ExecutionDataClient {
             getedExecData = true;
         }catch (ConnectException e){
             System.out.println(address+" cann't connect");
+            localFile.close();
+            destfile.delete();
+
         }finally {
             localFile.close();
         }
@@ -51,7 +55,7 @@ public class ExecutionDataClient {
      */
     public static void main(final String[] args) throws IOException {
         ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        executionDataClient.getExecutionData("10.3.241.17", 8098, "jacoco.exec");
+        executionDataClient.getExecutionData("10.3.241.17", 8098, new File("jacoco.exec"));
     }
 
 }

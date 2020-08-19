@@ -15,11 +15,15 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
 
     private final ExecutionDataReader reader;
     private Set<String> classIDSet;
+    private Set<String> classNameSet;
     private Boolean findnewversion = false;
 
     public AnalyNewBuildVersion(String classPath,String execFile)  throws IOException {
         reader = new  ExecutionDataReader(new FileInputStream(execFile));
-        this.classIDSet = new ClassInfo().execute(classPath);
+        ClassInfo classInfo =  new ClassInfo(classPath);
+        classInfo.execute();
+        this.classIDSet = classInfo.getClassIDSet();
+        this.classNameSet = classInfo.getClassNameSet();
         reader.setSessionInfoVisitor(this);
         reader.setExecutionDataVisitor(this);
     }
@@ -60,14 +64,18 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
 
     @Override
     public void visitClassExecution(ExecutionData executionData) {
-        if(!classIDSet.contains(Long.toHexString(executionData.getId()))) {
-            findnewversion = true;
+        if(classNameSet.contains(executionData.getName())) {
+            if(!classIDSet.contains(Long.toHexString(executionData.getId()))){
+                System.out.println(executionData.getName());
+                System.out.println(Long.toHexString(executionData.getId()));
+                findnewversion = true;
+            }
         }
     }
     public static void main(String[] args) throws IOException{
-//        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\fin-loan\\classes","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");
-//        Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
-//        System.out.println(newversion);
-        System.out.println(AnalyNewBuildVersion.fileNotUpdateBy24Hours(new File("D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec")));
+        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\10010\\classes","D:\\codeCoverage\\10010\\jacocoAll.exec");
+        Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
+        System.out.println(newversion);
+//        System.out.println(AnalyNewBuildVersion.fileNotUpdateBy24Hours(new File("D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec")));
     }
 }

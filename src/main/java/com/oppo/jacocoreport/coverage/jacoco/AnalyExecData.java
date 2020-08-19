@@ -31,7 +31,9 @@ public class AnalyExecData {
         Handler(final ExecutionDataWriter fileWriter,String classPath)
                 throws IOException {
             this.fileWriter = fileWriter;
-            this.classIDSet = new ClassInfo().execute(classPath);
+            ClassInfo classInfo =  new ClassInfo(classPath);
+            classInfo.execute();
+            this.classIDSet = classInfo.getClassIDSet();
 
             // Just send a valid header:
 //            new RemoteControlWriter(new FileOutputStream(ALLEXEC));
@@ -76,9 +78,6 @@ public class AnalyExecData {
                 new FileOutputStream(filteredExec));
         final Handler handler = new Handler(fileWriter,classPath);
         new Thread(handler).start();
-    }
-    public void findNewBuildVersion(String classPath,String execFile) throws IOException{
-       Set<String> classIDSet = new ClassInfo().execute(classPath);
     }
     public static void main(final String[] args) throws IOException {
         AnalyExecData analyExecData = new  AnalyExecData("jacoco-server.exec","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");

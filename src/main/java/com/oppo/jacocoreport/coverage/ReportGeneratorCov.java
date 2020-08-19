@@ -251,7 +251,7 @@ public class ReportGeneratorCov {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
                             executionDataFile = new File(coverageReportPath, serverip + "_jacoco.exec");//第一步生成的exec的文件
-                            boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile.toString());
+                            boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile);
                             //如果取得覆盖率数据，判断是否有新版本
                             if(getedexecdata){
                                 AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(),executionDataFile.toString());
@@ -264,6 +264,11 @@ public class ReportGeneratorCov {
                                 }
                             }
                         }
+                    }
+                    //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
+                    File allexecutionDataFile = new File(coverageReportPath,"jacocoAll.exec");
+                    if(allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)){
+                        cancel();
                     }
                     Map<String, Object> sourceapplications = (Map) applicationMap.get("sourceapplications");
                     for (String key : sourceapplications.keySet()) {
@@ -280,14 +285,11 @@ public class ReportGeneratorCov {
                     classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
                     //合并代码覆盖率
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
-                    File allexecutionDataFile = mergeDump.executeMerge();
-                    if (!allexecutionDataFile.exists()) {
+                    allexecutionDataFile = mergeDump.executeMerge();
+                    if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(), ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
-                    //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    if(!AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)){
-                        cancel();
-                    }
+
                     //生成整体覆盖率报告
                     System.out.println("生成整体覆盖率报告");
                     createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
@@ -296,7 +298,7 @@ public class ReportGeneratorCov {
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
                     //上传覆盖率报告
-                    sendcoveragedata();
+//                    sendcoveragedata();
                     Thread.sleep(1000);
                 } catch (Exception e) {
                     e.getStackTrace();
@@ -370,15 +372,15 @@ public class ReportGeneratorCov {
         ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
         projectMap.put("classPath",classPath);
 
-        //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
-        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
-        File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
-        if(jacocoAll.exists()) {
-            AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
-            analyExecData.filterOldExecData(classPath);
-            //再将原始jacocoAll.exec文件删除
-            jacocoAll.delete();
-        }
+//        //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
+//        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
+//        File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
+//        if(jacocoAll.exists()) {
+//            AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
+//            analyExecData.filterOldExecData(classPath);
+//            //再将原始jacocoAll.exec文件删除
+//            jacocoAll.delete();
+//        }
         //开始生成覆盖率报告任务
         timerTask(projectMap);
 
@@ -393,16 +395,19 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 123456789L;
-        String gitPath = "git@gitlab.os.adc.com:cql/CIdemo.git";
-        String testedBranch = "feature/cov";
+        Long taskID = 10010L;
+        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
+        String testedBranch = "release/fin-2.1";
         String basicBranch = "master";
-        String newTag = "463e9574257c3d28693c4780688b18f1b7918dc2";
-        String oldTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
-        String versionName = "ci-demo-20200703154236-28";
+        String newTag = "efa5b51a";
+        String oldTag = "f03755ea";
+        String versionName = "fin-loan-api-20200819110448-222";
+        String applicationID = "fin-loan-api";
+        String[] ignoreclassList = new String[]{};
+        String[] ignorepackageList = new String[]{};
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
-//        reportGeneratorCov.startCoverageTask("");
+        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
 
     }
 }
