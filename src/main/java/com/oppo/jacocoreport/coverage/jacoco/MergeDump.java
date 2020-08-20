@@ -34,10 +34,7 @@ public class MergeDump {
 
      for(File file : files){
          if(file.getName().contains(".exec")){
-             System.out.println("文件"+file.getAbsolutePath());
              fileSetList.add(file);
-         } else{
-             System.out.println("非exec文件:"+file.getAbsolutePath());
          }
      }
      return fileSetList;
@@ -45,6 +42,12 @@ public class MergeDump {
 
     public File executeMerge() {
         final ExecFileLoader loader = new ExecFileLoader();
+        //如果没有获取新覆盖率文件，就不merge
+        if(fileSets(this.path).size() == 1){
+            if(fileSets(this.path).get(0).getName().equals("jacocoAll.exec")){
+                return null;
+            }
+        }
         load(loader);
         save(loader);
         //执行完成后，删除非必须的dump文件
@@ -83,7 +86,6 @@ public class MergeDump {
             System.out.println("Skipping JaCoCo merge execution due to missing execution data files");
             return;
         }
-        System.out.println("Writing merged execution data to "+this.destFile.getAbsolutePath());
         try{
            loader.save(this.destFile,false);
         }catch (final IOException e){
@@ -92,7 +94,7 @@ public class MergeDump {
     }
 
     public static void main(String[] args) throws IOException{
-        MergeDump mergeDump = new MergeDump("D:\\execfile");
+        MergeDump mergeDump = new MergeDump("D:\\codeCoverage\\10010");
         mergeDump.executeMerge();
     }
 }
