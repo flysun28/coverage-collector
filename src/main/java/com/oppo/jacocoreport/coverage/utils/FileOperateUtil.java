@@ -336,4 +336,9 @@ public class FileOperateUtil {
             file.mkdirs();
         }
     }
+
+    public static void main(String[] args) throws Exception {
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+        fileOperateUtil.unTarGz(new File("D:\\coverreport\\browser-feeds-media-service-1.1.0-20200806-20200806-8075471.tar.gz"),"D:\\coverreport");
+    }
 }
