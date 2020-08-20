@@ -90,8 +90,14 @@ public class ReportGeneratorCov {
         return file;
     }
     private static File createCoverageReportPathByTaskid(String taskId){
+        File taskPath = new File(Config.ReportBasePath,"taskID");
+        if(!taskPath.exists()){
+            if(!taskPath.mkdir()){
+                System.out.println("当前路径不存在，创建失败");
+            }
+        }
 
-        File file = new File(Config.ReportBasePath,taskId);
+        File file = new File(taskPath,taskId);
         if(!file.exists()){
             if(!file.mkdir()){
                 System.out.println("当前路径不存在，创建失败");
