@@ -19,6 +19,7 @@ import org.jacoco.core.data.ExecutionDataStore;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.*;
 
 /**
  * This example reads Java class files, directories or JARs given as program
@@ -26,16 +27,19 @@ import java.io.PrintStream;
  */
 public final class ClassInfo implements ICoverageVisitor {
 
-    private final PrintStream out;
     private final Analyzer analyzer;
+    private Set<String> classIDSet;
+    private Set<String> classNameSet;
+    private String classpath;
 
     /**
      * Creates a new example instance printing to the given stream.
      *
-     * @param out stream for outputs
      */
-    public ClassInfo(final PrintStream out) {
-        this.out = out;
+    public ClassInfo(final String classpath) {
+        this.classIDSet = new HashSet();
+        this.classNameSet = new HashSet<>();
+        this.classpath = classpath;
         analyzer = new Analyzer(new ExecutionDataStore(), this);
     }
 
@@ -43,30 +47,35 @@ public final class ClassInfo implements ICoverageVisitor {
     /**
      * Run this example with the given parameters.
      *
-     * @param args command line parameters
      * @throws IOException in case of error reading a input file
      */
-    public void execute(final String[] args) throws IOException {
-        for (final String file : args) {
-            analyzer.analyzeAll(new File(file));
-        }
+    public void execute() throws IOException {
+        analyzer.analyzeAll(new File(this.classpath));
     }
 
     public void visitCoverage(final IClassCoverage coverage) {
-        out.printf("class name:   %s%n", coverage.getName());
-        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
-        out.printf("instructions: %s%n", Integer.valueOf(coverage
-                .getInstructionCounter().getTotalCount()));
-        out.printf("branches:     %s%n",
-                Integer.valueOf(coverage.getBranchCounter().getTotalCount()));
-        out.printf("lines:        %s%n",
-                Integer.valueOf(coverage.getLineCounter().getTotalCount()));
-        out.printf("methods:      %s%n",
-                Integer.valueOf(coverage.getMethodCounter().getTotalCount()));
-        out.printf("complexity:   %s%n%n", Integer.valueOf(coverage
-                .getComplexityCounter().getTotalCount()));
+//        out.printf("class name:   %s%n", coverage.getName());
+//        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
+        this.classIDSet.add(Long.toHexString(coverage.getId()));
+        this.classNameSet.add(coverage.getName());
+//        out.printf("instructions: %s%n", Integer.valueOf(coverage
+//                .getInstructionCounter().getTotalCount()));
+//        out.printf("branches:     %s%n",
+//                Integer.valueOf(coverage.getBranchCounter().getTotalCount()));
+//        out.printf("lines:        %s%n",
+//                Integer.valueOf(coverage.getLineCounter().getTotalCount()));
+//        out.printf("methods:      %s%n",
+//                Integer.valueOf(coverage.getMethodCounter().getTotalCount()));
+//        out.printf("complexity:   %s%n%n", Integer.valueOf(coverage
+//                .getComplexityCounter().getTotalCount()));
     }
 
+    public Set<String> getClassNameSet() {
+        return classNameSet;
+    }
+    public Set<String> getClassIDSet() {
+        return classIDSet;
+    }
     /**
      * Entry point to run this examples as a Java application.
      *
@@ -74,8 +83,13 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String[] execfile = {"D:\\codeCoverage\\fin-loan\\classes"};
-        new ClassInfo(System.out).execute(execfile);
+        String execfile = "D:\\codeCoverage\\10010\\classes";
+        ClassInfo classInfo = new ClassInfo(execfile);
+        classInfo.execute();
+        Iterator iterator = classInfo.getClassNameSet().iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next().toString());
+        }
     }
 
 }
