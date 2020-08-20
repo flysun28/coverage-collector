@@ -34,10 +34,7 @@ public class MergeDump {
 
      for(File file : files){
          if(file.getName().contains(".exec")){
-             System.out.println("文件"+file.getAbsolutePath());
              fileSetList.add(file);
-         } else{
-             System.out.println("非exec文件:"+file.getAbsolutePath());
          }
      }
      return fileSetList;
@@ -89,7 +86,6 @@ public class MergeDump {
             System.out.println("Skipping JaCoCo merge execution due to missing execution data files");
             return;
         }
-        System.out.println("Writing merged execution data to "+this.destFile.getAbsolutePath());
         try{
            loader.save(this.destFile,false);
         }catch (final IOException e){

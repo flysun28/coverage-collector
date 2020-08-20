@@ -16,7 +16,6 @@ public class ExecutionDataClient {
 
     public boolean getExecutionData(String address, int port, File destfile) throws IOException {
         boolean getedExecData = false;
-        System.out.println("exec文件路径" + destfile.toString());
         final FileOutputStream localFile = new FileOutputStream(destfile);
         final ExecutionDataWriter localWriter = new ExecutionDataWriter(localFile);
 
