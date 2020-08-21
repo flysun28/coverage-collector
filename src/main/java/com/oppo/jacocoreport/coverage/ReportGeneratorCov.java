@@ -373,7 +373,7 @@ public class ReportGeneratorCov {
         String newTag = "463e9574257c3d28693c4780688b18f1b7918dc2";
         String oldTag = "04a4134be9b1d6ee04eca362ab4c6182d3b71e0a";
         String versionName = "ci-demo-20200703154236-28";
-
+//        System.out.println(versionName.substring(versionName.indexOf("-")+1));
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
 //        reportGeneratorCov.startCoverageTask("");
 
