@@ -305,7 +305,7 @@ public class ColumbusUtils {
             }
             else{
                 if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
-                    denpentjarpath = f;
+                    return f;
                 }
             }
         }
