@@ -236,12 +236,12 @@ public class ColumbusUtils {
         for(File packagePath: packageList){
             fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
         }
-        zipfile.delete();
-        fileOperateUtil.delAllFile(resultPath);
+//        zipfile.delete();
+//        fileOperateUtil.delAllFile(resultPath);
 
         return targetPath;
     }
-    private static boolean extractJartoClass(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist,String applicationID){
+    public static boolean extractJartoClass(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist,String applicationID){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         Execute execute = new Execute();
         boolean existJar = false;
@@ -335,6 +335,8 @@ public class ColumbusUtils {
 //       for(AppVersionResponse appVersionResponse: appVersionResponses){
 //           System.out.println(appVersionResponse.getRepositoryUrl());
 //       }
-        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
+//        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
+        String downloadFilePath = downloadColumbusBuildVersion("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202008/combine_844869-20200820-8448691.zip","D:\\execfile");
+        extractColumsBuildVersionClasses(downloadFilePath,"D:\\execfile\\classes","annotate-data-product-service",new HashMap<>());
     }
 }
