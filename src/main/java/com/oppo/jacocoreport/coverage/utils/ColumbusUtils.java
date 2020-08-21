@@ -270,6 +270,8 @@ public class ColumbusUtils {
                 existJar = true;
                 fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
                 execute.extractFiles(targetPath);
+            }else{
+                System.out.println("find jar failed");
             }
         }
         //还没有找到jar包，再通过应用前缀再搜索一次
