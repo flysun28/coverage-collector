@@ -122,7 +122,7 @@ public class FileOperateUtil {
          3.极有可能有可能自己前面没有关闭此文件的流(我遇到的情况)
          */
         if (isDelete && isUnZipSuccess) {
-//            boolean flag = new File(zipFilePath).delete();
+            boolean flag = new File(zipFilePath).delete();
 //            logger.debug("删除源文件结果: " + flag);
 //            fileOperateUtil.WriteStringToFile(fileOperateUtil.logPath, "delete " + zipFilePath + "result: " + flag);
         }
