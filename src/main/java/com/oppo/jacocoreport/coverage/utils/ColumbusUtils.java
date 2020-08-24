@@ -272,7 +272,18 @@ public class ColumbusUtils {
                 execute.extractFiles(targetPath);
             }
         }
-
+        //还没有找到jar包，再通过应用前缀再搜索一次
+        if(!existJar){
+            System.out.println(applicationID.substring(applicationID.indexOf("-")+1));
+            applicationJarPath = getapplicationJarPath(new File(localpath),applicationID.substring(applicationID.indexOf("-")+1));
+            if(applicationJarPath!=null){
+                existJar = true;
+                fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+                execute.extractFiles(targetPath);
+            }else{
+                System.out.println("application postfix find jar failed");
+            }
+        }
         return existJar;
     }
     private static String getApplicationIDJarName(File filePath){
