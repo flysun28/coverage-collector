@@ -26,6 +26,7 @@ public class AsyncTask {
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
 
+
         if(ignoreclassStr != null && !ignoreclassStr.equals("")){
             ignoreclassList = ignoreclassStr.split(",");
         }
@@ -33,7 +34,7 @@ public class AsyncTask {
             ignorepackageList = ignorepackageStr.split(",");
         }
         System.out.println("start coverage test");
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskId,gitPath,testedBranch,versionname,basicBranch,newTag,oldTag);
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
             reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
         }catch (DefinitionException e){

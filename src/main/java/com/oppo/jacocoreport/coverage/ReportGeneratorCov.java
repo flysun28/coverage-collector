@@ -1,16 +1,12 @@
 package com.oppo.jacocoreport.coverage;
 
-import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
+import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
-import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
-import com.oppo.jacocoreport.coverage.jacoco.AnalyExecData;
 import com.oppo.jacocoreport.coverage.jacoco.AnalyNewBuildVersion;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
-import com.oppo.jacocoreport.coverage.maven.Maveninvoker;
 import com.oppo.jacocoreport.coverage.utils.*;
-import com.oppo.jacocoreport.coverage.yaml.ReadYml;
 import com.oppo.jacocoreport.response.DefinitionException;
 import com.oppo.jacocoreport.response.ErrorEnum;
 import org.jacoco.core.analysis.Analyzer;
@@ -23,8 +19,6 @@ import org.jacoco.report.FileMultiReportOutput;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.MultiSourceFileLocator;
 import org.jacoco.report.html.HTMLFormatter;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,6 +43,7 @@ public class ReportGeneratorCov {
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
     private String taskIdPath = "";
+    private String isTimerTask = "0";
 
     private ExecFileLoader execFileLoader;
 
@@ -57,18 +52,19 @@ public class ReportGeneratorCov {
      *
      * @param
      */
-    public ReportGeneratorCov(Long taskId,String applicationgitlabUrl,String newBranchName,String versionname,String oldBranchName,String newTag,String oldTag) {
+    public ReportGeneratorCov(ApplicationCodeInfo applicationCodeInfo) {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
-        this.taskId = taskId;
+        this.taskId = applicationCodeInfo.getId();
         this.port = Config.Port;
         this.gitName = Config.GitName;
         this.gitPassword = Config.GitPassword;
-        this.applicationgitlabUrl = applicationgitlabUrl;
-        this.newBranchName = newBranchName;
-        this.oldBranchName = oldBranchName;
-        this.versionname = versionname;
-        this.newTag = newTag;
-        this.oldTag = oldTag;
+        this.applicationgitlabUrl = applicationCodeInfo.getGitPath();
+        this.newBranchName = applicationCodeInfo.getTestedBranch();
+        this.oldBranchName = applicationCodeInfo.getBasicBranch();
+        this.versionname = applicationCodeInfo.getVersionName();
+        this.newTag = applicationCodeInfo.getTestedCommitId();
+        this.oldTag = applicationCodeInfo.getBasicCommitId();
+        this.isTimerTask = applicationCodeInfo.getIsTimerTask();
 
     }
     private static File createCoverageReportPathBySysTime(){
@@ -306,6 +302,9 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata();
                     Thread.sleep(1000);
+                    if(isTimerTask == "1"){
+                           cancel();
+                    }
                 } catch (Exception e) {
                     e.getStackTrace();
                 }
@@ -412,8 +411,8 @@ public class ReportGeneratorCov {
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
 
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
-        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
+//        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
+//        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
 
     }
 }
