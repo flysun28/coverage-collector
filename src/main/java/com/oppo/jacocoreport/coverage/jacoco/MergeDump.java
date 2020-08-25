@@ -34,10 +34,7 @@ public class MergeDump {
 
      for(File file : files){
          if(file.getName().contains(".exec")){
-             System.out.println("文件"+file.getAbsolutePath());
              fileSetList.add(file);
-         } else{
-             System.out.println("非exec文件:"+file.getAbsolutePath());
          }
      }
      return fileSetList;
