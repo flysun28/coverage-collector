@@ -14,6 +14,8 @@ import com.oppo.jacocoreport.response.ErrorEnum;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
+import org.jacoco.core.internal.diff.ClassInfo;
+import org.jacoco.core.internal.diff.CodeDiff;
 import org.jacoco.core.internal.diff.GitAdapter;
 import org.jacoco.core.tools.ExecFileLoader;
 import org.jacoco.report.DirectorySourceFileLocator;
@@ -129,11 +131,14 @@ public class ReportGeneratorCov {
 
     private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws Exception {
         //差异化代码覆盖率
+        List<ClassInfo> classInfos = CodeDiff.diffTagToTag(gitlocalPath, newBranchName, newTag, oldTag);
+        if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
 
-            if(bundleCoverageDiff.getPackages().size() > 0) {
+            if (bundleCoverageDiff.getPackages().size() > 0) {
                 createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
             }
+        }
     }
 
     private void createReport(final IBundleCoverage bundleCoverage,File reportDir,ArrayList<File> sourceDirectoryList)
