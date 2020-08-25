@@ -130,10 +130,11 @@ public class ReportGeneratorCov {
     private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws Exception {
         //差异化代码覆盖率
         List<ClassInfo> classInfos = CodeDiff.diffTagToTag(gitlocalPath, newBranchName, newTag, oldTag);
-        if(classInfos != null && classInfos.size() > 0) {
+        System.out.println("get diff report");
+//        if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
             createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
-        }
+//        }
     }
 
     private void createReport(final IBundleCoverage bundleCoverage,File reportDir,ArrayList<File> sourceDirectoryList)
@@ -305,7 +306,7 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata();
                     Thread.sleep(1000);
-                    if(isTimerTask == "1"){
+                    if(isTimerTask == "0"){
                            cancel();
                     }
                 } catch (Exception e) {
@@ -405,17 +406,26 @@ public class ReportGeneratorCov {
     public static void main(final String[] args) throws Exception {
         Long taskID = 10010L;
         String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/fin-2.1";
+        String testedBranch = "dev/2.2/bank_ktp";
         String basicBranch = "master";
-        String newTag = "efa5b51a";
-        String oldTag = "f03755ea";
-        String versionName = "fin-loan-api-20200819110448-222";
+        String newTag = "3293de29a71fd68b6aaca56df6d2936a3a49b7e2";
+        String oldTag = "a768b3b65f6167e09a76da65861af8e1abd4db32";
+        String versionName = "fin-loan-api-20200824194945-245";
         String applicationID = "fin-loan-api";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
+        ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
+        applicationCodeInfo.setId(taskID);
+        applicationCodeInfo.setGitPath(gitPath);
+        applicationCodeInfo.setTestedBranch(testedBranch);
+        applicationCodeInfo.setBasicBranch(basicBranch);
+        applicationCodeInfo.setTestedCommitId(newTag);
+        applicationCodeInfo.setBasicCommitId(oldTag);
+        applicationCodeInfo.setVersionName(versionName);
+        applicationCodeInfo.setApplicationID(applicationID);
 
-//        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(taskID,gitPath,testedBranch,versionName,basicBranch,newTag,oldTag);
-//        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
+        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
+        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
 
     }
 }
