@@ -200,6 +200,10 @@ public class ReportGeneratorCov {
 //        }else{
             //基于Tag比较的覆盖 参数1：本地仓库，参数2：代码分支，参数3：新Tag(预发版本)，参数4：基线Tag（变更前的版本）
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
+            System.out.println("gitlocalPath"+gitlocalPath);
+            System.out.println("newBranchName"+newBranchName);
+            System.out.println("newTag"+newTag);
+            System.out.println("oldTag"+oldTag);
             coverageBuilder = new CoverageBuilder(gitlocalPath, newBranchName, newTag, oldTag);
 //        }
         final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
