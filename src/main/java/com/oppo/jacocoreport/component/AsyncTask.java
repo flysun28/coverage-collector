@@ -27,7 +27,7 @@ public class AsyncTask {
         if(ignorepackageStr != null && !ignorepackageStr.equals("")){
             ignorepackageList = ignorepackageStr.split(",");
         }
-        System.out.println("start coverage test");
+        System.out.println("start coverage test "+applicationCodeInfo.toString());
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
             reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);

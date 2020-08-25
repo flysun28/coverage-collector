@@ -113,4 +113,21 @@ public class ApplicationCodeInfo {
         this.isTimerTask = isTimerTask;
     }
 
+    @Override
+    public String toString() {
+        return "CoverageResponse{" +
+                "id=" + id +
+                ", gitPath='" + gitPath + '\'' +
+                ", testedBranch='" + testedBranch + '\'' +
+                ", basicBranch='" + basicBranch + '\'' +
+                ", testedCommitId='" + testedCommitId + '\'' +
+                ", basicCommitId='" + basicCommitId + '\'' +
+                ", versionName='" + versionName + '\'' +
+                ", deployKey='" + deployKey + '\'' +
+                ", ignoreClass='" + ignoreClass + '\'' +
+                ", ignorePackage='" + ignorePackage + '\'' +
+                ", isTimerTask='" + isTimerTask + '\'' +
+                '}';
+    }
+
 }
