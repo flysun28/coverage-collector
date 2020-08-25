@@ -39,9 +39,10 @@ public class CoverageController {
             return new Data().setCode(-4).setData("versionname can not be blank");
         }
         //异步执行覆盖率任务
+        System.out.println(applicationCodeInfo.toString());
         asyncTask.startCoverageTask(applicationCodeInfo);
         System.out.println(gitPath);
-         return new Data().setCode(200).setData("sucess");
+         return new Data().setCode(200).setData("success");
     }
 
 

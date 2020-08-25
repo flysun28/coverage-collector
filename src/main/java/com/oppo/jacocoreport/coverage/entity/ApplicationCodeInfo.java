@@ -104,5 +104,20 @@ public class ApplicationCodeInfo {
     public void setDeployKey(String deployKey) {
         this.deployKey = deployKey;
     }
+    @Override
+    public String toString() {
+        return "CoverageResponse{" +
+                "id=" + id +
+                ", gitPath='" + gitPath + '\'' +
+                ", testedBranch='" + testedBranch + '\'' +
+                ", basicBranch='" + basicBranch + '\'' +
+                ", testedCommitId='" + testedCommitId + '\'' +
+                ", basicCommitId='" + basicCommitId + '\'' +
+                ", versionName='" + versionName + '\'' +
+                ", deployKey='" + deployKey + '\'' +
+                ", ignoreClass='" + ignoreClass + '\'' +
+                ", ignorePackage='" + ignorePackage + '\'' +
+                '}';
+    }
 
 }
