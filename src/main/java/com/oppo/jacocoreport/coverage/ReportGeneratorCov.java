@@ -135,9 +135,7 @@ public class ReportGeneratorCov {
         if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
 
-            if (bundleCoverageDiff.getPackages().size() > 0) {
-                createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
-            }
+            createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
         }
     }
 
