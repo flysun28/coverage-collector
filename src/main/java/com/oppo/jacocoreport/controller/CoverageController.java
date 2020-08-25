@@ -25,23 +25,28 @@ public class CoverageController {
     }
 
     private Data dealWith(ApplicationCodeInfo applicationCodeInfo){
-         String taskId = applicationCodeInfo.getId().toString();
-         String gitPath = applicationCodeInfo.getGitPath();
-         String testedBranch = applicationCodeInfo.getTestedBranch();
-         String versionname = applicationCodeInfo.getVersionName();
-         if(StringUtils.isEmpty(gitPath)){
+         if(StringUtils.isEmpty(applicationCodeInfo.getGitPath())){
              return new Data().setCode(-1).setData("gitpath can not be blank");
          }
-        if(StringUtils.isEmpty(testedBranch)){
+        if(StringUtils.isEmpty(applicationCodeInfo.getTestedBranch())){
             return new Data().setCode(-2).setData("testedBranch can not be blank");
         }
-        if(StringUtils.isEmpty(versionname)){
-            return new Data().setCode(-4).setData("versionname can not be blank");
+        if(StringUtils.isEmpty(applicationCodeInfo.getVersionName())){
+            return new Data().setCode(-3).setData("versionname can not be blank");
+        }
+        if(StringUtils.isEmpty(applicationCodeInfo.getTestedCommitId())){
+            return new Data().setCode(-4).setData("testedCommitId can not be blank");
+        }
+        if(StringUtils.isEmpty(applicationCodeInfo.getBasicCommitId())){
+            return new Data().setCode(-5).setData("basicCommitId can not be blank");
+        }
+        if(StringUtils.isEmpty(applicationCodeInfo.getBasicBranch())){
+            return new Data().setCode(-6).setData("basicBranch can not be blank");
         }
         //异步执行覆盖率任务
         System.out.println(applicationCodeInfo.toString());
         asyncTask.startCoverageTask(applicationCodeInfo);
-        System.out.println(gitPath);
+        System.out.println(applicationCodeInfo.getGitPath());
          return new Data().setCode(200).setData("success");
     }
 
