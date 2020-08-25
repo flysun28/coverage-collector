@@ -14,12 +14,6 @@ import org.springframework.util.StringUtils;
 public class AsyncTask {
     public void startCoverageTask(ApplicationCodeInfo applicationCodeInfo){
         Long taskId = applicationCodeInfo.getId();
-        String gitPath = applicationCodeInfo.getGitPath();
-        String testedBranch = applicationCodeInfo.getTestedBranch();
-        String basicBranch = applicationCodeInfo.getBasicBranch();
-        String versionname = applicationCodeInfo.getVersionName();
-        String newTag = applicationCodeInfo.getTestedCommitId();
-        String oldTag = applicationCodeInfo.getBasicCommitId();
         String applicationID = applicationCodeInfo.getApplicationID();
         String ignoreclassStr = applicationCodeInfo.getIgnoreClass();
         String ignorepackageStr = applicationCodeInfo.getIgnorePackage();
