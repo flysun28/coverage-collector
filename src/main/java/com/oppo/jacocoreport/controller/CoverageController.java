@@ -18,6 +18,10 @@ public class CoverageController {
     public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
     }
+    @GetMapping("/stopcoveragetask")
+    public Data stopcoveragetask(@RequestParam(name="taskID") long taskID,@RequestParam(name="isTimerTask") int  isTimerTask){
+        return new Data().setCode(200).setData("success");
+    }
 
     private Data dealWith(ApplicationCodeInfo applicationCodeInfo){
          String taskId = applicationCodeInfo.getId().toString();
@@ -36,7 +40,7 @@ public class CoverageController {
         //异步执行覆盖率任务
         asyncTask.startCoverageTask(applicationCodeInfo);
         System.out.println(gitPath);
-         return new Data().setCode(200).setData("sucess");
+         return new Data().setCode(200).setData("success");
     }
 
 
