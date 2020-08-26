@@ -309,7 +309,7 @@ public class ReportGeneratorCov {
                            cancel();
                     }
                 } catch (Exception e) {
-                    e.getStackTrace();
+                    e.printStackTrace();
                 }
             }
         }, 0, 300000);
