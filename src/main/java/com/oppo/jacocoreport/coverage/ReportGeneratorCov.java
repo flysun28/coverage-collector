@@ -44,10 +44,19 @@ public class ReportGeneratorCov {
     private String versionname = "";
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
-    private String taskIdPath = "";
     private String isTimerTask = "0";
 
     private ExecFileLoader execFileLoader;
+    private static Map<String,Timer> timerMap = new HashMap<String,Timer>();
+    public static Map<String, Timer> getTimerMap() {
+        return timerMap;
+    }
+
+    public static void setTimerMap(Map<String, Timer> timerMap) {
+        ReportGeneratorCov.timerMap = timerMap;
+    }
+
+
 
     /**
      * Create a new generator based for the given project.
@@ -236,7 +245,8 @@ public class ReportGeneratorCov {
     private void timerTask(Map<String,Object> applicationMap) throws Exception {
 
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        new Timer().schedule(new TimerTask() {
+        timerMap.put(String.valueOf(taskId),new Timer());
+        timerMap.get(String.valueOf(taskId)).schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
