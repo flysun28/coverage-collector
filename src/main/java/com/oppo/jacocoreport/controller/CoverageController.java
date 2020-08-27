@@ -26,8 +26,10 @@ public class CoverageController {
     public Data stopcoveragetask(@RequestParam(name="taskID") long taskID){
         try {
             Map<String, Timer> timerMap = ReportGeneratorCov.getTimerMap();
-            timerMap.get(String.valueOf(taskID)).cancel();
-            timerMap.remove(String.valueOf(taskID));
+            if(timerMap.containsKey(String.valueOf(taskID))) {
+                timerMap.get(String.valueOf(taskID)).cancel();
+                timerMap.remove(String.valueOf(taskID));
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
