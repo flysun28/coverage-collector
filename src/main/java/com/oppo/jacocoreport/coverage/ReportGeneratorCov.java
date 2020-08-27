@@ -308,7 +308,7 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
-                        throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(), ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+                        HttpUtils.sendErrorMSG(taskId,ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
 
                     //生成整体覆盖率报告
@@ -327,11 +327,17 @@ public class ReportGeneratorCov {
                     if(timerMap.containsKey(String.valueOf(taskId))) {
                         System.out.println(applicationMap.get("applicationID").toString()+" taskId : "+taskId+" is timertask");
                     }
-                } catch (Exception e) {
+                }catch (DefinitionException e){
+                    HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
+                }
+                catch (Exception e) {
                     e.printStackTrace();
+                }finally {
+                    cancel();
+                    timerMap.remove(String.valueOf(taskId));
                 }
             }
-        }, 0, 60000);
+        }, 0, 600000);
     }
 
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
