@@ -242,6 +242,7 @@ public class ReportGeneratorCov {
             throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
         }
     }
+
     private void timerTask(Map<String,Object> applicationMap) throws Exception {
 
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
@@ -275,6 +276,7 @@ public class ReportGeneratorCov {
                                     System.out.println("exist new version");
                                     executionDataFile.delete();
                                     cancel();
+                                    timerMap.remove(String.valueOf(taskId));
                                 }
                             }
                         }
