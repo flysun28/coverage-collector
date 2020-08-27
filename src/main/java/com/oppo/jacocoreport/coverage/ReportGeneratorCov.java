@@ -1,5 +1,6 @@
 package com.oppo.jacocoreport.coverage;
 
+import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
@@ -21,6 +22,7 @@ import org.jacoco.report.FileMultiReportOutput;
 import org.jacoco.report.IReportVisitor;
 import org.jacoco.report.MultiSourceFileLocator;
 import org.jacoco.report.html.HTMLFormatter;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
