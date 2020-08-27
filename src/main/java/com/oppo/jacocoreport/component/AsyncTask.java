@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
+
 @Component
 @Async
 public class AsyncTask {
@@ -27,7 +29,7 @@ public class AsyncTask {
         if(ignorepackageStr != null && !ignorepackageStr.equals("")){
             ignorepackageList = ignorepackageStr.split(",");
         }
-        System.out.println("start coverage test "+applicationCodeInfo.toString());
+        System.out.println(new Date().toString()+"start coverage test "+applicationCodeInfo.toString());
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
             reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);

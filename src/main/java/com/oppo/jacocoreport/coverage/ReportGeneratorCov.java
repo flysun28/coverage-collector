@@ -234,7 +234,7 @@ public class ReportGeneratorCov {
             }
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
             coverageData = jsouphtml.getCoverageData(taskId);
-            System.out.println(coverageData.toString());
+            System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
             System.out.println("send coveragedata" + data.getCode());
         }catch (Exception e){
@@ -283,6 +283,7 @@ public class ReportGeneratorCov {
                     File allexecutionDataFile = new File(coverageReportPath,"jacocoAll.exec");
                     if(allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)){
                         cancel();
+                        timerMap.remove(String.valueOf(taskId));
                     }
                     Map<String, Object> sourceapplications = (Map) applicationMap.get("sourceapplications");
                     for (String key : sourceapplications.keySet()) {
@@ -305,9 +306,7 @@ public class ReportGeneratorCov {
                     }
 
                     //生成整体覆盖率报告
-                    System.out.println("生成整体覆盖率报告");
                     createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
-                    System.out.println("生成差异化覆盖率报告");
                     if (!newTag.equals(oldTag)) {
 
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
