@@ -66,7 +66,6 @@ public class MergeDump {
      */
     public void load(final ExecFileLoader loader){
          for(final File fileSet : fileSets(this.path)){
-              System.out.println(fileSet.getAbsoluteFile());
               final  File inputFile = new File(this.path,fileSet.getName());
               if(inputFile.isDirectory()){
                   continue;

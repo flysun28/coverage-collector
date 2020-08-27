@@ -44,7 +44,7 @@ public class ReportGeneratorCov {
     private String versionname = "";
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
-    private String isTimerTask = "0";
+    private int isTimerTask = 0;
 
     private ExecFileLoader execFileLoader;
     private static Map<String,Timer> timerMap = new HashMap<String,Timer>();
@@ -315,8 +315,12 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata();
                     Thread.sleep(1000);
-                    if(isTimerTask == "0"){
+                    if(isTimerTask == 0){
                            cancel();
+                        timerMap.remove(String.valueOf(taskId));
+                    }
+                    if(timerMap.containsKey(String.valueOf(taskId))) {
+                        System.out.println(applicationMap.get("applicationID").toString()+" taskId : "+taskId+"is timertask");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -389,6 +393,7 @@ public class ReportGeneratorCov {
         //过滤配置的ignore class,package文件
         ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
         projectMap.put("classPath",classPath);
+        projectMap.put("applicationID",applicationID);
 
 //        //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
 //        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
@@ -432,6 +437,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setBasicCommitId(oldTag);
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
+        applicationCodeInfo.setIsTimerTask(1);
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);

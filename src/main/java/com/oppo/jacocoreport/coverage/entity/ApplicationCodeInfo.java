@@ -13,7 +13,10 @@ public class ApplicationCodeInfo {
     private String deployKey = "";
     private String ignoreClass = "";
     private String ignorePackage = "";
-    private String isTimerTask = "0";//默认为0，不开启轮询任务
+
+
+
+    private int isTimerTask = 0;//默认为0，不开启轮询任务
 
     public String getIgnoreClass() {
         return ignoreClass;
@@ -105,11 +108,11 @@ public class ApplicationCodeInfo {
     public void setDeployKey(String deployKey) {
         this.deployKey = deployKey;
     }
-    public String getIsTimerTask() {
+    public int getIsTimerTask() {
         return isTimerTask;
     }
 
-    public void setIsTimerTask(String isTimerTask) {
+    public void setIsTimerTask(int isTimerTask) {
         this.isTimerTask = isTimerTask;
     }
 
