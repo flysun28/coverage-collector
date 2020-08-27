@@ -47,7 +47,6 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
 
     public static boolean fileNotUpdateBy24Hours(File execFile){
         long modifedtime = execFile.lastModified();
-        Date d = new Date(modifedtime);
         long currenttime = new Date().getTime();
         double result = (currenttime - modifedtime)*1.0/(1000*60*60);
         if(result <= 24){

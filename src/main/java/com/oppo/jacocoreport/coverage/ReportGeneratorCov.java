@@ -319,7 +319,7 @@ public class ReportGeneratorCov {
                         timerMap.remove(String.valueOf(taskId));
                     }
                     if(timerMap.containsKey(String.valueOf(taskId))) {
-                        System.out.println(applicationMap.get("applicationID").toString()+" taskId : "+taskId+"is timertask");
+                        System.out.println(applicationMap.get("applicationID").toString()+" taskId : "+taskId+" is timertask");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

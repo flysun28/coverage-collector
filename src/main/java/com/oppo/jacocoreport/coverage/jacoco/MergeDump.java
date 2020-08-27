@@ -16,7 +16,6 @@ public class MergeDump {
     }
 
     private List<File> fileSets(String dir){
-     System.out.println(dir);
      List<File> fileSetList = new ArrayList<File>();
      File path = new File(dir);
      if(!path.exists()){
