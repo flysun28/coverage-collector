@@ -331,7 +331,7 @@ public class ReportGeneratorCov {
                     e.printStackTrace();
                 }
             }
-        }, 0, 300000);
+        }, 0, 60000);
     }
 
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
