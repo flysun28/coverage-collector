@@ -10,7 +10,7 @@ public class Config {
 
 //    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
     public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
-    public final static String ReportBaseUrl = "http://10.84.24.29:8888/";
+    public final static String ReportBaseUrl = "http://report.jacoco.wanyol:8888/";
     public final static String SEND_COVERAGE_URL = "http://atms.itest.wanyol.com/api/codeCoverage/execution/result";
     public static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
     public static String SEND_ERRORMESSAGE_URL = "http://atms.itest.wanyol.com/api/codeCoverage/execution/failed";
