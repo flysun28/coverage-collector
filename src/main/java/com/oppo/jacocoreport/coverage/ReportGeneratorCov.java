@@ -304,6 +304,8 @@ public class ReportGeneratorCov {
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
+                        cancel();
+                        timerMap.remove(String.valueOf(taskId));
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(), ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
 
@@ -317,7 +319,7 @@ public class ReportGeneratorCov {
                     sendcoveragedata();
                     Thread.sleep(1000);
                     if(isTimerTask == 0){
-                           cancel();
+                        cancel();
                         timerMap.remove(String.valueOf(taskId));
                     }
                     if(timerMap.containsKey(String.valueOf(taskId))) {

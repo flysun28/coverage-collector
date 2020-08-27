@@ -27,6 +27,7 @@ public class CoverageController {
         try {
             Map<String, Timer> timerMap = ReportGeneratorCov.getTimerMap();
             if(timerMap.containsKey(String.valueOf(taskID))) {
+                System.out.println(String.valueOf(taskID));
                 timerMap.get(String.valueOf(taskID)).cancel();
                 timerMap.remove(String.valueOf(taskID));
             }
