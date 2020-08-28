@@ -340,7 +340,7 @@ public class ReportGeneratorCov {
                     HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                 }
             }
-        }, 0, 300000);
+        }, 0, 1800000);
     }
 
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
