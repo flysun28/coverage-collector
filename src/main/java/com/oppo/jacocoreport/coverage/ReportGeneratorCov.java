@@ -326,7 +326,6 @@ public class ReportGeneratorCov {
                     if (isTimerTask == 0) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                     }
                     if (timerMap.containsKey(String.valueOf(taskId))) {
                         System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + taskId + " is timertask");
@@ -337,7 +336,9 @@ public class ReportGeneratorCov {
                     e.printStackTrace();
                     cancel();
                     timerMap.remove(String.valueOf(taskId));
-                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                    if(isTimerTask == 1) {
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                    }
                 }
             }
         }, 0, 1800000);
