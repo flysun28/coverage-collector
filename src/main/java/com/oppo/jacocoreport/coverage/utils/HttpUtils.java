@@ -16,27 +16,33 @@ import java.net.URL;
 public class HttpUtils {
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    public static String sendGet(String url) throws Exception {
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-        //默认值GET
-        con.setRequestMethod("GET");
-
-        //添加请求头
-        con.setRequestProperty("User-Agent", USER_AGENT);
-
-        System.out.println("\nSending 'GET' request to URL : " + url);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
+    public static String sendGet(String url) {
         StringBuffer response = new StringBuffer();
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+            //默认值GET
+            con.setRequestMethod("GET");
+
+            //添加请求头
+            con.setRequestProperty("User-Agent", USER_AGENT);
+
+            System.out.println("\nSending 'GET' request to URL : " + url);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        in.close();
-
         return response.toString();
     }
 

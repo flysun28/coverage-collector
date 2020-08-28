@@ -4,6 +4,8 @@ import com.oppo.jacocoreport.component.AsyncTask;
 import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.Data;
+import com.oppo.jacocoreport.coverage.utils.Config;
+import com.oppo.jacocoreport.coverage.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ public class CoverageController {
                 System.out.println(String.valueOf(taskID));
                 timerMap.get(String.valueOf(taskID)).cancel();
                 timerMap.remove(String.valueOf(taskID));
+                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL+taskID);
             }
         }catch (Exception e){
             e.printStackTrace();

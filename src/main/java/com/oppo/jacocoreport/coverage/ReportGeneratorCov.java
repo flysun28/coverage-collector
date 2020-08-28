@@ -248,7 +248,7 @@ public class ReportGeneratorCov {
     private void timerTask(Map<String,Object> applicationMap) throws Exception {
 
         final ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        timerMap.put(String.valueOf(taskId),new Timer());
+        timerMap.put(String.valueOf(taskId), new Timer());
         timerMap.get(String.valueOf(taskId)).schedule(new TimerTask() {
             @Override
             public void run() {
@@ -270,24 +270,26 @@ public class ReportGeneratorCov {
                             executionDataFile = new File(coverageReportPath, serverip + "_jacoco.exec");//第一步生成的exec的文件
                             boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile);
                             //如果取得覆盖率数据，判断是否有新版本
-                            if(getedexecdata){
-                                AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(),executionDataFile.toString());
+                            if (getedexecdata) {
+                                AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(), executionDataFile.toString());
                                 Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
                                 //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
-                                if(newversion){
+                                if (newversion) {
                                     System.out.println("exist new version");
                                     executionDataFile.delete();
                                     cancel();
                                     timerMap.remove(String.valueOf(taskId));
+                                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                                 }
                             }
                         }
                     }
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    File allexecutionDataFile = new File(coverageReportPath,"jacocoAll.exec");
-                    if(allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)){
+                    File allexecutionDataFile = new File(coverageReportPath, "jacocoAll.exec");
+                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                     }
                     Map<String, Object> sourceapplications = (Map) applicationMap.get("sourceapplications");
                     for (String key : sourceapplications.keySet()) {
@@ -308,7 +310,8 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
-                        HttpUtils.sendErrorMSG(taskId,ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                        HttpUtils.sendErrorMSG(taskId, ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
 
                     //生成整体覆盖率报告
@@ -320,24 +323,24 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata();
                     Thread.sleep(1000);
-                    if(isTimerTask == 0){
+                    if (isTimerTask == 0) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                     }
-                    if(timerMap.containsKey(String.valueOf(taskId))) {
-                        System.out.println(applicationMap.get("applicationID").toString()+" taskId : "+taskId+" is timertask");
+                    if (timerMap.containsKey(String.valueOf(taskId))) {
+                        System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + taskId + " is timertask");
                     }
-                }catch (DefinitionException e){
-                    HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
-                }
-                catch (Exception e) {
+                } catch (DefinitionException e) {
+                    HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
+                } catch (Exception e) {
                     e.printStackTrace();
-                }finally {
                     cancel();
                     timerMap.remove(String.valueOf(taskId));
+                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                 }
             }
-        }, 0, 600000);
+        }, 0, 300000);
     }
 
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{

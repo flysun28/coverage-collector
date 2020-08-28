@@ -15,4 +15,5 @@ public class Config {
     public final static String SEND_COVERAGE_URL = "http://atms-test.itest.wanyol.com/api/codeCoverage/execution/result";
     public static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
     public static String SEND_ERRORMESSAGE_URL = "http://atms-test.itest.wanyol.com/api/codeCoverage/execution/failed";
+    public static String SEND_STOPTIMERTASK_URL ="http://atms-test.itest.wanyol.com/api/codeCoverage/execution/stop/timerTask?id=";
 }
