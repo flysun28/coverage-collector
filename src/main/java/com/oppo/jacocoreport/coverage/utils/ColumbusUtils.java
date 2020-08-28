@@ -248,12 +248,22 @@ public class ColumbusUtils {
         Execute execute = new Execute();
         boolean existJar = false;
         File applicationJarPath = null;
-        for(String applicationsrcname :applicationsrclist.keySet()){
-            applicationJarPath = getapplicationJarPath(new File(localpath),applicationsrcname);
-            if(applicationJarPath!=null) {
-                existJar = true;
-                fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
-                execute.extractFiles(targetPath);
+        //先通过applicationID查找jar包
+        applicationJarPath = getapplicationJarPath(new File(localpath), applicationID);
+        if(applicationJarPath!=null) {
+            existJar = true;
+            fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+            execute.extractFiles(targetPath);
+        }
+
+        if(!existJar) {
+            for (String applicationsrcname : applicationsrclist.keySet()) {
+                applicationJarPath = getapplicationJarPath(new File(localpath), applicationsrcname);
+                if (applicationJarPath != null) {
+                    existJar = true;
+                    fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath + File.separator + applicationJarPath.getName());
+                    execute.extractFiles(targetPath);
+                }
             }
         }
         //如果没有找到jar包，通过压缩包前缀再搜索一次
