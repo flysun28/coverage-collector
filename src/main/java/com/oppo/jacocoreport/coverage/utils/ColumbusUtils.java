@@ -223,6 +223,8 @@ public class ColumbusUtils {
         String deployJarprefix = getdeployJarPrefix(zipfile.getName());
         String resultPath = execute.extractFile(zipfile);
         ArrayList<File> packageList = new ArrayList<File>();
+        //先替换下划线
+        applicationID = applicationID.replaceAll("_","-");
         //遍历所有文件夹，找出应用的jar包，并解压
         boolean existJar = extractJartoClass(resultPath,basicPath,deployJarprefix,applicationsrclist,applicationID);
         //再对解压的文件夹里，遍历解压一次
