@@ -289,6 +289,7 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
+
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
                     }
                     Map<String, Object> sourceapplications = (Map) applicationMap.get("sourceapplications");
@@ -311,7 +312,7 @@ public class ReportGeneratorCov {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
-                        HttpUtils.sendErrorMSG(taskId, ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+                        throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
 
                     //生成整体覆盖率报告
