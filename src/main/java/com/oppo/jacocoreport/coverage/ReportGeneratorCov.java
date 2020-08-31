@@ -311,7 +311,9 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                        if (isTimerTask == 1) {
+                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                        }
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
 
