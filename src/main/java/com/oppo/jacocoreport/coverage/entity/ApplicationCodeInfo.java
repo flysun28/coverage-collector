@@ -13,10 +13,8 @@ public class ApplicationCodeInfo {
     private String deployKey = "";
     private String ignoreClass = "";
     private String ignorePackage = "";
-
-
-
     private int isTimerTask = 0;//默认为0，不开启轮询任务
+    private int jacocoPort = 8098;//默认8098端口
 
     public String getIgnoreClass() {
         return ignoreClass;
@@ -101,19 +99,19 @@ public class ApplicationCodeInfo {
         this.basicCommitId = basicCommitId;
     }
 
-    public String getDeployKey() {
-        return deployKey;
-    }
-
-    public void setDeployKey(String deployKey) {
-        this.deployKey = deployKey;
-    }
     public int getIsTimerTask() {
         return isTimerTask;
     }
 
     public void setIsTimerTask(int isTimerTask) {
         this.isTimerTask = isTimerTask;
+    }
+    public int getJacocoPort() {
+        return jacocoPort;
+    }
+
+    public void setJacocoPort(int jacocoPort) {
+        this.jacocoPort = jacocoPort;
     }
 
     @Override
