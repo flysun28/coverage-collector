@@ -270,6 +270,11 @@ public class ReportGeneratorCov {
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
+                            //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
+//                            executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
+//                            executionDataClient.getExecutionData(serverip, port, executionDataFile);
+
+                            //保存到taskID目录下再存一份
                             executionDataFile = new File(coverageReportPath, serverip + "_jacoco.exec");//第一步生成的exec的文件
                             boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile);
                             //如果取得覆盖率数据，判断是否有新版本
@@ -308,7 +313,11 @@ public class ReportGeneratorCov {
 
                     }
                     classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
-                    //合并代码覆盖率
+                    //合并gitlocalPath目录覆盖率
+//                    MergeDump mergeDumpGitLocalPath = new MergeDump(coverageReportPath.toString());
+//                    mergeDumpGitLocalPath.executeMerge();
+
+                    //合并taskID目录代码覆盖率
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
