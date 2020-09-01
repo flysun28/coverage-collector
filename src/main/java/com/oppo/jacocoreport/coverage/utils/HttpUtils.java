@@ -84,6 +84,7 @@ public class HttpUtils {
         errorMsg.setMsg(msg);
         HttpUtils.sendPostRequest(Config.SEND_ERRORMESSAGE_URL,errorMsg);
     }
+
     public static Data sendPostRequest(String url, Object obj){
         RestTemplate client = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -99,6 +100,22 @@ public class HttpUtils {
             e.printStackTrace();
         }
 
+        return response.getBody();
+    }
+
+    /**
+     * 发送get请求
+     * @param url
+     * @return
+     */
+    public static Data sendGetRequest(String url){
+        RestTemplate client = new RestTemplate();
+        ResponseEntity<Data> response = null;
+        try{
+            response = client.getForEntity(url,Data.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return response.getBody();
     }
 

@@ -241,7 +241,6 @@ public class ReportGeneratorCov {
             coverageData = jsouphtml.getCoverageData(taskId);
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
-            System.out.println("send coveragedata" + data.getCode());
         }catch (Exception e){
             e.printStackTrace();
             throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
