@@ -19,11 +19,15 @@ public class CoverageController {
     @Autowired
     private AsyncTask asyncTask;
 
+    public CoverageController(){
+        super();
+    }
     //@GetMapping("/startcoveragetask")
     @PostMapping("/startcoveragetask")
     public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
     }
+
     @GetMapping("/stopcoveragetask")
     public Data stopcoveragetask(@RequestParam(name="taskID") long taskID){
         try {
