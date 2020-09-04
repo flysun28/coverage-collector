@@ -68,7 +68,10 @@ public class ReportGeneratorCov {
     public ReportGeneratorCov(ApplicationCodeInfo applicationCodeInfo) {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
         this.taskId = applicationCodeInfo.getId();
-        this.port = Config.Port;
+        this.port = applicationCodeInfo.getJacocoPort();
+        if(this.port==0){
+          this.port = Config.Port;
+        }
         this.gitName = Config.GitName;
         this.gitPassword = Config.GitPassword;
         this.applicationgitlabUrl = applicationCodeInfo.getGitPath();
@@ -238,7 +241,6 @@ public class ReportGeneratorCov {
             coverageData = jsouphtml.getCoverageData(taskId);
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
-            System.out.println("send coveragedata" + data.getCode());
         }catch (Exception e){
             e.printStackTrace();
             throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
@@ -267,6 +269,11 @@ public class ReportGeneratorCov {
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
+                            //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
+//                            executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
+//                            executionDataClient.getExecutionData(serverip, port, executionDataFile);
+
+                            //保存到taskID目录下再存一份
                             executionDataFile = new File(coverageReportPath, serverip + "_jacoco.exec");//第一步生成的exec的文件
                             boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile);
                             //如果取得覆盖率数据，判断是否有新版本
@@ -305,7 +312,11 @@ public class ReportGeneratorCov {
 
                     }
                     classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
-                    //合并代码覆盖率
+                    //合并gitlocalPath目录覆盖率
+//                    MergeDump mergeDumpGitLocalPath = new MergeDump(coverageReportPath.toString());
+//                    mergeDumpGitLocalPath.executeMerge();
+
+                    //合并taskID目录代码覆盖率
                     MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
