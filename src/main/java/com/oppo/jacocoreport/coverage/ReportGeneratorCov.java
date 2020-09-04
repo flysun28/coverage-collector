@@ -4,6 +4,7 @@ import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
+import com.oppo.jacocoreport.coverage.jacoco.AnalyExecData;
 import com.oppo.jacocoreport.coverage.jacoco.AnalyNewBuildVersion;
 import com.oppo.jacocoreport.coverage.jacoco.ExecutionDataClient;
 import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
@@ -47,6 +48,7 @@ public class ReportGeneratorCov {
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
     private int isTimerTask = 0;
+    private int isBranchTask = 0;
 
     private ExecFileLoader execFileLoader;
     private static Map<String,Timer> timerMap = new HashMap<String,Timer>();
@@ -81,6 +83,7 @@ public class ReportGeneratorCov {
         this.newTag = applicationCodeInfo.getTestedCommitId();
         this.oldTag = applicationCodeInfo.getBasicCommitId();
         this.isTimerTask = applicationCodeInfo.getIsTimerTask();
+        this.isBranchTask = applicationCodeInfo.getIsBranchTask();
 
     }
     private static File createCoverageReportPathBySysTime(){
@@ -303,8 +306,6 @@ public class ReportGeneratorCov {
                     for (String key : sourceapplications.keySet()) {
                         String projectDirectoryStr = ((Map) sourceapplications.get(key)).getOrDefault("sourceDirectory", "").toString();
                         File projectDirectory = new File(projectDirectoryStr);
-
-
                         sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
                         if (sourceDirectory.exists()) {
                             sourceDirectoryList.add(sourceDirectory);
@@ -358,6 +359,55 @@ public class ReportGeneratorCov {
         }, 0, 1800000);
     }
 
+    private void startBranchCoverageTask(Map<String,Object> applicationMap){
+        try {
+            File executionDataFile = null;
+            File sourceDirectory = null;
+            File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
+            File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
+
+            ArrayList<File> classesDirectoryList = new ArrayList<>();
+            ArrayList<File> sourceDirectoryList = new ArrayList<>();
+
+            Map<String, Object> sourceapplications = (Map) applicationMap.get("sourceapplications");
+            for (String key : sourceapplications.keySet()) {
+                String projectDirectoryStr = ((Map) sourceapplications.get(key)).getOrDefault("sourceDirectory", "").toString();
+                File projectDirectory = new File(projectDirectoryStr);
+                sourceDirectory = new File(projectDirectory, "src/main/java");//源码目录
+                if (sourceDirectory.exists()) {
+                    sourceDirectoryList.add(sourceDirectory);
+                }
+            }
+            File allexecutionDataFile = new File(coverageReportPath, "jacocoAll.exec");
+            classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
+
+            //合并taskID目录代码覆盖率
+            MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
+            allexecutionDataFile = mergeDump.executeMerge();
+            if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
+                timerMap.remove(String.valueOf(taskId));
+                if (isTimerTask == 1) {
+                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                }
+                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+            }
+
+            //生成整体覆盖率报告
+            createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+            if (!newTag.equals(oldTag)) {
+
+                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
+            }
+            //上传覆盖率报告
+            sendcoveragedata();
+            Thread.sleep(1000);
+        } catch (DefinitionException e) {
+            HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
         GitUtil gitUtil = new GitUtil(gitName,gitPassword);
@@ -406,8 +456,6 @@ public class ReportGeneratorCov {
         projectMap.put("sourceapplications",sourceapplicationsMap);
 
         HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,versionname);
-//        String newBranchName = applicationHash.get("buildBranch").toString();
-//        String newTag = applicationHash.get("commitID").toString();
         String applicationIPList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
 
@@ -424,20 +472,28 @@ public class ReportGeneratorCov {
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
 
-//        //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
-//        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
-//        File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
-//        if(jacocoAll.exists()) {
-//            AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
-//            analyExecData.filterOldExecData(classPath);
-//            //再将原始jacocoAll.exec文件删除
-//            jacocoAll.delete();
+//        if(this.isBranchTask == 1){
+//            filterBranchData(localPath,newBranchName,classPath);
+//
 //        }
-        //开始生成覆盖率报告任务
-        timerTask(projectMap);
+//        else {
+            //开始生成覆盖率报告任务
+            timerTask(projectMap);
+//        }
 
     }
 
+    public static void filterBranchData(File localPath,String newBranchName,String classPath) throws Exception{
+        //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
+        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
+        File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
+        if(jacocoAll.exists()) {
+            AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
+            analyExecData.filterOldExecData(classPath);
+            //再将原始jacocoAll.exec文件删除
+            jacocoAll.delete();
+        }
+    }
     /**
      * Starts the report generation process
      *
