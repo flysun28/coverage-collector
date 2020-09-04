@@ -15,6 +15,7 @@ public class ApplicationCodeInfo {
     private String ignorePackage = "";
     private int isTimerTask = 0;//默认为0，不开启轮询任务
     private int jacocoPort = 8098;//默认8098端口
+    private int isBranchTask = 0;// 0 非分支任务 1 分支任务
 
     public String getIgnoreClass() {
         return ignoreClass;
@@ -113,6 +114,13 @@ public class ApplicationCodeInfo {
     public void setJacocoPort(int jacocoPort) {
         this.jacocoPort = jacocoPort;
     }
+    public int getIsBranchTask() {
+        return isBranchTask;
+    }
+
+    public void setIsBranchTask(int isBranchTask) {
+        this.isBranchTask = isBranchTask;
+    }
 
     @Override
     public String toString() {
@@ -128,6 +136,7 @@ public class ApplicationCodeInfo {
                 ", ignoreClass='" + ignoreClass + '\'' +
                 ", ignorePackage='" + ignorePackage + '\'' +
                 ", isTimerTask='" + isTimerTask + '\'' +
+                ", isBranchTask='" + isBranchTask + '\'' +
                 '}';
     }
 
