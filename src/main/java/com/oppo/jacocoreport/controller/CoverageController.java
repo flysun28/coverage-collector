@@ -21,8 +21,6 @@ public class CoverageController {
 
     public CoverageController(){
         super();
-        System.out.println("start recover task");
-        HttpUtils.sendGetRequest(Config.RECOVER_TIMERTASK_URL);
     }
     //@GetMapping("/startcoveragetask")
     @PostMapping("/startcoveragetask")
