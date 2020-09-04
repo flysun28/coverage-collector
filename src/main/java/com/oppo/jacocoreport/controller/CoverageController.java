@@ -19,11 +19,17 @@ public class CoverageController {
     @Autowired
     private AsyncTask asyncTask;
 
+    public CoverageController(){
+        super();
+        System.out.println("start recover task");
+        HttpUtils.sendGetRequest(Config.RECOVER_TIMERTASK_URL);
+    }
     //@GetMapping("/startcoveragetask")
     @PostMapping("/startcoveragetask")
     public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
     }
+
     @GetMapping("/stopcoveragetask")
     public Data stopcoveragetask(@RequestParam(name="taskID") long taskID){
         try {

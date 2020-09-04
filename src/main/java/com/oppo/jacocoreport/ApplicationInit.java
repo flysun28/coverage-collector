@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 public class ApplicationInit implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
-         System.out.println("start recover task");
-         HttpUtils.sendGetRequest(Config.RECOVER_TIMERTASK_URL);
+
     }
 }
