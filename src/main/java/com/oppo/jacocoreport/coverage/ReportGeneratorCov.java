@@ -363,8 +363,8 @@ public class ReportGeneratorCov {
         try {
             File executionDataFile = null;
             File sourceDirectory = null;
-            File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
-            File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
+            File reportAllCovDirectory = new File(coverageReportPath, "branchcoveragereport");////要保存报告的地址
+            File reportDiffDirectory = new File(coverageReportPath, "branchcoveragediffreport");
 
             ArrayList<File> classesDirectoryList = new ArrayList<>();
             ArrayList<File> sourceDirectoryList = new ArrayList<>();
@@ -472,14 +472,14 @@ public class ReportGeneratorCov {
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
 
-//        if(this.isBranchTask == 1){
-//            filterBranchData(localPath,newBranchName,classPath);
-//
-//        }
-//        else {
+        if(this.isBranchTask == 1){
+            filterBranchData(localPath,newBranchName,classPath);
+
+        }
+        else {
             //开始生成覆盖率报告任务
             timerTask(projectMap);
-//        }
+        }
 
     }
 
