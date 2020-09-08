@@ -50,6 +50,7 @@ public class ReportGeneratorCov {
     private int isTimerTask = 0;
     private int isBranchTask = 0;
 
+
     private ExecFileLoader execFileLoader;
     private static Map<String,Timer> timerMap = new HashMap<String,Timer>();
     public static Map<String, Timer> getTimerMap() {
@@ -473,7 +474,10 @@ public class ReportGeneratorCov {
         String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
         //过滤配置的ignore class,package文件
         ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
+
         //只统计指定包
+        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
+        ColumbusUtils.filterContainPackages(containPackagesSet,new File(classPath));
 
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);

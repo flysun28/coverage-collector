@@ -152,31 +152,70 @@ public class ColumbusUtils {
             fileOperateUtil.delAllFile(new File(basePath,packagenamePath).toString());
         }
     }
-
-    public static void filterContainPackages(String[] containPackageList,File basePath){
-        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+    public static HashSet getcontainPackageHashSet(String[] containPackageList){
         HashSet containpackageSet = new HashSet();
         for(String packagename:containPackageList){
             String packagenamePath = packagename.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
             containpackageSet.add(packagenamePath);
         }
+        return containpackageSet;
+    }
+    public static int packageContainPath(HashSet containpackageSet,File basePath){
+        int containresult = 2; //0,路径中包含包名 1,路径完全匹配包名 2 路径不包含包名
+        if (containpackageSet == null) {
+            return containresult;
+        }
+
+        String path =basePath.getPath();
+        if(!path.contains("com")){
+            return containresult;
+        }
+        path = path.substring(path.indexOf("com"));
+        Iterator iterator = containpackageSet.iterator();
+        while (iterator.hasNext()) {
+            String containpackagename = iterator.next().toString();
+            if(containpackagename.contains(path)){
+                containresult=0;
+            }
+            if(containpackagename.equals(path)){
+                containresult=1;
+            }
+        }
+        return containresult;
+    }
+    public static void filterContainPackages(HashSet containpackageSet,File basePath){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
         if(basePath.isDirectory()) {
             File[] fileList = basePath.listFiles();
             //遍历代码工程
             for (File f : fileList) {
                 //判断是否文件夹目录
                 if (f.isDirectory()) {
-                    //如果当前文件夹名== src
-                    if ( containpackageSet.contains(f.getName())) {
-                        //断定当前是应用名
+                    int containresult = packageContainPath(containpackageSet,f);
+                    //如果不是指定包名
+                    if (containresult == 2) {
+                        fileOperateUtil.delAllFile(f.toString());
                     }
-                    else{
-//                        getApplicationNames(f,applicationList);
+                    //如果包含包名
+                    else if(containresult == 0){
+                        filterContainPackages(containpackageSet,f);
+                    }
+                    //如果等于包名
+                    else if(containresult == 1){
+                        //暂不处理
+                    }
+                }
+                else{
+                    int result = packageContainPath(containpackageSet,new File(f.getPath()));
+                    if(result != 1){
+                        System.out.println(f.toString());
+                         f.delete();
                     }
                 }
             }
         }
     }
+
 
     public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath){
         String fileName = "";
@@ -372,7 +411,10 @@ public class ColumbusUtils {
 //           System.out.println(appVersionResponse.getRepositoryUrl());
 //       }
 //        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
-        String downloadFilePath = downloadColumbusBuildVersion("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202008/combine_844869-20200820-8448691.zip","D:\\execfile");
-        extractColumsBuildVersionClasses(downloadFilePath,"D:\\execfile\\classes","annotate-data-product-service",new HashMap<>());
+//        String downloadFilePath = downloadColumbusBuildVersion("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202008/combine_844869-20200820-8448691.zip","D:\\execfile");
+//        extractColumsBuildVersionClasses(downloadFilePath,"D:\\execfile\\classes","annotate-data-product-service",new HashMap<>());
+        String[] containPackages = {"com.oppo.fintech.loan.core","com.oppo.fintech.loan.api.impl"};
+        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
+        ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\fin-loan\\classes"));
     }
 }
