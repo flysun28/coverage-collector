@@ -153,6 +153,31 @@ public class ColumbusUtils {
         }
     }
 
+    public static void filterContainPackages(String[] containPackageList,File basePath){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+        HashSet containpackageSet = new HashSet();
+        for(String packagename:containPackageList){
+            String packagenamePath = packagename.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+            containpackageSet.add(packagenamePath);
+        }
+        if(basePath.isDirectory()) {
+            File[] fileList = basePath.listFiles();
+            //遍历代码工程
+            for (File f : fileList) {
+                //判断是否文件夹目录
+                if (f.isDirectory()) {
+                    //如果当前文件夹名== src
+                    if ( containpackageSet.contains(f.getName())) {
+                        //断定当前是应用名
+                    }
+                    else{
+//                        getApplicationNames(f,applicationList);
+                    }
+                }
+            }
+        }
+    }
+
     public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath){
         String fileName = "";
         File downloadFilePath = null;

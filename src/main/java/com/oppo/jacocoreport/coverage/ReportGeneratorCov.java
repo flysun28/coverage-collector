@@ -35,7 +35,7 @@ import java.util.*;
 
 public class ReportGeneratorCov {
     private Long taskId = 0L;
-    private  int port = 0;
+    private  String port = "";
     private  String gitName = "";
     private  String gitPassword = "";
     private String gitlocalPath = "";
@@ -71,8 +71,8 @@ public class ReportGeneratorCov {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
         this.taskId = applicationCodeInfo.getId();
         this.port = applicationCodeInfo.getJacocoPort();
-        if(this.port==0){
-          this.port = Config.Port;
+        if("".equals(this.port) || null == this.port){
+          this.port = ""+Config.Port;
         }
         this.gitName = Config.GitName;
         this.gitPassword = Config.GitPassword;
@@ -276,20 +276,24 @@ public class ReportGeneratorCov {
 //                            executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
 //                            executionDataClient.getExecutionData(serverip, port, executionDataFile);
 
-                            //保存到taskID目录下再存一份
-                            executionDataFile = new File(coverageReportPath, serverip + "_jacoco.exec");//第一步生成的exec的文件
-                            boolean getedexecdata = executionDataClient.getExecutionData(serverip, port, executionDataFile);
-                            //如果取得覆盖率数据，判断是否有新版本
-                            if (getedexecdata) {
-                                AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(), executionDataFile.toString());
-                                Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
-                                //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
-                                if (newversion) {
-                                    System.out.println("exist new version");
-                                    executionDataFile.delete();
-                                    cancel();
-                                    timerMap.remove(String.valueOf(taskId));
-                                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+
+                            String[] portList = port.split(",");
+                            for (String portNum:portList) {
+                                //保存到taskID目录下再存一份
+                                executionDataFile = new File(coverageReportPath, serverip+"_"+portNum+ "_jacoco.exec");//第一步生成的exec的文件
+                                boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
+                                //如果取得覆盖率数据，判断是否有新版本
+                                if (getedexecdata) {
+                                    AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(), executionDataFile.toString());
+                                    Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
+                                    //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
+                                    if (newversion) {
+                                        System.out.println("exist new version");
+                                        executionDataFile.delete();
+                                        cancel();
+                                        timerMap.remove(String.valueOf(taskId));
+                                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                                    }
                                 }
                             }
                         }
@@ -438,7 +442,7 @@ public class ReportGeneratorCov {
         }
         return applicationNameMap;
     }
-    public void startCoverageTask(String applicationID,String[] ignoreclassList,String[] ignorepackageList) throws Exception{
+    public void startCoverageTask(String applicationID,String[] ignoreclassList,String[] ignorepackageList,String[] containPackages) throws Exception{
         HashMap<String, Object> projectMap = new HashMap<String, Object>();
         //通过git url地址解析应用名
         String projectName = GitUtil.getLastUrlString(this.applicationgitlabUrl);
@@ -469,6 +473,8 @@ public class ReportGeneratorCov {
         String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
         //过滤配置的ignore class,package文件
         ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
+        //只统计指定包
+
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
 
@@ -525,7 +531,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setIsTimerTask(1);
 
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
-        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
+        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList,null);
 
     }
 }
