@@ -280,7 +280,6 @@ public class ReportGeneratorCov {
 
                             String[] portList = port.split(",");
                             for (String portNum:portList) {
-                                System.out.println("portNum "+portNum +" "+serverip);
                                 //保存到taskID目录下再存一份
                                 executionDataFile = new File(coverageReportPath, serverip+"_"+portNum+ "_jacoco.exec");//第一步生成的exec的文件
                                 boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
