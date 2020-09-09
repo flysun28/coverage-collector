@@ -478,8 +478,10 @@ public class ReportGeneratorCov {
         ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
 
         //只统计指定包
-        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
-        ColumbusUtils.filterContainPackages(containPackagesSet,new File(classPath));
+        if(containPackages!= null && containPackages.length >0) {
+            HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
+            ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
+        }
 
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
