@@ -220,18 +220,18 @@ public class ColumbusUtils {
     public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath) throws Exception{
         String fileName = "";
         File downloadFilePath = null;
-        try {
-            Map<String, String > headers = new HashMap<>();
-            String nonce =  String.valueOf(new Random().nextInt(10000));
-            String curTime = String.valueOf((new Date()).getTime() / 1000L);
-            // 设置请求的header
-            headers.put("Nonce", nonce);
-            headers.put("CurTime", curTime);
-            headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        Map<String, String > headers = new HashMap<>();
+        String nonce =  String.valueOf(new Random().nextInt(10000));
+        String curTime = String.valueOf((new Date()).getTime() / 1000L);
+        // 设置请求的header
+        headers.put("Nonce", nonce);
+        headers.put("CurTime", curTime);
+        headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
-            fileName = repositoryUrl.substring(repositoryUrl.lastIndexOf("/")+1);
-            String downloadUrl = download_version_url+"/"+repositoryUrl;
-            System.out.println(downloadUrl);
+        fileName = repositoryUrl.substring(repositoryUrl.lastIndexOf("/")+1);
+        String downloadUrl = download_version_url+"/"+repositoryUrl;
+        System.out.println(downloadUrl);
+        try {
             downloadFilePath = new File(downloadPath,"downloadzip");
             if(!downloadFilePath.exists()){
                 downloadFilePath.mkdir();
@@ -253,7 +253,13 @@ public class ColumbusUtils {
 
         }catch (Exception e){
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(),ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
+            Thread.sleep(10000);
+            try{
+                HttpClientUtils.getInstance().httpDownloadFile(downloadUrl, downloadFilePath.toString(),null,headers);
+            }catch ( Exception en) {
+                en.printStackTrace();
+                throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
+            }
         }
         return downloadFilePath.toString();
     }
