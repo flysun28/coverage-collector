@@ -18,11 +18,11 @@ public class Jsouphtml {
       this.diffhtmlreport = diffhtmlreport;
     }
 
-    public CoverageData getCoverageData(Long taskid){
+    public CoverageData getCoverageData(Long taskid,int isBranchTask){
         CoverageData coverageData = new CoverageData();
         coverageData.setId(taskid);
-        String totalCoverageReportPath;
-        String diffCoverageReportPath;
+        String totalCoverageReportPath = "";
+        String diffCoverageReportPath = "";
 
         String missedInstructions;
         String totalInstructions;
@@ -100,8 +100,12 @@ public class Jsouphtml {
                     coverageData.setMissedClasses(missedClasses);
                     totalClasses = elements.get(12).text().replace(",", "");
                     coverageData.setTotalClasses(totalClasses);
+                    if(isBranchTask == 0) {
+                        totalCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragereport/index.html";
+                    }else if(isBranchTask == 1){
+                        totalCoverageReportPath = Config.ReportBaseUrl + taskid + "/branchcoveragereport/index.html";
 
-                    totalCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragereport/index.html";
+                    }
                     coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
                 }
 
@@ -140,8 +144,11 @@ public class Jsouphtml {
                     coverageData.setDiffMissedClasses(diffMissedClasses);
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
-
-                    diffCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragediffreport/index.html";
+                    if(isBranchTask == 0) {
+                        diffCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragediffreport/index.html";
+                    }else if(isBranchTask == 1){
+                        diffCoverageReportPath = Config.ReportBaseUrl + taskid + "/branchcoveragediffreport/index.html";
+                    }
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
             }
@@ -168,7 +175,7 @@ public class Jsouphtml {
             }
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(9L);
+            coverageData = jsouphtml.getCoverageData(9L,0);
             System.out.println(coverageData.toString());
             String requstUrl = Config.SEND_COVERAGE_URL;
             Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);

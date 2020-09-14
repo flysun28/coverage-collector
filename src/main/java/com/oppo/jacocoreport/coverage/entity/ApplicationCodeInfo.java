@@ -16,8 +16,10 @@ public class ApplicationCodeInfo {
     private int isTimerTask = 0;//默认为0，不开启轮询任务
     private String jacocoPort = "";//默认8098端口
     private int isBranchTask = 0;// 0 非分支任务 1 分支任务
+    private Long branchTaskID;//分支覆盖率taskID
     private String containPackages = "";
     private String applicationID;
+
 
     public String getContainPackages() {
         return containPackages;
@@ -131,6 +133,13 @@ public class ApplicationCodeInfo {
 
     public void setIsBranchTask(int isBranchTask) {
         this.isBranchTask = isBranchTask;
+    }
+    public Long getBranchTaskID() {
+        return branchTaskID;
+    }
+
+    public void setBranchTaskID(Long branchTaskID) {
+        this.branchTaskID = branchTaskID;
     }
 
     @Override

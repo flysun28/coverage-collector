@@ -1,6 +1,5 @@
 package com.oppo.jacocoreport.coverage;
 
-import com.oppo.jacocoreport.coverage.cloud.AppDeployInfo;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
@@ -49,6 +48,7 @@ public class ReportGeneratorCov {
     private File coverageReportPath;
     private int isTimerTask = 0;
     private int isBranchTask = 0;
+    private Long branchTaskID = 0L;//分支覆盖率taskID
 
 
     private ExecFileLoader execFileLoader;
@@ -85,6 +85,7 @@ public class ReportGeneratorCov {
         this.oldTag = applicationCodeInfo.getBasicCommitId();
         this.isTimerTask = applicationCodeInfo.getIsTimerTask();
         this.isBranchTask = applicationCodeInfo.getIsBranchTask();
+        this.branchTaskID = applicationCodeInfo.getBranchTaskID();
 
     }
     private static File createCoverageReportPathBySysTime(){
@@ -105,6 +106,7 @@ public class ReportGeneratorCov {
         System.out.println("创建成功"+fileName);
         return file;
     }
+
     private static File createCoverageReportPathByTaskid(String taskId){
         File taskPath = new File(Config.ReportBasePath,"taskID");
         if(!taskPath.exists()){
@@ -119,8 +121,19 @@ public class ReportGeneratorCov {
                 System.out.println("当前路径不存在，创建失败");
             }
         }
-        System.out.println("创建成功"+taskId);
+
         return file;
+    }
+
+    private static File createBranchCoverageReportPathByTaskid(String branchTaskID){
+        File branchTaskPath =createCoverageReportPathByTaskid(branchTaskID);
+        File branchcoverage = new File(branchTaskPath,"branchcoverage");
+        if(!branchcoverage.exists()) {
+            if (!branchcoverage.mkdir()) {
+                System.out.println("当前路径不存在，创建失败");
+            }
+        }
+        return branchcoverage;
     }
     /**
      * Create the report.
@@ -242,7 +255,31 @@ public class ReportGeneratorCov {
                 diffcoveragereport = new File(diffcoveragereport, "index.html");
             }
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(taskId);
+            coverageData = jsouphtml.getCoverageData(taskId,isBranchTask);
+            System.out.println(new Date().toString()+coverageData.toString());
+            Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
+        }
+    }
+
+    /**
+     * 上传分支覆盖率报告
+     */
+    public void sendBranchCoverageData(File branchTaskCoverageReportPath) throws DefinitionException{
+        try {
+            CoverageData coverageData = new CoverageData();
+            File coveragereport = new File(branchTaskCoverageReportPath, "branchcoveragereport");
+            if (coveragereport.exists()) {
+                coveragereport = new File(coveragereport, "index.html");
+            }
+            File diffcoveragereport = new File(branchTaskCoverageReportPath, "branchcoveragediffreport");
+            if (diffcoveragereport.exists()) {
+                diffcoveragereport = new File(diffcoveragereport, "index.html");
+            }
+            Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
+            coverageData = jsouphtml.getCoverageData(this.branchTaskID,isBranchTask);
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
         }catch (Exception e){
@@ -273,13 +310,11 @@ public class ReportGeneratorCov {
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
-                            //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
-//                            executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
-//                            executionDataClient.getExecutionData(serverip, port, executionDataFile);
-
-
                             String[] portList = port.split(",");
                             for (String portNum:portList) {
+                                //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
+                                executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
+                                executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
                                 //保存到taskID目录下再存一份
                                 executionDataFile = new File(coverageReportPath, serverip+"_"+portNum+ "_jacoco.exec");//第一步生成的exec的文件
                                 boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
@@ -319,12 +354,13 @@ public class ReportGeneratorCov {
                     }
                     classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
                     //合并gitlocalPath目录覆盖率
-//                    MergeDump mergeDumpGitLocalPath = new MergeDump(coverageReportPath.toString());
-//                    mergeDumpGitLocalPath.executeMerge();
+                    MergeDump mergeDumpGitLocalPath = new MergeDump(gitlocalPath.toString(),newBranchName.replace("/","_"));
+                    mergeDumpGitLocalPath.executeMerge();
 
                     //合并taskID目录代码覆盖率
-                    MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
+                    MergeDump mergeDump = new MergeDump(coverageReportPath.toString(),newBranchName.replace("/","_"));
                     allexecutionDataFile = mergeDump.executeMerge();
+
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
@@ -366,10 +402,12 @@ public class ReportGeneratorCov {
 
     private void startBranchCoverageTask(Map<String,Object> applicationMap){
         try {
-            File executionDataFile = null;
+            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(this.branchTaskID+"");
+            File filterExecFile = filterBranchData(new File(gitlocalPath),branchTaskCoverageReportPath,newBranchName,applicationMap.get("classPath").toString());
             File sourceDirectory = null;
-            File reportAllCovDirectory = new File(coverageReportPath, "branchcoveragereport");////要保存报告的地址
-            File reportDiffDirectory = new File(coverageReportPath, "branchcoveragediffreport");
+
+            File reportAllCovDirectory = new File(branchTaskCoverageReportPath, "branchcoveragereport");////要保存报告的地址
+            File reportDiffDirectory = new File(branchTaskCoverageReportPath, "branchcoveragediffreport");
 
             ArrayList<File> classesDirectoryList = new ArrayList<>();
             ArrayList<File> sourceDirectoryList = new ArrayList<>();
@@ -383,29 +421,22 @@ public class ReportGeneratorCov {
                     sourceDirectoryList.add(sourceDirectory);
                 }
             }
-            File allexecutionDataFile = new File(coverageReportPath, "jacocoAll.exec");
-            classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
+
+            classesDirectoryList.add(new File(branchTaskCoverageReportPath,"classes"));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
 
             //合并taskID目录代码覆盖率
-            MergeDump mergeDump = new MergeDump(coverageReportPath.toString());
-            allexecutionDataFile = mergeDump.executeMerge();
-            if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
-                timerMap.remove(String.valueOf(taskId));
-                if (isTimerTask == 1) {
-                    HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
-                }
+            if (filterExecFile != null && !filterExecFile.exists()) {
                 throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
             }
 
             //生成整体覆盖率报告
-            createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+            createAll(filterExecFile, classesDirectoryList, reportAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
             if (!newTag.equals(oldTag)) {
 
-                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
+                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
             }
             //上传覆盖率报告
-            sendcoveragedata();
-            Thread.sleep(1000);
+            sendBranchCoverageData(branchTaskCoverageReportPath);
         } catch (DefinitionException e) {
             HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
         } catch (Exception e) {
@@ -486,8 +517,7 @@ public class ReportGeneratorCov {
         projectMap.put("applicationID",applicationID);
 
         if(this.isBranchTask == 1){
-            filterBranchData(localPath,newBranchName,classPath);
-
+            startBranchCoverageTask(projectMap);
         }
         else {
             //开始生成覆盖率报告任务
@@ -496,16 +526,15 @@ public class ReportGeneratorCov {
 
     }
 
-    public static void filterBranchData(File localPath,String newBranchName,String classPath) throws Exception{
+    public static File filterBranchData(File localPath,File branchTaskCoverageReportPath,String newBranchName,String classPath) throws Exception{
         //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
-        File filterExecFile = new File(localPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
+        File filterExecFile = new File(branchTaskCoverageReportPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
         File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
         if(jacocoAll.exists()) {
             AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
             analyExecData.filterOldExecData(classPath);
-            //再将原始jacocoAll.exec文件删除
-            jacocoAll.delete();
         }
+        return filterExecFile;
     }
     /**
      * Starts the report generation process

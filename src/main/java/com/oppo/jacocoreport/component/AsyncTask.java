@@ -47,7 +47,4 @@ public class AsyncTask {
             HttpUtils.sendErrorMSG(taskId,"other error");
         }
     }
-    public void startBranchCoverageTask(ApplicationCodeInfo applicationCodeInfo){
-
-    }
 }

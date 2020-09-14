@@ -9,12 +9,13 @@ import java.util.List;
 public class MergeDump {
     private final String path;
     private final File destFile ;
+    private final String newBranchName;
 
-    public MergeDump(String path){
+    public MergeDump(String path,String newBranchName){
         this.path = path;
-        this.destFile = new File(path+"/jacocoAll.exec");
+        this.newBranchName = newBranchName;
+        this.destFile = new File(path,newBranchName+"_jacocoAll.exec");
     }
-
     private List<File> fileSets(String dir){
      List<File> fileSetList = new ArrayList<File>();
      File path = new File(dir);
@@ -33,7 +34,9 @@ public class MergeDump {
 
      for(File file : files){
          if(file.getName().contains(".exec")){
-             fileSetList.add(file);
+             if(file.getName().contains(this.newBranchName)) {
+                 fileSetList.add(file);
+             }
          }
      }
      return fileSetList;
@@ -55,7 +58,7 @@ public class MergeDump {
              fileSet.delete();
           }
         }
-        return new File(this.path,"jacocoAll.exec");
+        return this.destFile;
 
     }
 
@@ -92,7 +95,7 @@ public class MergeDump {
     }
 
     public static void main(String[] args) throws IOException{
-        MergeDump mergeDump = new MergeDump("D:\\codeCoverage\\10010");
+        MergeDump mergeDump = new MergeDump("D:\\codeCoverage\\10010","master");
         mergeDump.executeMerge();
     }
 }
