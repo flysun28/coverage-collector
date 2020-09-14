@@ -9,6 +9,7 @@ public enum ErrorEnum {
     JACOCO_EXEC_FAILED(1005,"获取测试环境覆盖率文件失败,请检查jacoco服务是否正确部署"),
     OTHER_ERROR(1006,"其他异常"),
     GETDOWNLOADPACKAGE_RAILED(1007,"未找到本版本的部署包,请确认配置的版本是否部署测试环境"),
+    DOWNLOAD_BUILDVERSION_FAILED(1008,"网络问题导致下载版本包失败，请重新执行一次"),
     ;
     private Integer errorCode;
     private String errorMsg;

@@ -14,8 +14,28 @@ public class ApplicationCodeInfo {
     private String ignoreClass = "";
     private String ignorePackage = "";
     private int isTimerTask = 0;//默认为0，不开启轮询任务
-    private int jacocoPort = 8098;//默认8098端口
+    private String jacocoPort = "";//默认8098端口
     private int isBranchTask = 0;// 0 非分支任务 1 分支任务
+    private String containPackages = "";
+    private String applicationID;
+
+    public String getContainPackages() {
+        return containPackages;
+    }
+
+    public void setContainPackages(String containPackages) {
+        this.containPackages = containPackages;
+    }
+
+    public String getJacocoPort() {
+        return jacocoPort;
+    }
+
+    public void setJacocoPort(String jacocoPort) {
+        this.jacocoPort = jacocoPort;
+    }
+
+
 
     public String getIgnoreClass() {
         return ignoreClass;
@@ -40,8 +60,6 @@ public class ApplicationCodeInfo {
     public void setApplicationID(String applicationID) {
         this.applicationID = applicationID;
     }
-
-    private String applicationID;
 
     public String getVersionName() {
         return versionName;
@@ -107,13 +125,6 @@ public class ApplicationCodeInfo {
     public void setIsTimerTask(int isTimerTask) {
         this.isTimerTask = isTimerTask;
     }
-    public int getJacocoPort() {
-        return jacocoPort;
-    }
-
-    public void setJacocoPort(int jacocoPort) {
-        this.jacocoPort = jacocoPort;
-    }
     public int getIsBranchTask() {
         return isBranchTask;
     }
@@ -137,6 +148,8 @@ public class ApplicationCodeInfo {
                 ", ignorePackage='" + ignorePackage + '\'' +
                 ", isTimerTask='" + isTimerTask + '\'' +
                 ", isBranchTask='" + isBranchTask + '\'' +
+                ", jacocoPort='" + jacocoPort + '\'' +
+                ", containPackages='" + containPackages + '\'' +
                 '}';
     }
 

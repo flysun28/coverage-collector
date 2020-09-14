@@ -19,8 +19,11 @@ public class AsyncTask {
         String applicationID = applicationCodeInfo.getApplicationID();
         String ignoreclassStr = applicationCodeInfo.getIgnoreClass();
         String ignorepackageStr = applicationCodeInfo.getIgnorePackage();
+        String containPackagesStr = applicationCodeInfo.getContainPackages();
+
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
+        String[] containPackagesList = new String[]{};
 
 
         if(ignoreclassStr != null && !ignoreclassStr.equals("")){
@@ -29,10 +32,14 @@ public class AsyncTask {
         if(ignorepackageStr != null && !ignorepackageStr.equals("")){
             ignorepackageList = ignorepackageStr.split(",");
         }
+        if(containPackagesStr != null && !containPackagesStr.equals("")){
+            containPackagesList = containPackagesStr.split(",");
+        }
+
         System.out.println(new Date().toString()+"start coverage test "+applicationCodeInfo.toString());
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
-            reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList);
+            reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList,containPackagesList);
         }catch (DefinitionException e){
             HttpUtils.sendErrorMSG(taskId,e.getErrorMsg());
         }catch (Exception e){
