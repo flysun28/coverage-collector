@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.oppo.jacocoreport.coverage.jacoco;
 
-import javafx.scene.SubScene;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -24,9 +23,6 @@ import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
