@@ -217,7 +217,7 @@ public class ColumbusUtils {
     }
 
 
-    public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath){
+    public static String downloadColumbusBuildVersion(String repositoryUrl,String downloadPath) throws Exception{
         String fileName = "";
         File downloadFilePath = null;
         try {
@@ -253,6 +253,7 @@ public class ColumbusUtils {
 
         }catch (Exception e){
             e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(),ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
         }
         return downloadFilePath.toString();
     }
