@@ -134,7 +134,7 @@ public class ReportGeneratorCov {
                 System.out.println("当前路径不存在，创建失败");
             }
         }
-        File branchcoverage2 = new File(branchTaskPath,newBranchName);
+        File branchcoverage2 = new File(branchcoverage1,newBranchName);
         if(!branchcoverage2.exists()) {
             if (!branchcoverage2.mkdir()) {
                 System.out.println("当前路径不存在，创建失败");

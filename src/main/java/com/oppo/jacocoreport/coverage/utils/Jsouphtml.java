@@ -108,7 +108,7 @@ public class Jsouphtml {
                     totalClasses = elements.get(12).text().replace(",", "");
                     coverageData.setTotalClasses(totalClasses);
 
-                    totalCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+ totalhtmlreport.getParent().toString()+"/"+totalhtmlreport.getName().toString();
+                    totalCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+new File(diffhtmlreport.getParent()).getName()+"/"+totalhtmlreport.getName();
                     coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
                 }
 
@@ -148,7 +148,7 @@ public class Jsouphtml {
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
 
-                    diffCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+diffhtmlreport.getParent().toString()+"/"+diffhtmlreport.getName().toString();
+                    diffCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+new File(diffhtmlreport.getParent()).getName()+"/"+diffhtmlreport.getName();
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
             }

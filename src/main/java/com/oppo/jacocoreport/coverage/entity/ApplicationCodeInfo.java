@@ -159,6 +159,7 @@ public class ApplicationCodeInfo {
                 ", isBranchTask='" + isBranchTask + '\'' +
                 ", jacocoPort='" + jacocoPort + '\'' +
                 ", containPackages='" + containPackages + '\'' +
+                ", branchTaskID='" + branchTaskID + '\'' +
                 '}';
     }
 
