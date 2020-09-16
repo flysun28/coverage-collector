@@ -1,6 +1,7 @@
 package com.oppo.jacocoreport.coverage;
 
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
+import com.oppo.jacocoreport.coverage.entity.BranchCoverageData;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.jacoco.AnalyExecData;
@@ -125,15 +126,21 @@ public class ReportGeneratorCov {
         return file;
     }
 
-    private static File createBranchCoverageReportPathByTaskid(String branchTaskID){
+    private static File createBranchCoverageReportPathByTaskid(String branchTaskID,String newBranchName){
         File branchTaskPath =createCoverageReportPathByTaskid(branchTaskID);
-        File branchcoverage = new File(branchTaskPath,"branchcoverage");
-        if(!branchcoverage.exists()) {
-            if (!branchcoverage.mkdir()) {
+        File branchcoverage1 = new File(branchTaskPath,"branchcoverage");
+        if(!branchcoverage1.exists()) {
+            if (!branchcoverage1.mkdir()) {
                 System.out.println("当前路径不存在，创建失败");
             }
         }
-        return branchcoverage;
+        File branchcoverage2 = new File(branchTaskPath,newBranchName);
+        if(!branchcoverage2.exists()) {
+            if (!branchcoverage2.mkdir()) {
+                System.out.println("当前路径不存在，创建失败");
+            }
+        }
+        return branchcoverage2;
     }
     /**
      * Create the report.
@@ -255,7 +262,7 @@ public class ReportGeneratorCov {
                 diffcoveragereport = new File(diffcoveragereport, "index.html");
             }
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(taskId,isBranchTask);
+            coverageData = jsouphtml.getCoverageData(taskId,"","","");
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
         }catch (Exception e){
@@ -267,21 +274,15 @@ public class ReportGeneratorCov {
     /**
      * 上传分支覆盖率报告
      */
-    public void sendBranchCoverageData(File branchTaskCoverageReportPath) throws DefinitionException{
+    public void sendBranchCoverageData(File reportAllCovDirectory,File reportDiffDirectory,String appCode,String testedBranch,String basicBranch) throws DefinitionException{
         try {
-            CoverageData coverageData = new CoverageData();
-            File coveragereport = new File(branchTaskCoverageReportPath, "branchcoveragereport");
-            if (coveragereport.exists()) {
-                coveragereport = new File(coveragereport, "index.html");
-            }
-            File diffcoveragereport = new File(branchTaskCoverageReportPath, "branchcoveragediffreport");
-            if (diffcoveragereport.exists()) {
-                diffcoveragereport = new File(diffcoveragereport, "index.html");
-            }
+            File coveragereport = new File(reportAllCovDirectory, "index.html");
+            File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
+
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(this.branchTaskID,isBranchTask);
-            System.out.println(new Date().toString()+coverageData.toString());
-            Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
+            CoverageData branchCoverageData = jsouphtml.getCoverageData(branchTaskID,appCode,testedBranch,basicBranch);
+            System.out.println(new Date().toString()+branchCoverageData.toString());
+            Data data = HttpUtils.sendPostRequest(Config.SEND_BRANCHCOVERAGE_URL, branchCoverageData);
         }catch (Exception e){
             e.printStackTrace();
             throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
@@ -307,16 +308,24 @@ public class ReportGeneratorCov {
                     String addressIPList = applicationMap.getOrDefault("ip", "").toString();
                     //获取覆盖率生成数据
                     String[] iplist = addressIPList.split(",");
+                    File gitlocalexecutionDataPath = new File(gitlocalPath,newBranchName.replace("/","_"));
+                    if(!gitlocalexecutionDataPath.exists()){
+                        gitlocalexecutionDataPath.mkdir();
+                    }
+                    File coverageexecutionDataPath = new File(coverageReportPath,newBranchName.replace("/","_"));
+                    if(!coverageexecutionDataPath.exists()){
+                        coverageexecutionDataPath.mkdir();
+                    }
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
                             String[] portList = port.split(",");
                             for (String portNum:portList) {
                                 //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
-                                executionDataFile = new File(gitlocalPath, newBranchName.replace("/","_")+"_"+serverip+"_jacoco.exec");//第一步生成的exec的文件
+                                executionDataFile = new File(gitlocalexecutionDataPath, serverip+"_jacoco.exec");//第一步生成的exec的文件
                                 executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
                                 //保存到taskID目录下再存一份
-                                executionDataFile = new File(coverageReportPath, serverip+"_"+portNum+ "_jacoco.exec");//第一步生成的exec的文件
+                                executionDataFile = new File(coverageexecutionDataPath, serverip+"_jacoco.exec");//第一步生成的exec的文件
                                 boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
                                 //如果取得覆盖率数据，判断是否有新版本
                                 if (getedexecdata) {
@@ -335,7 +344,7 @@ public class ReportGeneratorCov {
                         }
                     }
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    File allexecutionDataFile = new File(coverageReportPath, "jacocoAll.exec");
+                    File allexecutionDataFile = new File(coverageexecutionDataPath, "jacocoAll.exec");
                     if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
@@ -354,11 +363,11 @@ public class ReportGeneratorCov {
                     }
                     classesDirectoryList.add(new File(applicationMap.get("classPath").toString()));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
                     //合并gitlocalPath目录覆盖率
-                    MergeDump mergeDumpGitLocalPath = new MergeDump(gitlocalPath.toString(),newBranchName.replace("/","_"));
+                    MergeDump mergeDumpGitLocalPath = new MergeDump(gitlocalexecutionDataPath.toString());
                     mergeDumpGitLocalPath.executeMerge();
 
                     //合并taskID目录代码覆盖率
-                    MergeDump mergeDump = new MergeDump(coverageReportPath.toString(),newBranchName.replace("/","_"));
+                    MergeDump mergeDump = new MergeDump(coverageexecutionDataPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
 
                     if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
@@ -373,7 +382,6 @@ public class ReportGeneratorCov {
                     //生成整体覆盖率报告
                     createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
                     if (!newTag.equals(oldTag)) {
-
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
                     //上传覆盖率报告
@@ -385,6 +393,10 @@ public class ReportGeneratorCov {
                     }
                     if (timerMap.containsKey(String.valueOf(taskId))) {
                         System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + taskId + " is timertask");
+                    }
+                    //执行分支覆盖率任务
+                    if(isBranchTask == 1){
+                        startBranchCoverageTask(applicationMap);
                     }
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
@@ -402,12 +414,15 @@ public class ReportGeneratorCov {
 
     private void startBranchCoverageTask(Map<String,Object> applicationMap){
         try {
-            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(this.branchTaskID+"");
-            File filterExecFile = filterBranchData(new File(gitlocalPath),branchTaskCoverageReportPath,newBranchName,applicationMap.get("classPath").toString());
+            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(this.branchTaskID+"",newBranchName.replace("/","_"));
+            File branchTaskPath = createCoverageReportPathByTaskid(this.branchTaskID+"");
+            File branchclassPath = new File(branchTaskPath,"classes");
+            File gitlocalexecutionDataPath = new File(gitlocalPath,newBranchName.replace("/","_"));
+            File filterExecFile = filterBranchData(gitlocalexecutionDataPath,branchTaskCoverageReportPath,branchclassPath.toString());
             File sourceDirectory = null;
 
-            File reportAllCovDirectory = new File(branchTaskCoverageReportPath, "branchcoveragereport");////要保存报告的地址
-            File reportDiffDirectory = new File(branchTaskCoverageReportPath, "branchcoveragediffreport");
+            File reportAllCovDirectory = new File(branchTaskCoverageReportPath, "totalcoveragereport");////要保存报告的地址
+            File reportDiffDirectory = new File(branchTaskCoverageReportPath, "diffcoveragereport");
 
             ArrayList<File> classesDirectoryList = new ArrayList<>();
             ArrayList<File> sourceDirectoryList = new ArrayList<>();
@@ -422,7 +437,7 @@ public class ReportGeneratorCov {
                 }
             }
 
-            classesDirectoryList.add(new File(branchTaskCoverageReportPath,"classes"));//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
+            classesDirectoryList.add(branchclassPath);//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
 
             //合并taskID目录代码覆盖率
             if (filterExecFile != null && !filterExecFile.exists()) {
@@ -436,7 +451,7 @@ public class ReportGeneratorCov {
                 createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
             }
             //上传覆盖率报告
-            sendBranchCoverageData(branchTaskCoverageReportPath);
+            sendBranchCoverageData(reportAllCovDirectory,reportDiffDirectory,applicationMap.get("applicationID").toString(),newBranchName.replace("/","_"),oldBranchName);
         } catch (DefinitionException e) {
             HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
         } catch (Exception e) {
@@ -516,20 +531,15 @@ public class ReportGeneratorCov {
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
 
-        if(this.isBranchTask == 1){
-            startBranchCoverageTask(projectMap);
-        }
-        else {
-            //开始生成覆盖率报告任务
-            timerTask(projectMap);
-        }
+        //开始生成覆盖率报告任务
+        timerTask(projectMap);
 
     }
 
-    public static File filterBranchData(File localPath,File branchTaskCoverageReportPath,String newBranchName,String classPath) throws Exception{
+    public static File filterBranchData(File localPath,File branchTaskCoverageReportPath,String classPath) throws Exception{
         //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
-        File filterExecFile = new File(branchTaskCoverageReportPath,newBranchName.replace("/","_")+"_"+"jacoco.exec");
-        File jacocoAll =  new File(localPath,newBranchName.replace("/","_")+"_"+"jacocoAll.exec");
+        File filterExecFile = new File(branchTaskCoverageReportPath,"jacoco.exec");
+        File jacocoAll =  new File(localPath,"jacocoAll.exec");
         if(jacocoAll.exists()) {
             AnalyExecData analyExecData = new AnalyExecData(filterExecFile.toString(), jacocoAll.toString());
             analyExecData.filterOldExecData(classPath);
@@ -547,11 +557,11 @@ public class ReportGeneratorCov {
     public static void main(final String[] args) throws Exception {
         Long taskID = 10010L;
         String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "dev/2.2/bank_ktp";
+        String testedBranch = "release/fin-2.3";
         String basicBranch = "master";
-        String newTag = "3293de29a71fd68b6aaca56df6d2936a3a49b7e2";
-        String oldTag = "a768b3b65f6167e09a76da65861af8e1abd4db32";
-        String versionName = "fin-loan-api-20200824194945-245";
+        String newTag = "3fc3479d7c4d4812af7dfc9c3210c7716a37ed9d";
+        String oldTag = "d87e1ab85f135e2b18797968945b0b8690f3ecdb";
+        String versionName = "fin-loan-api-20200914102637-288";
         String applicationID = "fin-loan-api";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
@@ -564,10 +574,15 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setBasicCommitId(oldTag);
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
-        applicationCodeInfo.setIsTimerTask(1);
-
-        ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
-        reportGeneratorCov.startCoverageTask(applicationID,ignoreclassList,ignorepackageList,null);
+        applicationCodeInfo.setIsTimerTask(0);
+        applicationCodeInfo.setBranchTaskID(10010L);
+        applicationCodeInfo.setIsBranchTask(1);
+        try {
+            ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
+            reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 }

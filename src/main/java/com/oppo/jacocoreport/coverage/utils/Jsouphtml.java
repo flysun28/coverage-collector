@@ -1,72 +1,79 @@
 package com.oppo.jacocoreport.coverage.utils;
 
+import com.oppo.jacocoreport.coverage.entity.BranchCoverageData;
 import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.File;
-import java.lang.annotation.Documented;
 
 public class Jsouphtml {
     private File totalhtmlreport;
     private File diffhtmlreport;
+    String totalCoverageReportPath = "";
+    String diffCoverageReportPath = "";
+
+    String missedInstructions;
+    String totalInstructions;
+    String diffMissedInstructions;
+    String diffTotalInstructions;
+    /**
+     * 分支覆盖率
+     * */
+    String missedBranches;
+    String totalBranches;
+    String diffMissedBranches;
+    String diffTotalBranches;
+
+    /**
+     * 圈复杂度
+     * */
+    String missedCxty;
+    String totalCxty;
+    String diffMissedCxty;
+    String diffTotalCxty;
+
+    /**
+     * 代码行
+     * */
+    String missedLines;
+    String totalLines;
+    String diffMissedLines;
+    String diffTotalLines;
+
+    /**
+     * 方法
+     * */
+    String missedMethods;
+    String totalMethods;
+    String diffMissedMethods;
+    String diffTotalMethods;
+
+    /**
+     * 类
+     * */
+    String missedClasses;
+    String totalClasses;
+    String diffMissedClasses;
+    String diffTotalClasses;
+
     public Jsouphtml(File totalhtmlreport,File diffhtmlreport){
       this.totalhtmlreport = totalhtmlreport;
       this.diffhtmlreport = diffhtmlreport;
     }
 
-    public CoverageData getCoverageData(Long taskid,int isBranchTask){
+//    public BranchCoverageData getBranchCoverageData(Long taskid,int isBranchTask,String appCode,String testedBranch,String basicBranch){
+//        CoverageData coverageData = getCoverageData(taskid,isBranchTask);
+//        BranchCoverageData branchCoverageData = new BranchCoverageData(coverageData);
+//        branchCoverageData.setAppCode(appCode);
+//        branchCoverageData.setTestedBranch(testedBranch);
+//        branchCoverageData.setBasicBranch(basicBranch);
+//        return branchCoverageData;
+//    }
+    public CoverageData getCoverageData(Long taskid,String appCode,String testedBranch,String basicBranch){
         CoverageData coverageData = new CoverageData();
         coverageData.setId(taskid);
-        String totalCoverageReportPath = "";
-        String diffCoverageReportPath = "";
-
-        String missedInstructions;
-        String totalInstructions;
-        String diffMissedInstructions;
-        String diffTotalInstructions;
-        /**
-         * 分支覆盖率
-         * */
-        String missedBranches;
-        String totalBranches;
-        String diffMissedBranches;
-        String diffTotalBranches;
-
-        /**
-         * 圈复杂度
-         * */
-        String missedCxty;
-        String totalCxty;
-        String diffMissedCxty;
-        String diffTotalCxty;
-
-        /**
-         * 代码行
-         * */
-        String missedLines;
-        String totalLines;
-        String diffMissedLines;
-        String diffTotalLines;
-
-        /**
-         * 方法
-         * */
-        String missedMethods;
-        String totalMethods;
-        String diffMissedMethods;
-        String diffTotalMethods;
-
-        /**
-         * 类
-         * */
-        String missedClasses;
-        String totalClasses;
-        String diffMissedClasses;
-        String diffTotalClasses;
         try {
             //解析整体覆盖率报告
             if(this.totalhtmlreport.exists()) {
@@ -100,12 +107,8 @@ public class Jsouphtml {
                     coverageData.setMissedClasses(missedClasses);
                     totalClasses = elements.get(12).text().replace(",", "");
                     coverageData.setTotalClasses(totalClasses);
-                    if(isBranchTask == 0) {
-                        totalCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragereport/index.html";
-                    }else if(isBranchTask == 1){
-                        totalCoverageReportPath = Config.ReportBaseUrl + taskid + "/branchcoveragereport/index.html";
 
-                    }
+                    totalCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+ totalhtmlreport.getParent().toString()+"/"+totalhtmlreport.getName().toString();
                     coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
                 }
 
@@ -144,14 +147,14 @@ public class Jsouphtml {
                     coverageData.setDiffMissedClasses(diffMissedClasses);
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
-                    if(isBranchTask == 0) {
-                        diffCoverageReportPath = Config.ReportBaseUrl + taskid + "/coveragediffreport/index.html";
-                    }else if(isBranchTask == 1){
-                        diffCoverageReportPath = Config.ReportBaseUrl + taskid + "/branchcoveragediffreport/index.html";
-                    }
+
+                    diffCoverageReportPath = Config.ReportBaseUrl + taskid +"/"+diffhtmlreport.getParent().toString()+"/"+diffhtmlreport.getName().toString();
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
             }
+            coverageData.setAppCode(appCode);
+            coverageData.setTestedBranch(testedBranch);
+            coverageData.setBasicBranch(basicBranch);
             return coverageData;
         }catch (Exception e){
             e.printStackTrace();
@@ -175,7 +178,7 @@ public class Jsouphtml {
             }
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(9L,0);
+            coverageData = jsouphtml.getCoverageData(9L,"","","");
             System.out.println(coverageData.toString());
             String requstUrl = Config.SEND_COVERAGE_URL;
             Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);

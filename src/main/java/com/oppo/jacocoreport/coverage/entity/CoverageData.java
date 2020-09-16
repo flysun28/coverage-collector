@@ -66,6 +66,37 @@ public class CoverageData {
      * */
     private String diffCoverageReportPath;
 
+    public String getAppCode() {
+        return appCode;
+    }
+
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
+    }
+
+    public String getTestedBranch() {
+        return testedBranch;
+    }
+
+    public void setTestedBranch(String testedBranch) {
+        this.testedBranch = testedBranch;
+    }
+
+    public String getBasicBranch() {
+        return basicBranch;
+    }
+
+    public void setBasicBranch(String basicBranch) {
+        this.basicBranch = basicBranch;
+    }
+
+    //应用名称
+    private String appCode;
+    //被测分支
+    private String testedBranch;
+    //基准分支
+    private String basicBranch;
+
 
     public Long getId() {
         return id;

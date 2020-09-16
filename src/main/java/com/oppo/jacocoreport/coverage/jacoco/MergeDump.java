@@ -9,12 +9,10 @@ import java.util.List;
 public class MergeDump {
     private final String path;
     private final File destFile ;
-    private final String newBranchName;
 
-    public MergeDump(String path,String newBranchName){
+    public MergeDump(String path){
         this.path = path;
-        this.newBranchName = newBranchName;
-        this.destFile = new File(path,newBranchName+"_jacocoAll.exec");
+        this.destFile = new File(path,"jacocoAll.exec");
     }
     private List<File> fileSets(String dir){
      List<File> fileSetList = new ArrayList<File>();
@@ -34,9 +32,7 @@ public class MergeDump {
 
      for(File file : files){
          if(file.getName().contains(".exec")){
-             if(file.getName().contains(this.newBranchName)) {
                  fileSetList.add(file);
-             }
          }
      }
      return fileSetList;
@@ -46,7 +42,7 @@ public class MergeDump {
         final ExecFileLoader loader = new ExecFileLoader();
         //如果没有获取新覆盖率文件，就不merge
         if(fileSets(this.path).size() == 1){
-            if(fileSets(this.path).get(0).getName().equals("jacocoAll.exec")){
+            if(fileSets(this.path).get(0).getName().contains("jacocoAll.exec")){
                 return null;
             }
         }
@@ -54,7 +50,7 @@ public class MergeDump {
         save(loader);
         //执行完成后，删除非必须的dump文件
         for(final File fileSet : fileSets(this.path)){
-          if(!fileSet.getName().equals("jacocoAll.exec")){
+          if(!fileSet.getName().contains("jacocoAll.exec")){
              fileSet.delete();
           }
         }
@@ -95,7 +91,7 @@ public class MergeDump {
     }
 
     public static void main(String[] args) throws IOException{
-        MergeDump mergeDump = new MergeDump("D:\\codeCoverage\\10010","master");
+        MergeDump mergeDump = new MergeDump("D:\\codeCoverage\\10010");
         mergeDump.executeMerge();
     }
 }
