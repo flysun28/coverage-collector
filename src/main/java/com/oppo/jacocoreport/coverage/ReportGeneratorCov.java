@@ -250,19 +250,13 @@ public class ReportGeneratorCov {
     /**
      * 上传覆盖率报告
      */
-    public void sendcoveragedata() throws DefinitionException{
+    public void sendcoveragedata(File reportAllCovDirectory,File reportDiffDirectory) throws DefinitionException{
         try {
-            CoverageData coverageData = new CoverageData();
-            File coveragereport = new File(this.coverageReportPath, "coveragereport");
-            if (coveragereport.exists()) {
-                coveragereport = new File(coveragereport, "index.html");
-            }
-            File diffcoveragereport = new File(this.coverageReportPath, "coveragediffreport");
-            if (diffcoveragereport.exists()) {
-                diffcoveragereport = new File(diffcoveragereport, "index.html");
-            }
+
+            File coveragereport = new File(reportAllCovDirectory, "index.html");
+            File diffcoveragereport = new File(reportDiffDirectory, "index.html");
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(taskId,"","","");
+            CoverageData coverageData = jsouphtml.getCoverageData(taskId,"","","");
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
         }catch (Exception e){
@@ -385,7 +379,7 @@ public class ReportGeneratorCov {
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
                     //上传覆盖率报告
-                    sendcoveragedata();
+                    sendcoveragedata(reportAllCovDirectory,reportDiffDirectory);
                     Thread.sleep(1000);
                     if (isTimerTask == 0) {
                         cancel();
