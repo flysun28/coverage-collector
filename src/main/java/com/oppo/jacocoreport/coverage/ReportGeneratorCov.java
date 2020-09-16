@@ -73,7 +73,7 @@ public class ReportGeneratorCov {
         //从配置文件中获取当期工程的source目录，以及服务ip地址
         this.taskId = applicationCodeInfo.getId();
         this.port = applicationCodeInfo.getJacocoPort();
-        if("".equals(this.port) || null == this.port){
+        if("".equals(this.port) ||"0".equals(this.port)|| null == this.port){
           this.port = ""+Config.Port;
         }
         this.gitName = Config.GitName;
