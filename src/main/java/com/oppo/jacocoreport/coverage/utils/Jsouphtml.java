@@ -107,8 +107,7 @@ public class Jsouphtml {
                     coverageData.setMissedClasses(missedClasses);
                     totalClasses = elements.get(12).text().replace(",", "");
                     coverageData.setTotalClasses(totalClasses);
-
-                    totalCoverageReportPath = Config.ReportBaseUrl +taskid+"/"+new File(diffhtmlreport.getParent()).getName()+"/"+totalhtmlreport.getName();
+                    totalCoverageReportPath = Config.ReportBaseUrl +totalhtmlreport.toString().substring(totalhtmlreport.toString().indexOf(taskid+"")).replace("\\","/");
                     coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
                 }
 
@@ -148,7 +147,7 @@ public class Jsouphtml {
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
 
-                    diffCoverageReportPath = Config.ReportBaseUrl +taskid+"/"+new File(diffhtmlreport.getParent()).getName()+"/"+diffhtmlreport.getName();
+                    diffCoverageReportPath = Config.ReportBaseUrl +diffhtmlreport.toString().substring(diffhtmlreport.toString().indexOf(taskid+"")).replace("\\","/");
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
             }
@@ -189,7 +188,10 @@ public class Jsouphtml {
     }
     public static void main(String[] args){
 //        Jsouphtml jsouphtml = new Jsouphtml(new File("D:\\jacocoreport\\20200702102328\\coveragereport\\index.html"),new File("D:\\jacocoreport\\20200702102328\\coveragediffreport\\index.html"));
-        sendcoveragedata();
+        String diffhtmlreport= "D:\\codeCoverage\\taskID\\10010\\branchcoverage\\release_fin-2.3\\totalcoveragereport\\index.html";
+        Long taskid = 10010L;
+        System.out.println(diffhtmlreport.substring(diffhtmlreport.indexOf(taskid+"")).replace("\\","/"));
+//        sendcoveragedata();
 
     }
 }
