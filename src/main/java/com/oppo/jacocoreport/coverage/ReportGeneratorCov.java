@@ -403,7 +403,7 @@ public class ReportGeneratorCov {
                     }
                 }
             }
-        }, 0, 10000);
+        }, 0, 1800000);
     }
 
     private void startBranchCoverageTask(Map<String,Object> applicationMap){
