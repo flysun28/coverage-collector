@@ -388,10 +388,10 @@ public class ReportGeneratorCov {
                     if (timerMap.containsKey(String.valueOf(taskId))) {
                         System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + taskId + " is timertask");
                     }
-                    //执行分支覆盖率任务
-                    if(isBranchTask == 1){
-                        startBranchCoverageTask(applicationMap);
-                    }
+//                    //执行分支覆盖率任务
+//                    if(isBranchTask == 1){
+//                        startBranchCoverageTask(applicationMap);
+//                    }
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
                 } catch (Exception e) {
@@ -403,7 +403,7 @@ public class ReportGeneratorCov {
                     }
                 }
             }
-        }, 0, 1800000);
+        }, 0, 10000);
     }
 
     private void startBranchCoverageTask(Map<String,Object> applicationMap){
@@ -553,9 +553,9 @@ public class ReportGeneratorCov {
         String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
         String testedBranch = "release/fin-2.3";
         String basicBranch = "master";
-        String newTag = "3fc3479d7c4d4812af7dfc9c3210c7716a37ed9d";
-        String oldTag = "d87e1ab85f135e2b18797968945b0b8690f3ecdb";
-        String versionName = "fin-loan-api-20200914102637-288";
+        String newTag = "aaa59b53e98ad5da5a4a5f7a49411dd114972fa5";
+        String oldTag = "d57b610a37ae3b04287a98b55148cdd074e9c3a8";
+        String versionName = "fin-loan-api-20200916145059-291";
         String applicationID = "fin-loan-api";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};

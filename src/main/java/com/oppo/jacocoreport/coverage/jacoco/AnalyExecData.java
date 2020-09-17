@@ -73,13 +73,15 @@ public class AnalyExecData {
         }
     }
 
-    public void filterOldExecData(String classPath) throws IOException{
+    public void filterOldExecData(String classPath) throws Exception{
         final ExecutionDataWriter fileWriter = new ExecutionDataWriter(
                 new FileOutputStream(filteredExec));
         final Handler handler = new Handler(fileWriter,classPath);
-        new Thread(handler).start();
+        Thread thread = new Thread(handler);
+        thread.start();
+        thread.join();
     }
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws Exception {
         AnalyExecData analyExecData = new  AnalyExecData("jacoco-server.exec","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");
         analyExecData.filterOldExecData("D:\\codeCoverage\\fin-loan\\classes");
     }
