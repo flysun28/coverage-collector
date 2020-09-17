@@ -388,10 +388,10 @@ public class ReportGeneratorCov {
                     if (timerMap.containsKey(String.valueOf(taskId))) {
                         System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + taskId + " is timertask");
                     }
-//                    //执行分支覆盖率任务
-//                    if(isBranchTask == 1){
-//                        startBranchCoverageTask(applicationMap);
-//                    }
+                    //执行分支覆盖率任务
+                    if(isBranchTask == 1){
+                        startBranchCoverageTask(applicationMap);
+                    }
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(taskId, e.getErrorMsg());
                 } catch (Exception e) {
