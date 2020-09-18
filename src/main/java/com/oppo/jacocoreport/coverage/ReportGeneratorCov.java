@@ -314,6 +314,7 @@ public class ReportGeneratorCov {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
                             String[] portList = port.split(",");
+                            int ipindex = 0;
                             for (String portNum:portList) {
                                 //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
                                 executionDataFile = new File(gitlocalexecutionDataPath, serverip+"_jacoco.exec");//第一步生成的exec的文件
@@ -327,14 +328,17 @@ public class ReportGeneratorCov {
                                     Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
                                     //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
                                     if (newversion) {
+                                        ipindex++;
                                         System.out.println("exist new version at "+serverip);
                                         executionDataFile.delete();
-                                        cancel();
-                                        if(isTimerTask == 1) {
-                                            timerMap.remove(String.valueOf(taskId));
-                                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
-                                        }else{
-                                            throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(),ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+                                        if(ipindex == portList.length) {
+                                            cancel();
+                                            if (isTimerTask == 1) {
+                                                timerMap.remove(String.valueOf(taskId));
+                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                                            } else {
+                                                throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+                                            }
                                         }
                                     }
                                 }
