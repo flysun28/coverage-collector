@@ -327,7 +327,7 @@ public class ReportGeneratorCov {
                                     Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
                                     //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
                                     if (newversion) {
-                                        System.out.println("exist new version");
+                                        System.out.println("exist new version at "+serverip);
                                         executionDataFile.delete();
                                         cancel();
                                         if(isTimerTask == 1) {
