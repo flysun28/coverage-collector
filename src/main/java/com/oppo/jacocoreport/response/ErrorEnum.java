@@ -10,6 +10,7 @@ public enum ErrorEnum {
     OTHER_ERROR(1006,"其他异常"),
     GETDOWNLOADPACKAGE_RAILED(1007,"未找到本版本的部署包,请确认配置的版本是否部署测试环境"),
     DOWNLOAD_BUILDVERSION_FAILED(1008,"网络问题导致下载版本包失败，请重新执行一次"),
+    DETECTED_NEW_VERSION(1009,"检测到测试环境部署版本和配置不一致，请重新配置版本"),
     ;
     private Integer errorCode;
     private String errorMsg;

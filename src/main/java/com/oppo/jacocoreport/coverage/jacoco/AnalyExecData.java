@@ -57,8 +57,6 @@ public class AnalyExecData {
         }
 
         public void visitSessionInfo(final SessionInfo info) {
-            System.out.printf("Retrieving execution Data for session: %s%n",
-                    info.getId());
             synchronized (fileWriter) {
                 fileWriter.visitSessionInfo(info);
             }

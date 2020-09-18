@@ -330,8 +330,12 @@ public class ReportGeneratorCov {
                                         System.out.println("exist new version");
                                         executionDataFile.delete();
                                         cancel();
-                                        timerMap.remove(String.valueOf(taskId));
-                                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                                        if(isTimerTask == 1) {
+                                            timerMap.remove(String.valueOf(taskId));
+                                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+                                        }else{
+                                            throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(),ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+                                        }
                                     }
                                 }
                             }
@@ -549,14 +553,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10010L;
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/fin-2.3";
+        Long taskID = 10011L;
+        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/finshell-server.git";
+        String testedBranch = "release/finz-4.5-ljj";
         String basicBranch = "master";
-        String newTag = "aaa59b53e98ad5da5a4a5f7a49411dd114972fa5";
-        String oldTag = "d57b610a37ae3b04287a98b55148cdd074e9c3a8";
-        String versionName = "fin-loan-api-20200916145059-291";
-        String applicationID = "fin-loan-api";
+        String newTag = "c1d027b019ae210de1fa3597cea99602b06ca80a";
+        String oldTag = "0c3ad3c2e4affcfebcbe470e569d173aa79003e0";
+        String versionName = "finshell-server_release_finz-4.5-ljj_20200914175014_14b642fb";
+        String applicationID = "finshell-server";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
@@ -569,8 +573,8 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10010L);
-        applicationCodeInfo.setIsBranchTask(1);
+        applicationCodeInfo.setBranchTaskID(10011L);
+        applicationCodeInfo.setIsBranchTask(0);
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);
