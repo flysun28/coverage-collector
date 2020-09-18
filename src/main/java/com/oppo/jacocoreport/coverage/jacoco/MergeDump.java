@@ -40,8 +40,12 @@ public class MergeDump {
 
     public File executeMerge() {
         final ExecFileLoader loader = new ExecFileLoader();
+        List<File>  filesets = fileSets(this.path);
+        if(filesets.size() == 0){
+            return null;
+        }
         //如果没有获取新覆盖率文件，就不merge
-        if(fileSets(this.path).size() == 1){
+        if(filesets.size() == 1){
             if(fileSets(this.path).get(0).getName().contains("jacocoAll.exec")){
                 return null;
             }
@@ -49,7 +53,7 @@ public class MergeDump {
         load(loader);
         save(loader);
         //执行完成后，删除非必须的dump文件
-        for(final File fileSet : fileSets(this.path)){
+        for(final File fileSet : filesets){
           if(!fileSet.getName().contains("jacocoAll.exec")){
              fileSet.delete();
           }
