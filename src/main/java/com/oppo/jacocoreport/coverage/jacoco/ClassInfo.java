@@ -83,12 +83,14 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String execfile = "D:\\codeCoverage\\10010\\classes";
+        String execfile = "D:\\codeCoverage\\taskID\\10012\\classes";
         ClassInfo classInfo = new ClassInfo(execfile);
         classInfo.execute();
         Iterator iterator = classInfo.getClassNameSet().iterator();
+        Iterator iterator1 = classInfo.getClassIDSet().iterator();
         while(iterator.hasNext()){
             System.out.println(iterator.next().toString());
+            System.out.println(iterator1.next().toString());
         }
     }
 

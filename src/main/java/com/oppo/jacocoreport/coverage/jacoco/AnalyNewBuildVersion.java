@@ -65,14 +65,14 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
     public void visitClassExecution(ExecutionData executionData) {
         if(classNameSet.contains(executionData.getName())) {
             if(!classIDSet.contains(Long.toHexString(executionData.getId()))){
-//                System.out.println(executionData.getName());
-//                System.out.println(Long.toHexString(executionData.getId()));
+                System.out.println(executionData.getName());
+                System.out.println(Long.toHexString(executionData.getId()));
                 findnewversion = true;
             }
         }
     }
     public static void main(String[] args) throws IOException{
-        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\10010\\classes","D:\\codeCoverage\\10010\\jacocoAll.exec");
+        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\taskID\\10012\\classes","D:\\codeCoverage\\taskID\\10012\\release\\10.177.118.1661600668988580_jacoco.exec");
         Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
         System.out.println(newversion);
 //        System.out.println(AnalyNewBuildVersion.fileNotUpdateBy24Hours(new File("D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec")));

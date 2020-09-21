@@ -60,7 +60,7 @@ public class ExecutionDataClient {
      */
     public static void main(final String[] args) throws IOException {
         ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        executionDataClient.getExecutionData("10.177.205.211", 8098, new File("jacoco.exec"));
+        executionDataClient.getExecutionData("10.177.118.166", 8106, new File("jacoco.exec"));
     }
 
 }

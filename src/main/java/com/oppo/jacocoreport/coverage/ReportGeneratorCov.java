@@ -330,8 +330,8 @@ public class ReportGeneratorCov {
                                     if (newversion) {
                                         ipindex++;
                                         System.out.println("exist new version at "+serverip);
-                                        executionDataFile.delete();
-                                        if(ipindex == portList.length) {
+//                                        executionDataFile.delete();
+                                        if(ipindex == iplist.length) {
                                             cancel();
                                             if (isTimerTask == 1) {
                                                 timerMap.remove(String.valueOf(taskId));
@@ -557,14 +557,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10011L;
-        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/finshell-server.git";
-        String testedBranch = "release/finz-4.5-ljj";
-        String basicBranch = "master";
-        String newTag = "c1d027b019ae210de1fa3597cea99602b06ca80a";
-        String oldTag = "0c3ad3c2e4affcfebcbe470e569d173aa79003e0";
-        String versionName = "finshell-server_release_finz-4.5-ljj_20200914175014_14b642fb";
-        String applicationID = "finshell-server";
+        Long taskID = 10013L;
+        String gitPath = "git@gitlab.os.adc.com:nfc/wallet-door.git";
+        String testedBranch = "test-platform4.1-20200908";
+        String basicBranch = "release";
+        String newTag = "103d6d1d6f2fbbe42116b9b5d3f3978149cc0781";
+        String oldTag = "2cbe03d4574264cc3e551a2db581eb399e1d372b";
+        String versionName = "pandora-user-biz_20200918105119";
+        String applicationID = "pandora-user-biz";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
@@ -577,8 +577,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10011L);
+        applicationCodeInfo.setBranchTaskID(10013L);
         applicationCodeInfo.setIsBranchTask(0);
+        applicationCodeInfo.setJacocoPort("8098");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);
