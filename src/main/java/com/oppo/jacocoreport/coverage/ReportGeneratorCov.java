@@ -557,14 +557,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10013L;
+        Long taskID = 10012L;
         String gitPath = "git@gitlab.os.adc.com:nfc/wallet-door.git";
-        String testedBranch = "test-platform4.1-20200908";
-        String basicBranch = "release";
-        String newTag = "103d6d1d6f2fbbe42116b9b5d3f3978149cc0781";
-        String oldTag = "2cbe03d4574264cc3e551a2db581eb399e1d372b";
-        String versionName = "pandora-user-biz_20200918105119";
-        String applicationID = "pandora-user-biz";
+        String testedBranch = "release";
+        String basicBranch = "master";
+        String newTag = "bf9007175a31f17b78c3624b2a1fdd2e3818cfe8";
+        String oldTag = "be90873ad638aeac57c422460eaf64539e181936";
+        String versionName = "wallet-door-rpc_20200911113116_release";
+        String applicationID = "wallet-door-rpc";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
@@ -577,9 +577,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10013L);
+        applicationCodeInfo.setBranchTaskID(10012L);
         applicationCodeInfo.setIsBranchTask(0);
-        applicationCodeInfo.setJacocoPort("8098");
+        applicationCodeInfo.setJacocoPort("8106");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);

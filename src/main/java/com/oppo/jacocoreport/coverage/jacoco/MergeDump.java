@@ -41,7 +41,7 @@ public class MergeDump {
     public File executeMerge() {
         final ExecFileLoader loader = new ExecFileLoader();
         List<File>  filesets = fileSets(this.path);
-        if(filesets.size() == 0){
+        if(filesets == null && filesets.size() == 0){
             return null;
         }
         //如果没有获取新覆盖率文件，就不merge
