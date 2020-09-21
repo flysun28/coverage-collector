@@ -330,7 +330,7 @@ public class ReportGeneratorCov {
                                     if (newversion) {
                                         ipindex++;
                                         System.out.println("exist new version at "+serverip);
-//                                        executionDataFile.delete();
+                                        executionDataFile.delete();
                                         if(ipindex == iplist.length) {
                                             cancel();
                                             if (isTimerTask == 1) {
