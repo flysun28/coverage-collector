@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.NoRouteToHostException;
 import java.net.Socket;
 
 public class ExecutionDataClient {
@@ -40,7 +41,12 @@ public class ExecutionDataClient {
             localFile.close();
             destfile.delete();
 
-        }finally {
+        }catch (NoRouteToHostException e){
+            System.out.println(address+" cann't connect");
+            localFile.close();
+            destfile.delete();
+        }
+        finally {
             localFile.close();
         }
         return getedExecData;
