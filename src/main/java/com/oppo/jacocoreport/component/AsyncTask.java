@@ -2,12 +2,10 @@ package com.oppo.jacocoreport.component;
 
 import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
-import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.utils.HttpUtils;
 import com.oppo.jacocoreport.response.DefinitionException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 

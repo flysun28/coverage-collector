@@ -18,7 +18,6 @@ import org.jacoco.core.data.ExecutionDataStore;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -32,6 +31,10 @@ public final class ClassInfo implements ICoverageVisitor {
     private Set<String> classNameSet;
     private String classpath;
 
+
+
+    private HashMap<Long,String> classMap;
+
     /**
      * Creates a new example instance printing to the given stream.
      *
@@ -40,6 +43,7 @@ public final class ClassInfo implements ICoverageVisitor {
         this.classIDSet = new HashSet();
         this.classNameSet = new HashSet<>();
         this.classpath = classpath;
+        this.classMap = new HashMap();
         analyzer = new Analyzer(new ExecutionDataStore(), this);
     }
 
@@ -58,6 +62,7 @@ public final class ClassInfo implements ICoverageVisitor {
 //        out.printf("class id:     %016x%n", Long.valueOf(coverage.getId()));
         this.classIDSet.add(Long.toHexString(coverage.getId()));
         this.classNameSet.add(coverage.getName());
+        this.classMap.put(coverage.getId(),coverage.getName());
 //        out.printf("instructions: %s%n", Integer.valueOf(coverage
 //                .getInstructionCounter().getTotalCount()));
 //        out.printf("branches:     %s%n",
@@ -88,10 +93,14 @@ public final class ClassInfo implements ICoverageVisitor {
         classInfo.execute();
         Iterator iterator = classInfo.getClassNameSet().iterator();
         Iterator iterator1 = classInfo.getClassIDSet().iterator();
-        while(iterator.hasNext()){
-            System.out.println(iterator.next().toString());
-            System.out.println(iterator1.next().toString());
+
+        for(Long key :classInfo.classMap.keySet()){
+            System.out.println(Long.toHexString(key)+" "+classInfo.classMap.get(key));
         }
+//        while(iterator.hasNext()){
+//            System.out.println(iterator.next().toString());
+//            System.out.println(iterator1.next().toString());
+//        }
     }
 
 }

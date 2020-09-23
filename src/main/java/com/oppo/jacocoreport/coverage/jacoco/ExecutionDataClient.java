@@ -36,13 +36,9 @@ public class ExecutionDataClient {
             }
             socket.close();
             getedExecData = true;
-        }catch (ConnectException e){
+        }catch (Exception e){
             System.out.println(address+" cann't connect");
-            localFile.close();
-            destfile.delete();
-
-        }catch (NoRouteToHostException e){
-            System.out.println(address+" cann't connect");
+            e.printStackTrace();
             localFile.close();
             destfile.delete();
         }

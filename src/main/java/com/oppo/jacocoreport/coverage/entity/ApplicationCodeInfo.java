@@ -18,7 +18,8 @@ public class ApplicationCodeInfo {
     private int isBranchTask = 0;// 0 非分支任务 1 分支任务
     private Long branchTaskID;//分支覆盖率taskID
     private String containPackages = "";
-    private String applicationID;
+    private String applicationID = "";
+    private String ip = "";
 
 
     public String getContainPackages() {
@@ -141,6 +142,13 @@ public class ApplicationCodeInfo {
     public void setBranchTaskID(Long branchTaskID) {
         this.branchTaskID = branchTaskID;
     }
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
     @Override
     public String toString() {
@@ -160,6 +168,7 @@ public class ApplicationCodeInfo {
                 ", jacocoPort='" + jacocoPort + '\'' +
                 ", containPackages='" + containPackages + '\'' +
                 ", branchTaskID='" + branchTaskID + '\'' +
+                ", ip='" + ip + '\'' +
                 '}';
     }
 

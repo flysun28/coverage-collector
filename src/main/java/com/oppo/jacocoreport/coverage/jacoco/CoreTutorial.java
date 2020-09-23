@@ -169,7 +169,7 @@ public final class CoreTutorial {
 
     public void instrumentClass() throws Exception {
 //        final String targetName = TestTarget.class.getName();
-        final String targetName = "D:\\codeCoverage\\taskID\\10012\\classes\\com\\oppo\\nfc\\door\\core\\common\\code\\RspErrorCode.class";
+        final String targetName = "D:\\codeCoverage\\taskID\\10012\\classes\\com\\oppo\\nfc\\door\\core\\common\\constants\\Constants.class";
         LOG.info("targetName ---" + targetName.toString());
 
         // For instrumentation and runtime we need a IRuntime instance
