@@ -144,7 +144,7 @@ public class ColumbusUtils {
     public static void filterIgnoreClass(String[] classArrayList,String[] packageArrayList,File basePath){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         for(String classname:classArrayList){
-            String classPathLastStr = classname.substring(classname.lastIndexOf("."),classname.length() -1);
+            String classPathLastStr = classname.substring(classname.lastIndexOf("."));
             String classParentpathStr = classname.substring(0,classname.lastIndexOf("."));
             String classParentpath = classParentpathStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
             File classParentPath = new File(basePath, classParentpath);
@@ -160,12 +160,12 @@ public class ColumbusUtils {
                 }
             }
             else {
-                new File(classParentPath, classPathLastStr).delete();
+                new File(classParentPath, classPathLastStr+".class").delete();
             }
         }
 
         for(String packagename:packageArrayList){
-            String packagenamelastStr = packagename.substring(packagename.lastIndexOf("."),packagename.length() -1);
+            String packagenamelastStr = packagename.substring(packagename.lastIndexOf("."));
             String packageparentnameStr = packagename.substring(0,packagename.lastIndexOf("."));
 
             String packageparentnamePath = packageparentnameStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));

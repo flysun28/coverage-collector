@@ -372,7 +372,7 @@ public class ReportGeneratorCov {
                     MergeDump mergeDump = new MergeDump(coverageexecutionDataPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
 
-                    if (allexecutionDataFile != null && !allexecutionDataFile.exists()) {
+                    if (allexecutionDataFile == null) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
                         if (isTimerTask == 1) {
@@ -557,14 +557,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10012L;
-        String gitPath = "git@gitlab.os.adc.com:nfc/wallet-door.git";
-        String testedBranch = "release";
+        Long taskID = 10014L;
+        String gitPath = "git@gitlab.os.adc.com:cpc/browser/assistantscreen/cpc-assistantscreen-oppo-news.git";
+        String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "bf9007175a31f17b78c3624b2a1fdd2e3818cfe8";
-        String oldTag = "be90873ad638aeac57c422460eaf64539e181936";
-        String versionName = "wallet-door-rpc_20200911113116_release";
-        String applicationID = "wallet-door-rpc";
+        String newTag = "1f857e1abfb6c5bbaf580f3ddd697e02e4c1654b";
+        String oldTag = "1f857e1abfb6c5bbaf580f3ddd697e02e4c1654b";
+        String versionName = "cpc-assistantscreen-oppo-news-service_20200922163931";
+        String applicationID = "cpc-assistantscreen-oppo-news-service";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
@@ -577,9 +577,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10012L);
+        applicationCodeInfo.setBranchTaskID(10014L);
         applicationCodeInfo.setIsBranchTask(0);
-        applicationCodeInfo.setJacocoPort("8106");
+        applicationCodeInfo.setJacocoPort("8098");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);
