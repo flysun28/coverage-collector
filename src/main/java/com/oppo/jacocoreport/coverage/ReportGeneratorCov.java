@@ -407,6 +407,7 @@ public class ReportGeneratorCov {
                 } catch (Exception e) {
                     e.printStackTrace();
                     cancel();
+                    HttpUtils.sendErrorMSG(taskId, ErrorEnum.OTHER_ERROR.getErrorMsg());
                     timerMap.remove(String.valueOf(taskId));
                     if(isTimerTask == 1) {
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
