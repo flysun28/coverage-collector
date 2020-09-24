@@ -2,15 +2,15 @@ package com.oppo.jacocoreport.coverage.utils;
 
 public class Config {
     public final  static String MAVENPATH = "/usr/local/maven";
-    public final  static String CodePath = "D:\\codeCoverage";
+    public final  static String CodePath = "codeCoverage";
     public final static  int Port = 8098;
     public final  static String GitName = "80289528";
     public final  static String GitPassword = "Zhc_172520";
     public final  static String ResourceName = "testenvironment.yml";
 
-//    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
+    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
 //    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v"; //线上环境
-    public final static String ReportBasePath = "D:\\codeCoverage";
+//    public final static String ReportBasePath = "D:\\codeCoverage";
     public final static String ReportBaseUrl = "http://report-test.jacoco.wanyol.com/";
     public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
     public final static String SEND_COVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result";
