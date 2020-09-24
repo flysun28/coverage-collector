@@ -50,6 +50,7 @@ public class ReportGeneratorCov {
     private int isTimerTask = 0;
     private int isBranchTask = 0;
     private Long branchTaskID = 0L;//分支覆盖率taskID
+    private String specialIP = "";
 
 
     private ExecFileLoader execFileLoader;
@@ -87,6 +88,7 @@ public class ReportGeneratorCov {
         this.isTimerTask = applicationCodeInfo.getIsTimerTask();
         this.isBranchTask = applicationCodeInfo.getIsBranchTask();
         this.branchTaskID = applicationCodeInfo.getBranchTaskID();
+        this.specialIP = applicationCodeInfo.getIp();
 
     }
     private static File createCoverageReportPathBySysTime(){
@@ -372,7 +374,7 @@ public class ReportGeneratorCov {
                     MergeDump mergeDump = new MergeDump(coverageexecutionDataPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
 
-                    if (allexecutionDataFile == null) {
+                    if (allexecutionDataFile == null || !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(taskId));
                         if (isTimerTask == 1) {
@@ -511,8 +513,11 @@ public class ReportGeneratorCov {
         HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,versionname);
         String applicationIPList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
-
-        projectMap.put("ip",applicationIPList);
+        if (specialIP!= null && !specialIP.equals("")) {
+            projectMap.put("ip",specialIP);
+        }else {
+            projectMap.put("ip", applicationIPList);
+        }
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskid(this.taskId+"");
         this.coverageReportPath = coverageReportPath;
