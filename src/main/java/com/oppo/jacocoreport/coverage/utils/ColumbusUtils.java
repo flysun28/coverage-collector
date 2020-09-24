@@ -144,7 +144,7 @@ public class ColumbusUtils {
     public static void filterIgnoreClass(String[] classArrayList,String[] packageArrayList,File basePath){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         for(String classname:classArrayList){
-            String classPathLastStr = classname.substring(classname.lastIndexOf("."));
+            String classPathLastStr = classname.substring(classname.lastIndexOf(".")+1);
             String classParentpathStr = classname.substring(0,classname.lastIndexOf("."));
             String classParentpath = classParentpathStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
             File classParentPath = new File(basePath, classParentpath);
@@ -165,7 +165,7 @@ public class ColumbusUtils {
         }
 
         for(String packagename:packageArrayList){
-            String packagenamelastStr = packagename.substring(packagename.lastIndexOf("."));
+            String packagenamelastStr = packagename.substring(packagename.lastIndexOf(".")+1);
             String packageparentnameStr = packagename.substring(0,packagename.lastIndexOf("."));
 
             String packageparentnamePath = packageparentnameStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
@@ -208,10 +208,13 @@ public class ColumbusUtils {
         Iterator iterator = containpackageSet.iterator();
         while (iterator.hasNext()) {
             String containpackagename = iterator.next().toString();
+            if(containpackagename.contains("*")){
+                containpackagename = containpackagename.substring(0,containpackagename.indexOf("*"));
+            }
             if(containpackagename.contains(path)){
                 containresult=0;
             }
-            if(containpackagename.equals(path)){
+            if(containpackagename.contains(path)){
                 containresult=1;
             }
         }
@@ -454,8 +457,8 @@ public class ColumbusUtils {
 //        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
 //        String downloadFilePath = downloadColumbusBuildVersion("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202008/combine_844869-20200820-8448691.zip","D:\\execfile");
 //        extractColumsBuildVersionClasses(downloadFilePath,"D:\\execfile\\classes","annotate-data-product-service",new HashMap<>());
-        String[] containPackages = {"com.oppo.fintech.loan.core","com.oppo.fintech.loan.api.impl"};
+        String[] containPackages = {"com.oppo.fintech.loan.api.re*","com.oppo.fintech.loan.api.impl"};
         HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
-        ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\fin-loan\\classes"));
+        ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\taskID\\10015\\classes"));
     }
 }
