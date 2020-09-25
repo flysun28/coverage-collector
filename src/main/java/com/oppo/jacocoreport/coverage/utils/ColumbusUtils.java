@@ -185,6 +185,8 @@ public class ColumbusUtils {
                 } else {
                     fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
                 }
+            }else{
+                fileOperateUtil.delAllFile(new File(basePath, packagename).toString());
             }
         }
     }
