@@ -143,45 +143,48 @@ public class ColumbusUtils {
 
     public static void filterIgnoreClass(String[] classArrayList,String[] packageArrayList,File basePath){
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
-        for(String classname:classArrayList){
-            String classPathLastStr = classname.substring(classname.lastIndexOf(".")+1);
-            String classParentpathStr = classname.substring(0,classname.lastIndexOf("."));
-            String classParentpath = classParentpathStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-            File classParentPath = new File(basePath, classParentpath);
-            if(classPathLastStr.endsWith("*")) {
-                String prefix = classPathLastStr.substring(0,classPathLastStr.indexOf("*"));
-                if (classParentPath.exists()) {
-                    File[] listFile = classParentPath.listFiles();
-                    for (File classFile:listFile) {
-                          if(classFile.getName().startsWith(prefix)){
-                              classFile.delete();
-                          }
+        for(String classname:classArrayList) {
+            if (classname.contains(".")) {
+                String classPathLastStr = classname.substring(classname.lastIndexOf(".") + 1);
+                String classParentpathStr = classname.substring(0, classname.lastIndexOf("."));
+                String classParentpath = classParentpathStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+                File classParentPath = new File(basePath, classParentpath);
+                if (classPathLastStr.endsWith("*")) {
+                    String prefix = classPathLastStr.substring(0, classPathLastStr.indexOf("*"));
+                    if (classParentPath.exists()) {
+                        File[] listFile = classParentPath.listFiles();
+                        for (File classFile : listFile) {
+                            if (classFile.getName().startsWith(prefix)) {
+                                classFile.delete();
+                            }
+                        }
                     }
+                } else {
+                    new File(classParentPath, classPathLastStr + ".class").delete();
                 }
-            }
-            else {
-                new File(classParentPath, classPathLastStr+".class").delete();
             }
         }
 
-        for(String packagename:packageArrayList){
-            String packagenamelastStr = packagename.substring(packagename.lastIndexOf(".")+1);
-            String packageparentnameStr = packagename.substring(0,packagename.lastIndexOf("."));
+        for(String packagename:packageArrayList) {
+            if (packagename.contains(".")) {
+                String packagenamelastStr = packagename.substring(packagename.lastIndexOf(".") + 1);
+                String packageparentnameStr = packagename.substring(0, packagename.lastIndexOf("."));
 
-            String packageparentnamePath = packageparentnameStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-            File packagenameParentFile = new File(basePath,packageparentnamePath);
-            if(packagenamelastStr.endsWith("*")){
-                if(packagenameParentFile.exists()) {
-                    for(File packagefile :packagenameParentFile.listFiles()){
-                        String prefix = packagenamelastStr.substring(0,packagenamelastStr.indexOf("*"));
-                        if(packagefile.getName().contains(prefix)){
-                            fileOperateUtil.delAllFile(packagefile.toString());
+                String packageparentnamePath = packageparentnameStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+                File packagenameParentFile = new File(basePath, packageparentnamePath);
+                if (packagenamelastStr.endsWith("*")) {
+                    if (packagenameParentFile.exists()) {
+                        for (File packagefile : packagenameParentFile.listFiles()) {
+                            String prefix = packagenamelastStr.substring(0, packagenamelastStr.indexOf("*"));
+                            if (packagefile.getName().contains(prefix)) {
+                                fileOperateUtil.delAllFile(packagefile.toString());
+                            }
                         }
-                    }
 
+                    }
+                } else {
+                    fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
                 }
-            }else {
-                fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
             }
         }
     }
