@@ -169,6 +169,7 @@ public class ApplicationCodeInfo {
                 ", containPackages='" + containPackages + '\'' +
                 ", branchTaskID='" + branchTaskID + '\'' +
                 ", ip='" + ip + '\'' +
+                ", applicationID='" + applicationID + '\''+
                 '}';
     }
 
