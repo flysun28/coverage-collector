@@ -38,7 +38,7 @@ public class ColumbusUtils {
         try {
             String signature = HMAC_MD5_encode("123456789", sortedParams);
             String ret = null;
-            ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=50");
+            ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=100");
             appVersionResponses = new Gson().fromJson(ret, new TypeToken<List<AppVersionResponse>>() {
             }.getType());
             for (AppVersionResponse appVersionResponse : appVersionResponses) {
