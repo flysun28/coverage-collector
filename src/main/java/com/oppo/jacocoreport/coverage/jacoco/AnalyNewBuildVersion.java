@@ -6,6 +6,7 @@ import org.jacoco.core.runtime.RemoteControlReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -73,7 +74,10 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
                 System.out.println(executionData.getName());
                 System.out.println(Long.toHexString(executionData.getId()));
                 try {
-                    Class cls = Class.forName(classPath+File.separator+executionData.getName()+".class");
+//                    ClassLoader c1 = new URLClassLoader("file://"+classPath+File.separator+executionData.getName()+".class");
+                    MyClassLoader loader = new MyClassLoader();
+
+                    Class<?> cls = loader.findClass("file://"+classPath+File.separator+executionData.getName()+".class");
                     if(!cls.isInterface()){
                         findnewversion = true;
                     }
@@ -84,7 +88,7 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
         }
     }
     public static void main(String[] args) throws IOException{
-        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\taskID\\10012\\classes","D:\\codeCoverage\\taskID\\10012\\release\\10.177.118.1661600668988580_jacoco.exec");
+        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\taskID\\10016\\classes","D:\\codeCoverage\\taskID\\10016\\master\\jacocoAll.exec");
         Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
         System.out.println(newversion);
 //        System.out.println(AnalyNewBuildVersion.fileNotUpdateBy24Hours(new File("D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec")));
