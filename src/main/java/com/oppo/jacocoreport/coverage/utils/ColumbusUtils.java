@@ -212,18 +212,18 @@ public class ColumbusUtils {
             return containresult;
         }
         path = path.substring(path.indexOf("com"));
-        System.out.println("path : "+path);
         Iterator iterator = containpackageSet.iterator();
         while (iterator.hasNext()) {
             String containpackagename = iterator.next().toString();
             if(containpackagename.contains("*")){
                 containpackagename = containpackagename.substring(0,containpackagename.indexOf("*"));
             }
-            if(containpackagename.contains(path)){
-                containresult=0;
-            }
-            if(containpackagename.contains(path)){
+            if(containpackagename.equals(path)){
                 containresult=1;
+                return containresult;
+            }else if(containpackagename.contains(path)){
+                containresult=0;
+                return containresult;
             }
         }
         return containresult;

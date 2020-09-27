@@ -563,16 +563,17 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10016L;
-        String gitPath = "git@gitlab.os.adc.com:fin/wealth/fin-wealth.git";
+        Long taskID = 10017L;
+        String gitPath = "git@gitlab.os.adc.com:OCloud/ocloud_backup/ocloud_drive.git";
         String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
-        String oldTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
-        String versionName = "fin-wealth-api_20200915204749";
-        String applicationID = "fin-wealth-api";
-        String[] ignoreclassList = new String[]{""};
+        String newTag = "1efea64f1bc8b24fd119b497a7133d07fbbcc83f";
+        String oldTag = "1efea64f1bc8b24fd119b497a7133d07fbbcc83f";
+        String versionName = "ocloud_drive_web_20200923192050";
+        String applicationID = "ocloud_drive_web";
+        String[] ignoreclassList = new String[]{"com.oppo.ocloud.drive.web.rest.DriveStatusRest","com.oppo.ocloud.drive.web.rest.AbstractController","com.oppo.ocloud.drive.web.rest.AbstractController$Processor"};
         String[] ignorepackageList = new String[]{""};
+        String[] containpackageList = new String[]{"com.oppo.ocloud.drive.web.rest"};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -583,12 +584,12 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10016L);
+        applicationCodeInfo.setBranchTaskID(10017L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
-            reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, null);
+            reportGeneratorCov.startCoverageTask(applicationID, ignoreclassList, ignorepackageList, containpackageList);
         }catch (Exception e){
             e.printStackTrace();
         }
