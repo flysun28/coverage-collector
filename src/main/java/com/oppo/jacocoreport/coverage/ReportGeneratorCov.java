@@ -327,22 +327,22 @@ public class ReportGeneratorCov {
                                 //如果取得覆盖率数据，判断是否有新版本
                                 if (getedexecdata) {
                                     AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(), executionDataFile.toString());
-                                    Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
-                                    //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
-                                    if (newversion) {
-                                        ipindex++;
-                                        System.out.println("exist new version at "+serverip);
-                                        executionDataFile.delete();
-                                        if(ipindex == iplist.length) {
-                                            cancel();
-                                            if (isTimerTask == 1) {
-                                                timerMap.remove(String.valueOf(taskId));
-                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
-                                            } else {
-                                                throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
-                                            }
-                                        }
-                                    }
+//                                    Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
+//                                    //如果存在新版本，则结束当前的覆盖率任务，同时删除本次覆盖率数据
+//                                    if (newversion) {
+//                                        ipindex++;
+//                                        System.out.println("exist new version at "+serverip);
+//                                        executionDataFile.delete();
+//                                        if(ipindex == iplist.length) {
+//                                            cancel();
+//                                            if (isTimerTask == 1) {
+//                                                timerMap.remove(String.valueOf(taskId));
+//                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + taskId);
+//                                            } else {
+//                                                throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+//                                            }
+//                                        }
+//                                    }
                                 }
                             }
                         }
@@ -563,16 +563,16 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10015L;
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "hotfix-trace";
+        Long taskID = 10016L;
+        String gitPath = "git@gitlab.os.adc.com:fin/wealth/fin-wealth.git";
+        String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "b9ab113967f927d8be81a1ebe34fe432404c0989";
-        String oldTag = "d57b610a37ae3b04287a98b55148cdd074e9c3a8";
-        String versionName = "fin-loan-api-20200922142808-296";
-        String applicationID = "fin-loan-api";
-        String[] ignoreclassList = new String[]{"com.oppo.fintech.loan.api.rest.Home*"};
-        String[] ignorepackageList = new String[]{"com.oppo.fintech.loan.core*"};
+        String newTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
+        String oldTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
+        String versionName = "fin-wealth-api_20200915204749";
+        String applicationID = "fin-wealth-api";
+        String[] ignoreclassList = new String[]{""};
+        String[] ignorepackageList = new String[]{""};
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -583,7 +583,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10015L);
+        applicationCodeInfo.setBranchTaskID(10016L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {

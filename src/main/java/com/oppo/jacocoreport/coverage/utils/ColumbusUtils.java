@@ -186,7 +186,9 @@ public class ColumbusUtils {
                     fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
                 }
             }else{
-                fileOperateUtil.delAllFile(new File(basePath, packagename).toString());
+                if(!packagename.equals("")) {
+                    fileOperateUtil.delAllFile(new File(basePath, packagename).toString());
+                }
             }
         }
     }
@@ -210,6 +212,7 @@ public class ColumbusUtils {
             return containresult;
         }
         path = path.substring(path.indexOf("com"));
+        System.out.println("path : "+path);
         Iterator iterator = containpackageSet.iterator();
         while (iterator.hasNext()) {
             String containpackagename = iterator.next().toString();

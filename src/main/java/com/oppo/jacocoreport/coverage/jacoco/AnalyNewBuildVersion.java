@@ -65,8 +65,8 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
     public void visitClassExecution(ExecutionData executionData) {
         if(classNameSet.contains(executionData.getName())) {
             if(!classIDSet.contains(Long.toHexString(executionData.getId()))){
-//                System.out.println(executionData.getName());
-//                System.out.println(Long.toHexString(executionData.getId()));
+                System.out.println(executionData.getName());
+                System.out.println(Long.toHexString(executionData.getId()));
                 findnewversion = true;
             }
         }
