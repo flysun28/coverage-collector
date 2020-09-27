@@ -32,6 +32,9 @@ public final class ClassInfo implements ICoverageVisitor {
     private String classpath;
 
 
+    public HashMap<Long, String> getClassMap() {
+        return classMap;
+    }
 
     private HashMap<Long,String> classMap;
 
