@@ -2,6 +2,7 @@ package com.oppo.jacocoreport.coverage.jacoco;
 
 import org.jacoco.core.data.*;
 import org.jacoco.core.runtime.RemoteControlReader;
+import org.objectweb.asm.ClassReader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,13 +75,13 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
 //                System.out.println(executionData.getName());
 //                System.out.println(Long.toHexString(executionData.getId()));
                 try {
-//                    ClassLoader c1 = new URLClassLoader("file://"+classPath+File.separator+executionData.getName()+".class");
-//                    MyClassLoader loader = new MyClassLoader();
-
-//                    Class<?> cls = loader.findClass("file:///"+classPath+File.separator+executionData.getName()+".class");
-//                    if(!cls.isInterface()){
+                    String classpath = classPath+File.separator+executionData.getName()+".class";
+                    FileInputStream in = new FileInputStream(classpath);
+                    ClassReader classReader = new ClassReader(in);
+                    if(classReader.getClass().isInterface()){
+                        System.out.println(classReader);
                         findnewversion = true;
-//                    }
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -88,7 +89,7 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
         }
     }
     public static void main(String[] args) throws IOException{
-        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\taskID\\10016\\classes","D:\\codeCoverage\\taskID\\10016\\master\\jacocoAll.exec");
+        AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion("D:\\codeCoverage\\taskID\\10017\\classes","D:\\codeCoverage\\taskID\\10017\\master\\jacocoAll.exec");
         Boolean newversion = analyNewBuildVersion.findNewBuildVersion();
         System.out.println(newversion);
 //        System.out.println(AnalyNewBuildVersion.fileNotUpdateBy24Hours(new File("D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec")));
