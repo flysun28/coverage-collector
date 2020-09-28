@@ -311,6 +311,11 @@ public class ColumbusUtils {
     public static String getdeployJarPrefix(String doanloadZipFile){
         String[] applicationprelist = doanloadZipFile.split("-");
         String applicationpre = "";
+        if(doanloadZipFile.contains("bin")){
+            applicationpre = doanloadZipFile.substring(0,doanloadZipFile.indexOf("bin")-1);
+            return applicationpre;
+        }
+
         if(applicationprelist.length > 2){
             if(applicationprelist[1].matches("\\d*")){
                 applicationpre = applicationprelist[0];
