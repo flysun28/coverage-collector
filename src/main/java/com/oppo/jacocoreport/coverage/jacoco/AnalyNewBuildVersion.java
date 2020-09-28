@@ -78,7 +78,7 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
                     String classpath = classPath+File.separator+executionData.getName()+".class";
                     FileInputStream in = new FileInputStream(classpath);
                     ClassReader classReader = new ClassReader(in);
-                    if(classReader.getClass().isInterface()){
+                    if(!classReader.getClass().isInterface()){
                         System.out.println(classReader);
                         findnewversion = true;
                     }
