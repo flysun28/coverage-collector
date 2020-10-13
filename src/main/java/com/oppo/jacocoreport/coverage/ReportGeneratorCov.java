@@ -149,11 +149,11 @@ public class ReportGeneratorCov {
      *
      * @throws IOException
      */
-    private void createAll(File executionDataFile,ArrayList<File> classesDirectoryList,File reportAllCovDirectory,String title,ArrayList<File> sourceDirectoryList) throws Exception {
+    private void createAll(ArrayList<File> classesDirectoryList,File reportAllCovDirectory,String title,ArrayList<File> sourceDirectoryList) throws Exception {
 
         // Read the jacoco.exec file. Multiple data files could be merged
         // at this point
-        loadExecutionData(executionDataFile);
+
 
         // Run the structure analyzer on a single class folder to build up
         // the coverage model. The process would be similar if your classes
@@ -382,12 +382,13 @@ public class ReportGeneratorCov {
                         }
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
-
-                    //生成整体覆盖率报告
-                    createAll(allexecutionDataFile, classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+                    loadExecutionData(allexecutionDataFile);
+                    //生成差异化覆盖率报告
                     if (!newTag.equals(oldTag)) {
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
+                    //生成整体覆盖率报告
+                    createAll(classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
                     //上传覆盖率报告
                     sendcoveragedata(reportAllCovDirectory,reportDiffDirectory);
                     Thread.sleep(1000);
@@ -448,13 +449,13 @@ public class ReportGeneratorCov {
             if (filterExecFile != null && !filterExecFile.exists()) {
                 throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
             }
-
-            //生成整体覆盖率报告
-            createAll(filterExecFile, classesDirectoryList, reportAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
+            loadExecutionData(filterExecFile);
+            //生成差异化覆盖率
             if (!newTag.equals(oldTag)) {
-
                 createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
             }
+            //生成整体覆盖率报告
+            createAll(classesDirectoryList, reportAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
             //上传覆盖率报告
             sendBranchCoverageData(reportAllCovDirectory,reportDiffDirectory,applicationMap.get("applicationID").toString(),newBranchName.replace("/","_"),oldBranchName);
         } catch (DefinitionException e) {
