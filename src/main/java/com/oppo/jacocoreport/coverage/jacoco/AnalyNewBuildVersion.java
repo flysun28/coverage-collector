@@ -81,7 +81,7 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
                     if(!classReader.getClass().isInterface()){
                         findnewversion = true;
                     }else {
-                        System.out.println("changed class "+classpath);
+                        System.out.println("changed interface "+classpath);
                     }
                 }catch (Exception e){
                     e.printStackTrace();

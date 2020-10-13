@@ -240,7 +240,7 @@ public class ReportGeneratorCov {
 //        }else{
             //基于Tag比较的覆盖 参数1：本地仓库，参数2：代码分支，参数3：新Tag(预发版本)，参数4：基线Tag（变更前的版本）
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
-            coverageBuilder = new CoverageBuilder(gitlocalPath, newBranchName, newTag, oldTag);
+        coverageBuilder = new CoverageBuilder(gitlocalPath, newBranchName, newTag, oldTag);
 //        }
         final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
             for (File classesDirectory : classesDirectoryList) {
@@ -563,14 +563,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10016L;
-        String gitPath = "git@gitlab.os.adc.com:fin/wealth/fin-wealth.git";
-        String testedBranch = "master";
+        Long taskID = 10019L;
+        String gitPath = "git@gitlab.os.adc.com:finance/pandora.git";
+        String testedBranch = "test-platform4.2-20200922";
         String basicBranch = "master";
-        String newTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
-        String oldTag = "a4ce2fd31df64aedcd9669a6885ffb0bde2a739e";
-        String versionName = "fin-wealth-api_20200915204749";
-        String applicationID = "fin-wealth-api";
+        String newTag = "72d6d7b30b22664774348a6d9ad5388f0c97685b";
+        String oldTag = "73b6105dfce43ea8e7cf7af3a6054a7da8db16bc";
+        String versionName = "pandora-server-web_20201012173840";
+        String applicationID = "pandora-server-web";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         String[] containpackageList = new String[]{};
@@ -584,7 +584,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10016L);
+        applicationCodeInfo.setBranchTaskID(10019L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {

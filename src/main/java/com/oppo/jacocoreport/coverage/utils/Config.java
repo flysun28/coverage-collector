@@ -3,7 +3,7 @@ package com.oppo.jacocoreport.coverage.utils;
 public class Config {
     public final static  int Port = 8098;
     public final  static String GitName = "80289528";
-    public final  static String GitPassword = "Zhc_172520";
+    public final  static String GitPassword = "Zhc_001";
 
 //    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
     public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v"; //线上环境
