@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class AnalyExecData {
+public class AnalyDiffExecData {
     //    private static final String EXECFILE = "jacoco-server.exec";
 //    private static final String ALLEXEC = "D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec";
     private String filteredExec;
     private String originExec;
 
-    public AnalyExecData(String filteredExec,String originExec){
+    public AnalyDiffExecData(String filteredExec, String originExec){
         this.filteredExec = filteredExec;
         this.originExec = originExec;
     }
@@ -27,14 +27,12 @@ public class AnalyExecData {
         private final RemoteControlReader reader;
 
         private final ExecutionDataWriter fileWriter;
-        private Set<String> classIDSet;
+        private List<ClassInfo> classInfos;
 
-        Handler(final ExecutionDataWriter fileWriter,String classPath)
+        Handler(final ExecutionDataWriter fileWriter,List<ClassInfo> classInfos)
                 throws IOException {
             this.fileWriter = fileWriter;
-            ClassInfo classInfo =  new ClassInfo(classPath);
-            classInfo.execute();
-            this.classIDSet = classInfo.getClassIDSet();
+            this.classInfos = classInfos;
 
             // Just send a valid header:
 //            new RemoteControlWriter(new FileOutputStream(ALLEXEC));
@@ -64,25 +62,25 @@ public class AnalyExecData {
         }
 
         public void visitClassExecution(final ExecutionData data) {
-            if(classIDSet.contains(Long.toHexString(data.getId()))) {
+//            if(classIDSet.contains(Long.toHexString(data.getId()))) {
                 synchronized (fileWriter) {
                     fileWriter.visitClassExecution(data);
                 }
-            }
+//            }
         }
     }
 
-    public void filterOldExecData(String classPath) throws Exception{
+    public void filterOldExecData(List<ClassInfo> classInfos) throws Exception{
         final ExecutionDataWriter fileWriter = new ExecutionDataWriter(
                 new FileOutputStream(filteredExec));
-        final Handler handler = new Handler(fileWriter,classPath);
+        final Handler handler = new Handler(fileWriter,classInfos);
         Thread thread = new Thread(handler);
         thread.start();
         thread.join();
     }
 
     public static void main(final String[] args) throws Exception {
-        AnalyExecData analyExecData = new  AnalyExecData("jacoco-server.exec","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");
-        analyExecData.filterOldExecData("D:\\codeCoverage\\fin-loan\\classes");
+        AnalyDiffExecData analyExecData = new AnalyDiffExecData("jacoco-server.exec","D:\\jacocoCov\\20200728102452\\fin-loan-api\\jacocoAll.exec");
+//        analyExecData.filterOldExecData("D:\\codeCoverage\\fin-loan\\classes");
     }
 }

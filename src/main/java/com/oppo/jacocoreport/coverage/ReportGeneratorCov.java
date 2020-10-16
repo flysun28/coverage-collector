@@ -242,6 +242,7 @@ public class ReportGeneratorCov {
             //final CoverageBuilder coverageBuilder = new CoverageBuilder("E:\\Git-pro\\JacocoTest","daily","v004","v003");
         coverageBuilder = new CoverageBuilder(gitlocalPath, newBranchName, newTag, oldTag);
 //        }
+
         final Analyzer analyzer = new Analyzer(execFileLoader.getExecutionDataStore(), coverageBuilder);
             for (File classesDirectory : classesDirectoryList) {
                 analyzer.analyzeAll(classesDirectory);
@@ -564,14 +565,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10019L;
-        String gitPath = "git@gitlab.os.adc.com:finance/pandora.git";
-        String testedBranch = "test-platform4.2-20200922";
+        Long taskID = 10020L;
+        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/credit-platform.git";
+        String testedBranch = "release/finz-4.6-ljj";
         String basicBranch = "master";
-        String newTag = "72d6d7b30b22664774348a6d9ad5388f0c97685b";
-        String oldTag = "73b6105dfce43ea8e7cf7af3a6054a7da8db16bc";
-        String versionName = "pandora-server-web_20201012173840";
-        String applicationID = "pandora-server-web";
+        String newTag = "bcd70b58506fab71f5c6d04df35caece7f8fd0d8";
+        String oldTag = "280c2b383260293ba5ee33e8df16038344fae165";
+        String versionName = "credit-platform-core_bcd70b5_20201013161304_351ca7ce";
+        String applicationID = "credit-platform-core";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         String[] containpackageList = new String[]{};
@@ -585,7 +586,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10019L);
+        applicationCodeInfo.setBranchTaskID(10020L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {
