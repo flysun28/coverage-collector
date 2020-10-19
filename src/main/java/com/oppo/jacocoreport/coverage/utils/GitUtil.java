@@ -92,6 +92,7 @@ public class GitUtil {
         GitAdapter gitAdapter = new GitAdapter(gitPath);
         Git git = gitAdapter.getGit();
         Repository repo = gitAdapter.getRepository();
+
         //默认master分支，如果不存在，取release分支
         try {
             System.out.println(repo.getBranch());

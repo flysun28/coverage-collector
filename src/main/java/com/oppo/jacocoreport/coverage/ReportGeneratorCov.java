@@ -565,14 +565,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10020L;
-        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/credit-platform.git";
-        String testedBranch = "release/finz-4.6-ljj";
-        String basicBranch = "master";
-        String newTag = "bcd70b58506fab71f5c6d04df35caece7f8fd0d8";
-        String oldTag = "280c2b383260293ba5ee33e8df16038344fae165";
-        String versionName = "credit-platform-core_bcd70b5_20201013161304_351ca7ce";
-        String applicationID = "credit-platform-core";
+        Long taskID = 10024L;
+        String gitPath = "git@gitlab.os.adc.com:finance/pandora.git";
+        String testedBranch = "test-syyh-20200910";
+        String basicBranch = "release";
+        String newTag = "39e1a9a0dec2ad327233d55d72cde7ae3c1a21de";
+        String oldTag = "db66e626dc0c7c8e03a1eb0c257934b786f7aded";
+        String versionName = "pandora-user-biz_20201016173627";
+        String applicationID = "pandora-user-biz";
         String[] ignoreclassList = new String[]{};
         String[] ignorepackageList = new String[]{};
         String[] containpackageList = new String[]{};
@@ -586,7 +586,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10020L);
+        applicationCodeInfo.setBranchTaskID(10024L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {

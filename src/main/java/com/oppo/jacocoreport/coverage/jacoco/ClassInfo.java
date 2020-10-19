@@ -91,7 +91,7 @@ public final class ClassInfo implements ICoverageVisitor {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String execfile = "D:\\codeCoverage\\taskID\\10012\\classes";
+        String execfile = "C:\\Users\\80289528\\Documents\\TeamTalk\\download\\80289528\\classes";
         ClassInfo classInfo = new ClassInfo(execfile);
         classInfo.execute();
         Iterator iterator = classInfo.getClassNameSet().iterator();
