@@ -534,7 +534,7 @@ public class ReportGeneratorCov {
 
         //只统计指定包
         if(containPackages!= null && containPackages.length >0) {
-            HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
+            HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages,classPath);
             ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
         }
 

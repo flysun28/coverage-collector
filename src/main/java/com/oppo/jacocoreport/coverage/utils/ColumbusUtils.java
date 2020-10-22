@@ -193,11 +193,16 @@ public class ColumbusUtils {
         }
     }
 
-    public static HashSet getcontainPackageHashSet(String[] containPackageList){
+    public static HashSet getcontainPackageHashSet(String[] containPackageList,String localPath){
         HashSet containpackageSet = new HashSet();
         for(String packagename:containPackageList){
             String packagenamePath = packagename.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-            containpackageSet.add(packagenamePath);
+            String packagPath = localPath+File.separator+packagenamePath;
+            if(new File(packagPath).exists()) {
+                containpackageSet.add(packagenamePath);
+            }else if(packagename.contains("*")){
+                containpackageSet.add(packagenamePath);
+            }
         }
         return containpackageSet;
     }
@@ -369,6 +374,19 @@ public class ColumbusUtils {
         Execute execute = new Execute();
         boolean existJar = false;
         File applicationJarPath = null;
+        //获取解压缩文件夹名
+        File[] fileList =  new File(localpath).listFiles();
+        for(File filename : fileList){
+            if(filename.isDirectory()){
+                //先通过解压缩工程名查找jar包
+                applicationJarPath = getapplicationJarPath(new File(localpath), filename.getName());
+                if(applicationJarPath!=null) {
+                    existJar = true;
+                    fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+                    execute.extractFiles(targetPath);
+                }
+            }
+        }
         //先通过applicationID查找jar包
         applicationJarPath = getapplicationJarPath(new File(localpath), applicationID);
         if(applicationJarPath!=null) {
@@ -470,8 +488,8 @@ public class ColumbusUtils {
 //        getdeployJarPrefix("fin-20200721_0251-bin-20200721-7675751.zip");
 //        String downloadFilePath = downloadColumbusBuildVersion("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202008/combine_844869-20200820-8448691.zip","D:\\execfile");
 //        extractColumsBuildVersionClasses(downloadFilePath,"D:\\execfile\\classes","annotate-data-product-service",new HashMap<>());
-        String[] containPackages = {"com.oppo.fintech.loan.api.re*","com.oppo.fintech.loan.api.impl"};
-        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages);
+        String[] containPackages = {"com.oppo.fintech.loan.api.re*","com.oppo.fin.wealthe"};
+        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages,"\"D:\\\\codeCoverage\\\\taskID\\\\10016\\\\classes");
         ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\taskID\\10015\\classes"));
     }
 }
