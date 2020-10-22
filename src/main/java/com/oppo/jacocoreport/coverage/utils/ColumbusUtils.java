@@ -375,18 +375,18 @@ public class ColumbusUtils {
         boolean existJar = false;
         File applicationJarPath = null;
         //获取解压缩文件夹名
-        File[] fileList =  new File(localpath).listFiles();
-        for(File filename : fileList){
-            if(filename.isDirectory()){
-                //先通过解压缩工程名查找jar包
-                applicationJarPath = getapplicationJarPath(new File(localpath), filename.getName());
-                if(applicationJarPath!=null) {
-                    existJar = true;
-                    fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
-                    execute.extractFiles(targetPath);
-                }
-            }
-        }
+//        File[] fileList =  new File(localpath).listFiles();
+//        for(File filename : fileList){
+//            if(filename.isDirectory()){
+//                //先通过解压缩工程名查找jar包
+//                applicationJarPath = getapplicationJarPath(new File(localpath), filename.getName());
+//                if(applicationJarPath!=null) {
+//                    existJar = true;
+//                    fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
+//                    execute.extractFiles(targetPath);
+//                }
+//            }
+//        }
         //先通过applicationID查找jar包
         applicationJarPath = getapplicationJarPath(new File(localpath), applicationID);
         if(applicationJarPath!=null) {
