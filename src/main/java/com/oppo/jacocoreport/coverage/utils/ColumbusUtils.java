@@ -154,13 +154,16 @@ public class ColumbusUtils {
                     if (classParentPath.exists()) {
                         File[] listFile = classParentPath.listFiles();
                         for (File classFile : listFile) {
-                            if (classFile.getName().startsWith(prefix)) {
+                            if (classFile.getName().startsWith(prefix) && classFile.exists()) {
                                 classFile.delete();
                             }
                         }
                     }
                 } else {
-                    new File(classParentPath, classPathLastStr + ".class").delete();
+                    File classfilename = new File(classParentPath, classPathLastStr + ".class");
+                    if(classfilename.exists()){
+                        classfilename.delete();
+                    }
                 }
             }
         }
@@ -176,17 +179,19 @@ public class ColumbusUtils {
                     if (packagenameParentFile.exists()) {
                         for (File packagefile : packagenameParentFile.listFiles()) {
                             String prefix = packagenamelastStr.substring(0, packagenamelastStr.indexOf("*"));
-                            if (packagefile.getName().contains(prefix)) {
+                            if (packagefile.getName().contains(prefix)&& packagefile.exists()) {
                                 fileOperateUtil.delAllFile(packagefile.toString());
                             }
                         }
 
                     }
                 } else {
-                    fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
+                    if(new File(packagenameParentFile, packagenamelastStr).exists()) {
+                        fileOperateUtil.delAllFile(new File(packagenameParentFile, packagenamelastStr).toString());
+                    }
                 }
             }else{
-                if(!packagename.equals("")) {
+                if(!packagename.equals("")&& new File(basePath, packagename).exists()) {
                     fileOperateUtil.delAllFile(new File(basePath, packagename).toString());
                 }
             }
