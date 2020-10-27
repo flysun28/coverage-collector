@@ -392,20 +392,19 @@ public class ReportGeneratorCov {
                     createAll(classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
                     //上传覆盖率报告
                     sendcoveragedata(reportAllCovDirectory,reportDiffDirectory,0);
-                    if(!StringUtils.isEmptyOrNull(applicationCodeInfo.getIgnoreClass()) || !StringUtils.isEmptyOrNull(applicationCodeInfo.getIgnorePackage()) || !StringUtils.isEmptyOrNull(applicationCodeInfo.getContainPackages())) {
-                        File filterreportAllCovDirectory = new File(coverageReportPath, "filtercoveragereport");////要保存报告的地址
-                        File filterreportDiffDirectory = new File(coverageReportPath, "filtercoveragediffreport");
 
-                        //过滤class和package文件
-                        filterClassAndPackage(applicationMap.get("classPath").toString());
-                        if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
-                            createDiff(classesDirectoryList, filterreportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
-                        }
-                        //生成整体覆盖率报告
-                        createAll(classesDirectoryList, filterreportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
-                        //上传覆盖率报告
-                        sendcoveragedata(filterreportAllCovDirectory, filterreportDiffDirectory, 1);
+                    File filterreportAllCovDirectory = new File(coverageReportPath, "filtercoveragereport");////要保存报告的地址
+                    File filterreportDiffDirectory = new File(coverageReportPath, "filtercoveragediffreport");
+
+                    //过滤class和package文件
+                    filterClassAndPackage(applicationMap.get("classPath").toString());
+                    if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
+                        createDiff(classesDirectoryList, filterreportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
+                    //生成整体覆盖率报告
+                    createAll(classesDirectoryList, filterreportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+                    //上传覆盖率报告
+                    sendcoveragedata(filterreportAllCovDirectory, filterreportDiffDirectory, 1);
 
                     Thread.sleep(1000);
                     if (applicationCodeInfo.getIsTimerTask() == 0) {
