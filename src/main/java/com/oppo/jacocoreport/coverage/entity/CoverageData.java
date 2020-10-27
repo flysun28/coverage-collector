@@ -97,6 +97,17 @@ public class CoverageData {
     //基准分支
     private String basicBranch;
 
+    public int getFilterTask() {
+        return filterTask;
+    }
+
+    public void setFilterTask(int filterTask) {
+        this.filterTask = filterTask;
+    }
+
+    //是否过滤任务
+    private int filterTask; //0 非过滤 1 过滤
+
 
     public Long getId() {
         return id;
@@ -344,6 +355,7 @@ public class CoverageData {
                 ", diffTotalClasses='" + diffTotalClasses + '\'' +
                 ", totalCoverageReportPath='" + totalCoverageReportPath + '\'' +
                 ", diffCoverageReportPath='" + diffCoverageReportPath + '\'' +
+                ", filterTask='" + filterTask + '\'' +
                 '}';
     }
 }
