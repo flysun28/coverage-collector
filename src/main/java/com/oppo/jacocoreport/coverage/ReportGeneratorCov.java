@@ -350,7 +350,7 @@ public class ReportGeneratorCov {
                     }
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
                     File allexecutionDataFile = new File(coverageexecutionDataPath, "jacocoAll.exec");
-                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateBy24Hours(allexecutionDataFile)) {
+                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
 
@@ -626,6 +626,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setBranchTaskID(10027L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
+        applicationCodeInfo.setIgnorePackage("com.oppo.fintech.loan.domain");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID);

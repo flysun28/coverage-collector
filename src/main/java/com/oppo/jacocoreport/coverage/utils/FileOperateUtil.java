@@ -134,7 +134,7 @@ public class FileOperateUtil {
      * @param path 文件夹完整绝对路径
      * @return
      */
-    public boolean delAllFile(String path) {
+    public static boolean delAllFile(String path) {
         boolean flag = false;
         File file = new File(path);
         if (!file.exists()) {

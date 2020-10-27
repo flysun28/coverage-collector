@@ -52,11 +52,11 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
        return findnewversion;
     }
 
-    public static boolean fileNotUpdateBy24Hours(File execFile){
+    public static boolean fileNotUpdateByHours(File execFile,int hour){
         long modifedtime = execFile.lastModified();
         long currenttime = new Date().getTime();
         double result = (currenttime - modifedtime)*1.0/(1000*60*60);
-        if(result <= 24){
+        if(result <= hour){
            return true;
         }else{
             return false;
