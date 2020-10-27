@@ -90,7 +90,7 @@ public class ReportGeneratorCov {
         this.applicationCodeInfo = applicationCodeInfo;
 
     }
-    private static File createCoverageReportPathBySysTime(){
+    private File createCoverageReportPathBySysTime(){
 
         //1.读取系统时间
         Calendar calendar = Calendar.getInstance();
@@ -109,7 +109,7 @@ public class ReportGeneratorCov {
         return file;
     }
 
-    private static File createCoverageReportPathByTaskid(String taskId){
+    private File createCoverageReportPathByTaskid(String taskId){
         File taskPath = new File(Config.ReportBasePath,"taskID");
         if(!taskPath.exists()){
             if(!taskPath.mkdir()){
@@ -127,7 +127,7 @@ public class ReportGeneratorCov {
         return file;
     }
 
-    private static File createBranchCoverageReportPathByTaskid(String branchTaskID,String newBranchName){
+    private File createBranchCoverageReportPathByTaskid(String branchTaskID,String newBranchName){
         File branchTaskPath =createCoverageReportPathByTaskid(branchTaskID);
         File branchcoverage1 = new File(branchTaskPath,"branchcoverage");
         if(!branchcoverage1.exists()) {
@@ -501,7 +501,7 @@ public class ReportGeneratorCov {
      * @param applicationNames
      * @return
      */
-    public static HashMap getApplicationSourceDirectoryp(ArrayList<File>  applicationNames){
+    public HashMap getApplicationSourceDirectoryp(ArrayList<File>  applicationNames){
         HashMap<String,HashMap> applicationNameMap = new HashMap<String ,HashMap>();
         for(File applicationPath : applicationNames){
             HashMap<String,Object> applicationInfo = new HashMap<>();
@@ -585,7 +585,7 @@ public class ReportGeneratorCov {
         }
     }
 
-    public static File filterBranchData(File localPath,File branchTaskCoverageReportPath,String classPath) throws Exception{
+    public File filterBranchData(File localPath,File branchTaskCoverageReportPath,String classPath) throws Exception{
         //将当前的覆盖率数据做一轮清洗，过滤class文件中不存在的classID
         File filterExecFile = new File(branchTaskCoverageReportPath,"jacoco.exec");
         File jacocoAll =  new File(localPath,"jacocoAll.exec");
