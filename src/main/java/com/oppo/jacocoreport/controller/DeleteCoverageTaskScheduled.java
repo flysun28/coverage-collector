@@ -10,7 +10,8 @@ import java.io.File;
 
 @Component
 public class DeleteCoverageTaskScheduled {
-    @Scheduled(cron = "* * 10 * * ?")
+//    @Scheduled(cron="* 5 1 * * *")
+    @Scheduled(fixedRate = 120000)
     public void scheduledTask(){
         File taskPath = new File(Config.ReportBasePath,"taskID");
         if(taskPath.isDirectory()){
