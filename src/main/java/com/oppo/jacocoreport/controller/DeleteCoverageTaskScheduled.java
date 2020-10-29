@@ -10,9 +10,10 @@ import java.io.File;
 
 @Component
 public class DeleteCoverageTaskScheduled {
-    @Scheduled(cron="* 5 1 * * ?")
+    @Scheduled(cron="* 5 * * * ?")
     public void scheduledTask(){
         File taskPath = new File(Config.ReportBasePath,"taskID");
+        System.out.println("start delete coverage task");
         if(taskPath.isDirectory()){
            File[] tasklist = taskPath.listFiles();
            for(File taskid:tasklist) {
