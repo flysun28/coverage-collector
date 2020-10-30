@@ -17,7 +17,7 @@ public class DeleteCoverageTaskScheduled {
         if(taskPath.isDirectory()){
            File[] tasklist = taskPath.listFiles();
            for(File taskid:tasklist) {
-               if (!AnalyNewBuildVersion.fileNotUpdateByHours(taskid,48)) {
+               if (!AnalyNewBuildVersion.fileNotUpdateByHours(taskid,240)) {
                    FileOperateUtil.delAllFile(taskid.toString());
                }
            }

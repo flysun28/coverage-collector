@@ -313,11 +313,11 @@ public class ReportGeneratorCov {
                     if(!coverageexecutionDataPath.exists()){
                         coverageexecutionDataPath.mkdir();
                     }
+                    int ipindex = 0;
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
                         if (!serverip.isEmpty()) {
                             String[] portList = port.split(",");
-                            int ipindex = 0;
                             for (String portNum:portList) {
                                 //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
                                 executionDataFile = new File(gitlocalexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
@@ -334,15 +334,6 @@ public class ReportGeneratorCov {
                                         ipindex++;
                                         System.out.println("exist new version at "+serverip);
                                         executionDataFile.delete();
-                                        if(ipindex == iplist.length) {
-                                            cancel();
-                                            if (applicationCodeInfo.getIsTimerTask() == 1) {
-                                                timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
-                                            } else {
-                                                throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -417,6 +408,16 @@ public class ReportGeneratorCov {
                     //执行分支覆盖率任务
                     if(applicationCodeInfo.getIsBranchTask() == 1){
                         startBranchCoverageTask(applicationMap);
+                    }
+                    //上报新版本
+                    if(ipindex == iplist.length) {
+                        cancel();
+                        if (applicationCodeInfo.getIsTimerTask() == 1) {
+                            timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                        } else {
+                            throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+                        }
                     }
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
