@@ -293,26 +293,29 @@ public class ReportGeneratorCov {
         timerMap.get(String.valueOf(applicationCodeInfo.getId())).schedule(new TimerTask() {
             @Override
             public void run() {
+                File executionDataFile = null;
+                File sourceDirectory = null;
+                File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
+                File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
+                File filterreportAllCovDirectory = new File(coverageReportPath, "filtercoveragereport");////要保存报告的地址
+                File filterreportDiffDirectory = new File(coverageReportPath, "filtercoveragediffreport");
+
+                ArrayList<File> classesDirectoryList = new ArrayList<>();
+                ArrayList<File> sourceDirectoryList = new ArrayList<>();
+
+                String addressIPList = applicationMap.getOrDefault("ip", "").toString();
+                //获取覆盖率生成数据
+                String[] iplist = addressIPList.split(",");
+                File gitlocalexecutionDataPath = new File(gitlocalPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
+                if(!gitlocalexecutionDataPath.exists()){
+                    gitlocalexecutionDataPath.mkdir();
+                }
+                File coverageexecutionDataPath = new File(coverageReportPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
+                if(!coverageexecutionDataPath.exists()){
+                    coverageexecutionDataPath.mkdir();
+                }
+                File allexecutionDataFile = new File(coverageexecutionDataPath, "jacocoAll.exec");
                 try {
-                    File executionDataFile = null;
-                    File sourceDirectory = null;
-                    File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
-                    File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
-
-                    ArrayList<File> classesDirectoryList = new ArrayList<>();
-                    ArrayList<File> sourceDirectoryList = new ArrayList<>();
-
-                    String addressIPList = applicationMap.getOrDefault("ip", "").toString();
-                    //获取覆盖率生成数据
-                    String[] iplist = addressIPList.split(",");
-                    File gitlocalexecutionDataPath = new File(gitlocalPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
-                    if(!gitlocalexecutionDataPath.exists()){
-                        gitlocalexecutionDataPath.mkdir();
-                    }
-                    File coverageexecutionDataPath = new File(coverageReportPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
-                    if(!coverageexecutionDataPath.exists()){
-                        coverageexecutionDataPath.mkdir();
-                    }
                     int ipindex = 0;
                     for (String serverip : iplist) {
                         //获取覆盖率生成数据
@@ -334,13 +337,23 @@ public class ReportGeneratorCov {
                                         ipindex++;
                                         System.out.println("exist new version at "+serverip);
                                         executionDataFile.delete();
+                                        //上报新版本
+                                        if(ipindex == iplist.length) {
+                                            cancel();
+                                            if (applicationCodeInfo.getIsTimerTask() == 1) {
+                                                timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                                            } else {
+                                                throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    File allexecutionDataFile = new File(coverageexecutionDataPath, "jacocoAll.exec");
                     if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
@@ -384,9 +397,6 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata(reportAllCovDirectory,reportDiffDirectory,0);
 
-                    File filterreportAllCovDirectory = new File(coverageReportPath, "filtercoveragereport");////要保存报告的地址
-                    File filterreportDiffDirectory = new File(coverageReportPath, "filtercoveragediffreport");
-
                     //过滤class和package文件
                     filterClassAndPackage(applicationMap.get("classPath").toString());
                     if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
@@ -409,18 +419,32 @@ public class ReportGeneratorCov {
                     if(applicationCodeInfo.getIsBranchTask() == 1){
                         startBranchCoverageTask(applicationMap);
                     }
-                    //上报新版本
-                    if(ipindex == iplist.length) {
-                        cancel();
-                        if (applicationCodeInfo.getIsTimerTask() == 1) {
-                            timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
-                        } else {
-                            throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
-                        }
-                    }
+
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
+                    try {
+                        //当覆盖率报告被删除后，重新生成覆盖率报告
+                        if (allexecutionDataFile.exists() && !reportAllCovDirectory.exists()) {
+                            loadExecutionData(allexecutionDataFile);
+                            //生成差异化覆盖率报告
+                            if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
+                                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
+                            }
+                            //生成整体覆盖率报告
+                            createAll(classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+
+                            //过滤class和package文件
+                            filterClassAndPackage(applicationMap.get("classPath").toString());
+                            if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
+                                createDiff(classesDirectoryList, filterreportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
+                            }
+                            //生成整体覆盖率报告
+                            createAll(classesDirectoryList, filterreportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
+
+                        }
+                    } catch (Exception ep) {
+                        ep.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     cancel();
@@ -543,15 +567,6 @@ public class ReportGeneratorCov {
         String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl,coverageReportPath.toString());
         //解压zip包获取class文件
         String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
-
-//        //过滤配置的ignore class,package文件
-//        ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
-//
-//        //只统计指定包
-//        if(containPackages!= null && containPackages.length >0) {
-//            HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages,classPath);
-//            ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
-//        }
 
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);

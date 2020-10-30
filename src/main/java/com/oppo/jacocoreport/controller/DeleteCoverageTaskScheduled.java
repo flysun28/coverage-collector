@@ -16,9 +16,16 @@ public class DeleteCoverageTaskScheduled {
         System.out.println("start delete coverage task");
         if(taskPath.isDirectory()){
            File[] tasklist = taskPath.listFiles();
-           for(File taskid:tasklist) {
-               if (!AnalyNewBuildVersion.fileNotUpdateByHours(taskid,240)) {
-                   FileOperateUtil.delAllFile(taskid.toString());
+           for(File taskidPath:tasklist) {
+               if (!AnalyNewBuildVersion.fileNotUpdateByHours(taskidPath,240)) {
+                   File reportAllCovDirectory = new File(taskidPath, "coveragereport");////要保存报告的地址
+                   File reportDiffDirectory = new File(taskidPath, "coveragediffreport");
+                   File filterreportAllCovDirectory = new File(taskidPath, "filtercoveragereport");////要保存报告的地址
+                   File filterreportDiffDirectory = new File(taskidPath, "filtercoveragediffreport");
+                   FileOperateUtil.delAllFile(reportAllCovDirectory.toString());
+                   FileOperateUtil.delAllFile(reportDiffDirectory.toString());
+                   FileOperateUtil.delAllFile(filterreportAllCovDirectory.toString());
+                   FileOperateUtil.delAllFile(filterreportDiffDirectory.toString());
                }
            }
         }
