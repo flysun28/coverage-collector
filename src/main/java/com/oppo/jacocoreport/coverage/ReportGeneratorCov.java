@@ -620,14 +620,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10027L;
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/escrow";
+        Long taskID = 10028L;
+        String gitPath = "git@gitlab.os.adc.com:credits/credits_server.git";
+        String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "2284d0dcf037f596fe8512bdd30301eda952a98e";
-        String oldTag = "12099f5f8d5b363b89cda21bd1bf06dd0cde621a";
-        String versionName = "fin-loan-api-20201026161735-332";
-        String applicationID = "fin-loan-api";
+        String newTag = "496d3853c2b3c86e029e3521422c776e513d528d";
+        String oldTag = "496d3853c2b3c86e029e3521422c776e513d528d";
+        String versionName = "credits-web_20201030185959_9f3a47cd";
+        String applicationID = "credits-web";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -638,10 +638,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10027L);
+        applicationCodeInfo.setBranchTaskID(10028L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
-        applicationCodeInfo.setIgnorePackage("com.oppo.fintech.loan.domain");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID);

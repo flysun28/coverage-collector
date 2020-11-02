@@ -365,9 +365,13 @@ public class ColumbusUtils {
         }else{
             packageList = getComPackagePath(new File(resultPath), packageList);
         }
+        if(deployJarprefix.contains("tomcat")){
+            ArrayList<File> tomcatpackageList = new ArrayList<File>();
+            packageList = getComPackagePath(new File(resultPath), tomcatpackageList);
+        }
 
-        for(File packagePath: packageList){
-            fileOperateUtil.copyFolder(packagePath.toString(),targetPath);
+        for (File packagePath : packageList) {
+            fileOperateUtil.copyFolder(packagePath.toString(), targetPath);
         }
         zipfile.delete();
         fileOperateUtil.delAllFile(resultPath);
