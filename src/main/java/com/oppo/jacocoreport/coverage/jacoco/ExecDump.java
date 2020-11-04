@@ -91,7 +91,7 @@ public final class ExecDump {
      * @throws IOException in case of errors executing the example
      */
     public static void main(final String[] args) throws IOException {
-        String[] filelist = {"D:\\codeCoverage\\taskID\\10021\\test\\jacocoAll.exec"};
+        String[] filelist = {"D:\\home\\jacocoAll.exec"};
         new ExecDump(System.out).execute(filelist);
     }
 }

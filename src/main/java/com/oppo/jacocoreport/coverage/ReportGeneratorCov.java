@@ -620,14 +620,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10028L;
-        String gitPath = "git@gitlab.os.adc.com:credits/credits_server.git";
-        String testedBranch = "master";
+        Long taskID = 10030L;
+        String gitPath = "git@gitlab.os.adc.com:ads/ad_show/ad_show_mixer/mixer.git";
+        String testedBranch = "release/brand/20201101";
         String basicBranch = "master";
-        String newTag = "496d3853c2b3c86e029e3521422c776e513d528d";
-        String oldTag = "496d3853c2b3c86e029e3521422c776e513d528d";
-        String versionName = "credits-web_20201030185959_9f3a47cd";
-        String applicationID = "credits-web";
+        String newTag = "d3638d26c36ce7db49a192c1fd69ca133e1c6d57";
+        String oldTag = "067366d236db4578e6641b6143aeaf397bf80063";
+        String versionName = "ad-show-mixer-service-20201104124937-990";
+        String applicationID = "ad-show-mixer-service";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -638,7 +638,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10028L);
+        applicationCodeInfo.setBranchTaskID(10030L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         try {

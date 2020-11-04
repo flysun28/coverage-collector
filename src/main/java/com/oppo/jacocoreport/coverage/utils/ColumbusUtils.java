@@ -338,6 +338,19 @@ public class ColumbusUtils {
         System.out.println("prefix "+applicationpre);
         return applicationpre;
     }
+    public static String getApplicationIDPrefix(String applicationID){
+        String applicationIDPrex = "";
+        String applicationIDLastrex = "";
+        if(applicationID.contains("-")) {
+            applicationIDLastrex = applicationID.substring(applicationID.lastIndexOf("-") + 1);
+        }
+        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")) {
+            applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
+        }else{
+            applicationIDPrex = applicationID;
+        }
+        return applicationIDPrex;
+    }
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String basicPath = new File(downloadZipFile).getParentFile().toString();
@@ -354,13 +367,16 @@ public class ColumbusUtils {
         String deployJarprefix = getdeployJarPrefix(zipfile.getName());
         String resultPath = execute.extractFile(zipfile);
         ArrayList<File> packageList = new ArrayList<File>();
+
+        HashSet jarPackageSet = new HashSet();
         //先替换下划线
         applicationID = applicationID.replaceAll("_","-");
         //遍历所有文件夹，找出应用的jar包，并解压
-        boolean existJar = extractJartoClass(resultPath,basicPath,deployJarprefix,applicationsrclist,applicationID);
+        jarPackageSet = extractJartoClass2(resultPath,basicPath,deployJarprefix,applicationsrclist,applicationID);
+        fileOperateUtil.delAllFile(resultPath);
         //再对解压的文件夹里，遍历解压一次
-        if(existJar) {
-            extractJartoClass(basicPath, basicPath, "",applicationsrclist,applicationID);
+        if(jarPackageSet.size() > 0) {
+            extractJartoClass2(basicPath, basicPath, "",applicationsrclist,applicationID);
             packageList = getComPackagePath(new File(basicPath), packageList);
         }else{
             packageList = getComPackagePath(new File(resultPath), packageList);
@@ -383,19 +399,6 @@ public class ColumbusUtils {
         Execute execute = new Execute();
         boolean existJar = false;
         File applicationJarPath = null;
-        //获取解压缩文件夹名
-//        File[] fileList =  new File(localpath).listFiles();
-//        for(File filename : fileList){
-//            if(filename.isDirectory()){
-//                //先通过解压缩工程名查找jar包
-//                applicationJarPath = getapplicationJarPath(new File(localpath), filename.getName());
-//                if(applicationJarPath!=null) {
-//                    existJar = true;
-//                    fileOperateUtil.copyFile(applicationJarPath.toString(), targetPath+File.separator+applicationJarPath.getName());
-//                    execute.extractFiles(targetPath);
-//                }
-//            }
-//        }
         //先通过applicationID查找jar包
         applicationJarPath = getapplicationJarPath(new File(localpath), applicationID);
         if(applicationJarPath!=null) {
@@ -431,7 +434,7 @@ public class ColumbusUtils {
                 execute.extractFiles(targetPath);
             }
         }
-        //还没有找到jar包，再通过应用前缀再搜索一次
+        //还没有找到jar包，再通过应用后缀再搜索一次
         if(!existJar){
             System.out.println(applicationID.substring(applicationID.indexOf("-")+1));
             applicationJarPath = getapplicationJarPath(new File(localpath),applicationID.substring(applicationID.indexOf("-")+1));
@@ -444,6 +447,47 @@ public class ColumbusUtils {
             }
         }
         return existJar;
+    }
+    public static HashSet extractJartoClass2(String localpath,String targetPath,String deployJarprefix,Map<String ,Map> applicationsrclist,String applicationID){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
+        Execute execute = new Execute();
+        HashSet jarPackageSet = new HashSet();
+        String applicationIDPrefix = getApplicationIDPrefix(applicationID);
+        //先通过applicationID查找jar包
+        jarPackageSet = getapplicationJarList(new File(localpath), applicationID,jarPackageSet);
+
+        for (String applicationsrcname : applicationsrclist.keySet()) {
+            jarPackageSet = getapplicationJarList(new File(localpath), applicationsrcname,jarPackageSet);
+        }
+
+
+        //还没有找到jar包，再通过应用前缀再搜索一次
+        jarPackageSet = getapplicationJarList(new File(localpath),applicationIDPrefix,jarPackageSet);
+        //如果没有找到jar包，通过压缩包前缀再搜索一次
+        if(!deployJarprefix.equals("")&&jarPackageSet.size()==0){
+            jarPackageSet = getapplicationJarList(new File(localpath),deployJarprefix,jarPackageSet);
+        }
+        //还没有找到jar包，再通过应用后缀再搜索一次
+//        jarPackageSet = getapplicationJarList(new File(localpath),applicationID.substring(applicationID.indexOf("-")+1),jarPackageSet);
+
+        HashSet<File> jarPackageSet2 = new HashSet<File>();
+        Iterator<File> itr = jarPackageSet.iterator();
+
+        while (itr.hasNext()) {
+            File jarPackage = itr.next();
+            if (jarPackage.getName().contains(applicationIDPrefix)) {
+                jarPackageSet2.add(jarPackage);
+            }
+        }
+        Iterator<File> itr2 = jarPackageSet2.iterator();
+        while (itr2.hasNext()){
+            File jarPackage = itr2.next();
+            System.out.println(jarPackage);
+            fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+            execute.extractFiles(targetPath);
+        }
+
+        return jarPackageSet2;
     }
     private static String getApplicationIDJarName(File filePath){
         String folderName = filePath.getName();
@@ -469,6 +513,24 @@ public class ColumbusUtils {
             }
         }
         return denpentjarpath;
+    }
+
+    public static HashSet getapplicationJarList(File extractPath,String dependentjarname,HashSet jarPackageSet){
+        File[] fileList = extractPath.listFiles();
+        //遍历代码工程
+        for (File f : fileList) {
+            //判断是否文件夹目录
+            if (f.isDirectory()) {
+                //如果当前文件夹名== src
+               getapplicationJarList(f,dependentjarname,jarPackageSet);
+            }
+            else{
+                if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
+                    jarPackageSet.add(f);
+                }
+            }
+        }
+        return jarPackageSet;
     }
     private static ArrayList getComPackagePath(File localPath,ArrayList<File> packageList){
         File[] fileList = localPath.listFiles();
