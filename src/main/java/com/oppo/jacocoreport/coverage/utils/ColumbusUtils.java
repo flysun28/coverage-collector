@@ -344,7 +344,7 @@ public class ColumbusUtils {
         if(applicationID.contains("-")) {
             applicationIDLastrex = applicationID.substring(applicationID.lastIndexOf("-") + 1);
         }
-        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")) {
+        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")||applicationIDLastrex.equals("api")||applicationIDLastrex.equals("rpc")) {
             applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
         }else{
             applicationIDPrex = applicationID;
