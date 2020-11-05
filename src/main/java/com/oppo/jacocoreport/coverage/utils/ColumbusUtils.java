@@ -342,13 +342,14 @@ public class ColumbusUtils {
         String applicationIDPrex = "";
         String applicationIDLastrex = "";
         if(applicationID.contains("-")) {
-            applicationIDLastrex = applicationID.substring(applicationID.lastIndexOf("-") + 1);
+            applicationIDPrex = applicationID.substring(0,applicationID.lastIndexOf("-") );
         }
-        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")||applicationIDLastrex.equals("api")||applicationIDLastrex.equals("rpc")||applicationIDLastrex.equals("core")) {
-            applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
-        }else{
+//        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")||applicationIDLastrex.equals("api")||applicationIDLastrex.equals("rpc")||applicationIDLastrex.equals("core")) {
+//            applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
+//        }
+       else{
             applicationIDPrex = applicationID;
-        }
+       }
         return applicationIDPrex;
     }
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
