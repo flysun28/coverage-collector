@@ -480,6 +480,13 @@ public class ColumbusUtils {
                 jarPackageSet2.add(jarPackage);
             }
         }
+        //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
+        if(jarPackageSet2.size() == 0) {
+            for (String applicationsrcname : applicationsrclist.keySet()) {
+                jarPackageSet2 = getapplicationJarList(new File(localpath), applicationsrcname, jarPackageSet2);
+            }
+        }
+
         Iterator<File> itr2 = jarPackageSet2.iterator();
         while (itr2.hasNext()){
             File jarPackage = itr2.next();
