@@ -393,7 +393,7 @@ public class ColumbusUtils {
 
         //遍历所有文件夹，找出应用的jar包，并解压
         jarPackageSet = extractJartoClass2(resultPath,jarpackagePath,deployJarprefix,applicationsrclist,applicationID);
-        fileOperateUtil.delAllFile(resultPath);
+//        fileOperateUtil.delAllFile(resultPath);
         //再对解压的文件夹里，遍历解压一次
         if(jarPackageSet.size() > 0) {
             extractJartoClass2(jarpackagePath, jarpackagePath, "",applicationsrclist,applicationID);
