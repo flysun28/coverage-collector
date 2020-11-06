@@ -338,20 +338,34 @@ public class ColumbusUtils {
         System.out.println("prefix "+applicationpre);
         return applicationpre;
     }
+    private static int getNumIndexFormStr(String str){
+        for(int i = 0;i<str.length();i++){
+           if(str.charAt(i) >=48 && str.charAt(i)<= 57){
+               return i;
+           }
+        }
+     return -1;
+    }
+    private static  String getJarPackageVersion(File jarPackage){
+        int numbeginindex = getNumIndexFormStr(jarPackage.getName());
+        int numlastindex = jarPackage.getName().indexOf("-",numbeginindex);
+        if(numlastindex == -1){
+            numlastindex = jarPackage.getName().indexOf(".jar");
+        }
+        return jarPackage.getName().substring(numbeginindex,numlastindex);
+
+    }
     public static String getApplicationIDPrefix(String applicationID){
         String applicationIDPrex = "";
-        String applicationIDLastrex = "";
         if(applicationID.contains("-")) {
             applicationIDPrex = applicationID.substring(0,applicationID.lastIndexOf("-") );
         }
-//        if(applicationIDLastrex.equals("web") || applicationIDLastrex.equals("service")||applicationIDLastrex.equals("api")||applicationIDLastrex.equals("rpc")||applicationIDLastrex.equals("core")) {
-//            applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
-//        }
        else{
             applicationIDPrex = applicationID;
        }
         return applicationIDPrex;
     }
+
     public static  String extractColumsBuildVersionClasses(String downloadZipFile,String targetPath,String applicationID,Map<String ,Map> applicationsrclist) throws Exception{
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         String basicPath = new File(downloadZipFile).getParentFile().toString();
@@ -456,11 +470,9 @@ public class ColumbusUtils {
         String applicationIDPrefix = getApplicationIDPrefix(applicationID);
         //先通过applicationID查找jar包
         jarPackageSet = getapplicationJarList(new File(localpath), applicationID,jarPackageSet);
-
         for (String applicationsrcname : applicationsrclist.keySet()) {
             jarPackageSet = getapplicationJarList(new File(localpath), applicationsrcname,jarPackageSet);
         }
-
 
         //还没有找到jar包，再通过应用前缀再搜索一次
         jarPackageSet = getapplicationJarList(new File(localpath),applicationIDPrefix,jarPackageSet);
@@ -468,18 +480,18 @@ public class ColumbusUtils {
         if(!deployJarprefix.equals("")&&jarPackageSet.size()==0){
             jarPackageSet = getapplicationJarList(new File(localpath),deployJarprefix,jarPackageSet);
         }
-        //还没有找到jar包，再通过应用后缀再搜索一次
-//        jarPackageSet = getapplicationJarList(new File(localpath),applicationID.substring(applicationID.indexOf("-")+1),jarPackageSet);
 
         HashSet<File> jarPackageSet2 = new HashSet<File>();
         Iterator<File> itr = jarPackageSet.iterator();
 
         while (itr.hasNext()) {
             File jarPackage = itr.next();
-            if (jarPackage.getName().contains(applicationIDPrefix)) {
+            if (jarPackage.getName().startsWith(applicationIDPrefix)) {
                 jarPackageSet2.add(jarPackage);
             }
         }
+
+
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
         if(jarPackageSet2.size() == 0) {
             for (String applicationsrcname : applicationsrclist.keySet()) {
@@ -487,15 +499,55 @@ public class ColumbusUtils {
             }
         }
 
+        HashSet<File> jarPackageSet3 = new HashSet<>();
         Iterator<File> itr2 = jarPackageSet2.iterator();
-        while (itr2.hasNext()){
+        String jarversion = getMaxCountVersion(jarPackageSet2);
+        while (itr2.hasNext()) {
             File jarPackage = itr2.next();
-            System.out.println(jarPackage);
-            fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
-            execute.extractFiles(targetPath);
+            if(jarPackage.toString().contains("lib") && jarPackage.getName().contains(jarversion)){
+                fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+                execute.extractFiles(targetPath);
+                jarPackageSet3.add(jarPackage);
+            }else if(!jarPackage.toString().contains("lib")){
+                fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+                execute.extractFiles(targetPath);
+                jarPackageSet3.add(jarPackage);
+            }
+
+        }
+        return jarPackageSet3;
+    }
+    private static String getMaxCountVersion(HashSet<File> jarPackageSet){
+        Iterator<File> itr = jarPackageSet.iterator();
+        HashMap maxMap = new HashMap();
+        int maxcount = 0;
+        while (itr.hasNext()) {
+            File jarPackage = itr.next();
+            if (jarPackage.toString().contains("lib")) {
+                String jarversion = getJarPackageVersion(jarPackage);
+                HashMap<String,Integer> hashMap = getCountVersion(jarPackageSet,jarversion);
+                if(hashMap.get(jarversion) > maxcount){
+                    maxcount = hashMap.get(jarversion);
+                    maxMap.put("jarversion",jarversion);
+                    maxMap.put("count",maxcount);
+                }
+            }
         }
 
-        return jarPackageSet2;
+     return maxMap.getOrDefault("jarversion","nothing").toString();
+    }
+    private static HashMap<String,Integer> getCountVersion( HashSet<File> jarPackageSet,String jarversion){
+        Iterator<File> itr = jarPackageSet.iterator();
+        HashMap hashMap = new HashMap();
+        int count = 0;
+        while (itr.hasNext()){
+            File jarPackage = itr.next();
+            if(jarPackage.getName().contains(jarversion)){
+                count++;
+            }
+        }
+        hashMap.put(jarversion,count);
+        return hashMap;
     }
     private static String getApplicationIDJarName(File filePath){
         String folderName = filePath.getName();
@@ -533,7 +585,7 @@ public class ColumbusUtils {
                getapplicationJarList(f,dependentjarname,jarPackageSet);
             }
             else{
-                if(f.getName().contains(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
+                if(f.getName().startsWith(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
                     jarPackageSet.add(f);
                 }
             }
