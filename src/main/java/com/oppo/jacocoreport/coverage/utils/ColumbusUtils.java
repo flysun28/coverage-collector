@@ -386,19 +386,23 @@ public class ColumbusUtils {
         HashSet jarPackageSet = new HashSet();
         //先替换下划线
         applicationID = applicationID.replaceAll("_","-");
+        String jarpackagePath = basicPath+File.separator+"jarpackage";
+        if(!new File(jarpackagePath).exists()){
+            new File(jarpackagePath).mkdir();
+        }
+
         //遍历所有文件夹，找出应用的jar包，并解压
-        jarPackageSet = extractJartoClass2(resultPath,basicPath,deployJarprefix,applicationsrclist,applicationID);
+        jarPackageSet = extractJartoClass2(resultPath,jarpackagePath,deployJarprefix,applicationsrclist,applicationID);
         fileOperateUtil.delAllFile(resultPath);
         //再对解压的文件夹里，遍历解压一次
         if(jarPackageSet.size() > 0) {
-            extractJartoClass2(basicPath, basicPath, "",applicationsrclist,applicationID);
-            packageList = getComPackagePath(new File(basicPath), packageList);
+            extractJartoClass2(jarpackagePath, jarpackagePath, "",applicationsrclist,applicationID);
+            packageList = getComPackagePath(new File(jarpackagePath), packageList);
         }else{
             packageList = getComPackagePath(new File(resultPath), packageList);
         }
         if(deployJarprefix.contains("tomcat")){
-            ArrayList<File> tomcatpackageList = new ArrayList<File>();
-            packageList = getComPackagePath(new File(resultPath), tomcatpackageList);
+            packageList = getComPackagePath(new File(resultPath), packageList);
         }
 
         for (File packagePath : packageList) {
