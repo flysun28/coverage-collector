@@ -348,6 +348,9 @@ public class ColumbusUtils {
     }
     private static  String getJarPackageVersion(File jarPackage){
         int numbeginindex = getNumIndexFormStr(jarPackage.getName());
+        if(numbeginindex == -1){
+            return "";
+        }
         int numlastindex = jarPackage.getName().indexOf("-",numbeginindex);
         if(numlastindex == -1){
             numlastindex = jarPackage.getName().indexOf(".jar");
@@ -512,7 +515,12 @@ public class ColumbusUtils {
                 fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
                 execute.extractFiles(targetPath);
                 jarPackageSet3.add(jarPackage);
-            }else if(!jarPackage.toString().contains("lib")){
+            }else if(jarPackage.toString().contains("lib") && jarversion.equals("nothing")){
+                fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+                execute.extractFiles(targetPath);
+                jarPackageSet3.add(jarPackage);
+            }
+            else if(!jarPackage.toString().contains("lib")){
                 fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
                 execute.extractFiles(targetPath);
                 jarPackageSet3.add(jarPackage);
@@ -529,11 +537,13 @@ public class ColumbusUtils {
             File jarPackage = itr.next();
             if (jarPackage.toString().contains("lib")) {
                 String jarversion = getJarPackageVersion(jarPackage);
-                HashMap<String,Integer> hashMap = getCountVersion(jarPackageSet,jarversion);
-                if(hashMap.get(jarversion) > maxcount){
-                    maxcount = hashMap.get(jarversion);
-                    maxMap.put("jarversion",jarversion);
-                    maxMap.put("count",maxcount);
+                if(!jarversion.equals("")) {
+                    HashMap<String, Integer> hashMap = getCountVersion(jarPackageSet, jarversion);
+                    if (hashMap.get(jarversion) > maxcount) {
+                        maxcount = hashMap.get(jarversion);
+                        maxMap.put("jarversion", jarversion);
+                        maxMap.put("count", maxcount);
+                    }
                 }
             }
         }

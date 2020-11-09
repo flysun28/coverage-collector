@@ -20,6 +20,7 @@ public class ApplicationCodeInfo {
     private String containPackages = "";
     private String applicationID = "";
     private String ip = "";
+    private Long versionId;
 
 
     public String getContainPackages() {
@@ -149,6 +150,13 @@ public class ApplicationCodeInfo {
     public void setIp(String ip) {
         this.ip = ip;
     }
+    public Long getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
     @Override
     public String toString() {
@@ -170,6 +178,7 @@ public class ApplicationCodeInfo {
                 ", branchTaskID='" + branchTaskID + '\'' +
                 ", ip='" + ip + '\'' +
                 ", applicationID='" + applicationID + '\''+
+                ", versionId='" + versionId + '\''+
                 '}';
     }
 
