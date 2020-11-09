@@ -466,8 +466,8 @@ public class ReportGeneratorCov {
             File filterExecFile = filterBranchData(versionDataPath,branchTaskCoverageReportPath,branchclassPath.toString());
             File sourceDirectory = null;
 
-            File reportAllCovDirectory = new File(branchTaskCoverageReportPath, "totalcoveragereport");////要保存报告的地址
-            File reportDiffDirectory = new File(branchTaskCoverageReportPath, "diffcoveragereport");
+            File versionAllCovDirectory = new File(branchTaskCoverageReportPath, "versioncoveragereport");////要保存报告的地址
+            File versionDiffDirectory = new File(branchTaskCoverageReportPath, "versiondiffcoveragereport");
 
             ArrayList<File> classesDirectoryList = new ArrayList<>();
             ArrayList<File> sourceDirectoryList = new ArrayList<>();
@@ -483,12 +483,12 @@ public class ReportGeneratorCov {
             loadExecutionData(filterExecFile);
             //生成差异化覆盖率
             if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
-                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
+                createDiff(classesDirectoryList, versionDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
             }
             //生成整体覆盖率报告
-            createAll(classesDirectoryList, reportAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
+            createAll(classesDirectoryList, versionAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
             //上传覆盖率报告
-            sendBranchCoverageData(reportAllCovDirectory,reportDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch());
+            sendBranchCoverageData(versionAllCovDirectory,versionDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch());
         } catch (DefinitionException e) {
             HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
         } catch (Exception e) {
