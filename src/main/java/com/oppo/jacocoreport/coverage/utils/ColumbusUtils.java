@@ -493,7 +493,7 @@ public class ColumbusUtils {
 
         while (itr.hasNext()) {
             File jarPackage = itr.next();
-            if (jarPackage.getName().startsWith(applicationIDPrefix)) {
+            if (jarPackage.getName().replaceAll("_","-").startsWith(applicationIDPrefix)) {
                 jarPackageSet2.add(jarPackage);
             }
         }
@@ -599,7 +599,8 @@ public class ColumbusUtils {
                getapplicationJarList(f,dependentjarname,jarPackageSet);
             }
             else{
-                if(f.getName().startsWith(dependentjarname) && f.getName().endsWith(".jar") && !f.getName().endsWith("sources.jar")){
+                String fname = f.getName().replaceAll("_","-");
+                if(fname.startsWith(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")){
                     jarPackageSet.add(f);
                 }
             }
