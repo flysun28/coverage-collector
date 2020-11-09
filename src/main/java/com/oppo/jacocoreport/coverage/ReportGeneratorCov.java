@@ -266,6 +266,23 @@ public class ReportGeneratorCov {
             throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
         }
     }
+    /**
+     * 上传项目覆盖率报告
+     */
+    public void sendVersionIDCoverageData(File reportAllCovDirectory,File reportDiffDirectory,String appCode,String testedBranch,String basicBranch) throws DefinitionException{
+        try {
+            File coveragereport = new File(reportAllCovDirectory, "index.html");
+            File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
+
+            Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
+            CoverageData versionIDCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getVersionId(),appCode,testedBranch,basicBranch);
+            System.out.println(new Date().toString()+versionIDCoverageData.toString());
+            Data data = HttpUtils.sendPostRequest(Config.SEND_VERSIONCOVERAGE_URL, versionIDCoverageData);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new DefinitionException(ErrorEnum.PRODUCT_REPORT.getErrorCode(),ErrorEnum.PRODUCT_REPORT.getErrorMsg());
+        }
+    }
     private ArrayList<File> getSourceCode(Map<String,Object> applicationMap){
         File sourceDirectory = null;
         ArrayList<File> sourceDirectoryList = new ArrayList<>();
@@ -459,22 +476,26 @@ public class ReportGeneratorCov {
     }
     private void startVersionCoverageTask(Map<String,Object> applicationMap){
         try {
-            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"",applicationCodeInfo.getTestedBranch().replace("/","_"));
-            File branchTaskPath = createCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"");
-            File branchclassPath = (File)applicationMap.get("classPath");
-            File versionDataPath = new File(gitlocalPath,applicationCodeInfo.getVersionId()+"");
-            File filterExecFile = filterBranchData(versionDataPath,branchTaskCoverageReportPath,branchclassPath.toString());
-            File sourceDirectory = null;
+            File versionIdDataPath = new File(gitlocalPath,applicationCodeInfo.getVersionId()+"");
+            if(!versionIdDataPath.exists()){
+                versionIdDataPath.mkdir();
+            }
+            File versionCoverageReportBasicPath = new File(versionIdDataPath,"coverage");
+            if(!versionCoverageReportBasicPath.exists()){
+                versionCoverageReportBasicPath.mkdir();
+            }
+//            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"",applicationCodeInfo.getTestedBranch().replace("/","_"));
+//            File branchTaskPath = createCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"");
+            File versionIDclassPath = (File)applicationMap.get("classPath");
 
-            File versionAllCovDirectory = new File(branchTaskCoverageReportPath, "versioncoveragereport");////要保存报告的地址
-            File versionDiffDirectory = new File(branchTaskCoverageReportPath, "versiondiffcoveragereport");
+            File filterExecFile = filterBranchData(versionIdDataPath,versionCoverageReportBasicPath,versionIDclassPath.toString());
+
+            File versionAllCovDirectory = new File(versionCoverageReportBasicPath, "versioncoveragereport");////要保存报告的地址
+            File versionDiffDirectory = new File(versionCoverageReportBasicPath, "versiondiffcoveragereport");
 
             ArrayList<File> classesDirectoryList = new ArrayList<>();
-            ArrayList<File> sourceDirectoryList = new ArrayList<>();
-
-
-            sourceDirectoryList = getSourceCode(applicationMap);
-            classesDirectoryList.add(branchclassPath);//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
+            ArrayList<File>  sourceDirectoryList = getSourceCode(applicationMap);
+            classesDirectoryList.add(versionIDclassPath);//目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
 
             //合并taskID目录代码覆盖率
             if (filterExecFile != null && !filterExecFile.exists()) {
@@ -483,12 +504,12 @@ public class ReportGeneratorCov {
             loadExecutionData(filterExecFile);
             //生成差异化覆盖率
             if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
-                createDiff(classesDirectoryList, versionDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
+                createDiff(classesDirectoryList, versionDiffDirectory, sourceDirectoryList, versionCoverageReportBasicPath.getName());
             }
             //生成整体覆盖率报告
-            createAll(classesDirectoryList, versionAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
+            createAll(classesDirectoryList, versionAllCovDirectory, versionCoverageReportBasicPath.getName(), sourceDirectoryList);
             //上传覆盖率报告
-            sendBranchCoverageData(versionAllCovDirectory,versionDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch());
+            sendVersionIDCoverageData(versionAllCovDirectory,versionDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch());
         } catch (DefinitionException e) {
             HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
         } catch (Exception e) {
