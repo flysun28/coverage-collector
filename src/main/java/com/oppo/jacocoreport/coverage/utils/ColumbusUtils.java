@@ -493,7 +493,7 @@ public class ColumbusUtils {
 
         while (itr.hasNext()) {
             File jarPackage = itr.next();
-            if (jarPackage.getName().replaceAll("_","-").startsWith(applicationIDPrefix)) {
+            if (jarPackage.getName().replaceAll("_","-").contains(applicationIDPrefix)) {
                 jarPackageSet2.add(jarPackage);
             }
         }
@@ -508,7 +508,7 @@ public class ColumbusUtils {
 
         HashSet<File> jarPackageSet3 = new HashSet<>();
         Iterator<File> itr2 = jarPackageSet2.iterator();
-        String jarversion = getMaxCountVersion(jarPackageSet2);
+        String jarversion = getMaxCountVersion(jarPackageSet2,applicationID);
         while (itr2.hasNext()) {
             File jarPackage = itr2.next();
             if(jarPackage.toString().contains("lib") && jarPackage.getName().contains(jarversion)){
@@ -529,7 +529,7 @@ public class ColumbusUtils {
         }
         return jarPackageSet3;
     }
-    private static String getMaxCountVersion(HashSet<File> jarPackageSet){
+    private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
         Iterator<File> itr = jarPackageSet.iterator();
         HashMap maxMap = new HashMap();
         int maxcount = 0;
@@ -537,6 +537,11 @@ public class ColumbusUtils {
             File jarPackage = itr.next();
             if (jarPackage.toString().contains("lib")) {
                 String jarversion = getJarPackageVersion(jarPackage);
+                //如果jar包包含应用名,直接使用这个jar包的版本号
+                if(jarPackage.getName().contains(applicationID)){
+                    maxMap.put("jarversion", jarversion);
+                    break;
+                }
                 if(!jarversion.equals("")) {
                     HashMap<String, Integer> hashMap = getCountVersion(jarPackageSet, jarversion);
                     if (hashMap.get(jarversion) > maxcount) {
@@ -545,7 +550,9 @@ public class ColumbusUtils {
                         maxMap.put("count", maxcount);
                     }
                 }
+
             }
+
         }
 
      return maxMap.getOrDefault("jarversion","nothing").toString();
