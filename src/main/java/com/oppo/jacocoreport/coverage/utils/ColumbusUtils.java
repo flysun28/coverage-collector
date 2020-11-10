@@ -478,7 +478,7 @@ public class ColumbusUtils {
         //先通过applicationID查找jar包
         jarPackageSet = getapplicationJarList(new File(localpath), applicationID,jarPackageSet);
         for (String applicationsrcname : applicationsrclist.keySet()) {
-            jarPackageSet = getapplicationJarList(new File(localpath), applicationsrcname,jarPackageSet);
+            jarPackageSet = getapplicationJarList(new File(localpath), applicationsrcname.replaceAll("_","-"),jarPackageSet);
         }
 
         //还没有找到jar包，再通过应用前缀再搜索一次
@@ -502,7 +502,7 @@ public class ColumbusUtils {
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
         if(jarPackageSet2.size() == 0) {
             for (String applicationsrcname : applicationsrclist.keySet()) {
-                jarPackageSet2 = getapplicationJarList(new File(localpath), applicationsrcname, jarPackageSet2);
+                jarPackageSet2 = getapplicationJarList(new File(localpath), applicationsrcname.replaceAll("_","-"), jarPackageSet2);
             }
         }
 
