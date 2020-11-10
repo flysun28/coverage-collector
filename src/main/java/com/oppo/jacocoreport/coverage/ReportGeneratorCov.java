@@ -305,7 +305,6 @@ public class ReportGeneratorCov {
             @Override
             public void run() {
                 File executionDataFile = null;
-                File sourceDirectory = null;
                 File reportAllCovDirectory = new File(coverageReportPath, "coveragereport");////要保存报告的地址
                 File reportDiffDirectory = new File(coverageReportPath, "coveragediffreport");
                 File filterreportAllCovDirectory = new File(coverageReportPath, "filtercoveragereport");////要保存报告的地址
@@ -327,6 +326,7 @@ public class ReportGeneratorCov {
                 if(!versionIdDataPath.exists()){
                     versionIdDataPath.mkdir();
                 }
+                //创建测试taskID目录
                 File coverageexecutionDataPath = new File(coverageReportPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
                 if(!coverageexecutionDataPath.exists()){
                     coverageexecutionDataPath.mkdir();
@@ -488,8 +488,6 @@ public class ReportGeneratorCov {
             if(!versionCoverageReportBasicPath.exists()){
                 versionCoverageReportBasicPath.mkdir();
             }
-//            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"",applicationCodeInfo.getTestedBranch().replace("/","_"));
-//            File branchTaskPath = createCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"");
             File versionIDclassPath = new File(applicationMap.get("classPath").toString());
 
             File filterExecFile = filterBranchData(versionIdDataPath,versionCoverageReportBasicPath,versionIDclassPath.toString());
