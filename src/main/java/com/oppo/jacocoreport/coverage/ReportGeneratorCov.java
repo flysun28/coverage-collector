@@ -388,6 +388,10 @@ public class ReportGeneratorCov {
                     MergeDump mergeDumpGitLocalPath = new MergeDump(gitlocalexecutionDataPath.toString());
                     mergeDumpGitLocalPath.executeMerge();
 
+                    //合并versionIDPath目录覆盖率
+                    MergeDump versionIDMerge = new MergeDump(versionIdDataPath.toString());
+                    versionIDMerge.executeMerge();
+
                     //合并taskID目录代码覆盖率
                     MergeDump mergeDump = new MergeDump(coverageexecutionDataPath.toString());
                     allexecutionDataFile = mergeDump.executeMerge();
@@ -486,7 +490,7 @@ public class ReportGeneratorCov {
             }
 //            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"",applicationCodeInfo.getTestedBranch().replace("/","_"));
 //            File branchTaskPath = createCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"");
-            File versionIDclassPath = (File)applicationMap.get("classPath");
+            File versionIDclassPath = new File(applicationMap.get("classPath").toString());
 
             File filterExecFile = filterBranchData(versionIdDataPath,versionCoverageReportBasicPath,versionIDclassPath.toString());
 
