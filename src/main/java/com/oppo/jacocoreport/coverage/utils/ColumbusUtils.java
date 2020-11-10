@@ -600,7 +600,7 @@ public class ColumbusUtils {
             }
             else{
                 String fname = f.getName().replaceAll("_","-");
-                if(fname.startsWith(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")){
+                if(fname.contains(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")){
                     jarPackageSet.add(f);
                 }
             }
