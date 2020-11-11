@@ -160,7 +160,7 @@ public class ApplicationCodeInfo {
 
     @Override
     public String toString() {
-        return "CoverageResponse{" +
+        return "task info{" +
                 "id=" + id +
                 ", gitPath='" + gitPath + '\'' +
                 ", testedBranch='" + testedBranch + '\'' +

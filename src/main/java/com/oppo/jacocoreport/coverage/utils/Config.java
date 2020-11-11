@@ -13,6 +13,7 @@ public class Config {
     public final static String BaseUrl = "http://atms.itest.wanyol.com/";
     public final static String SEND_COVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result";
     public final static String SEND_BRANCHCOVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result/branch";
+    public final static String SEND_VERSIONCOVERAGE_URL = BaseUrl+"api/codeCoverage/record/project/result";
     public static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
     public static String SEND_ERRORMESSAGE_URL = BaseUrl+"api/codeCoverage/execution/failed";
     public static String SEND_STOPTIMERTASK_URL =BaseUrl+"api/codeCoverage/execution/stop/timerTask?id=";
