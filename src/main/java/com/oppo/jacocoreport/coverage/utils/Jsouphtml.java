@@ -71,7 +71,7 @@ public class Jsouphtml {
 //        branchCoverageData.setBasicBranch(basicBranch);
 //        return branchCoverageData;
 //    }
-    public CoverageData getCoverageData(Long taskid,String appCode,String testedBranch,String basicBranch){
+    public CoverageData getCoverageData(Long taskid,String appCode,String testedBranch,String basicBranch,Long versionId){
         CoverageData coverageData = new CoverageData();
         coverageData.setId(taskid);
         try {
@@ -154,6 +154,7 @@ public class Jsouphtml {
             coverageData.setAppCode(appCode);
             coverageData.setTestedBranch(testedBranch);
             coverageData.setBasicBranch(basicBranch);
+            coverageData.setVersionId(versionId);
             return coverageData;
         }catch (Exception e){
             e.printStackTrace();
@@ -177,7 +178,7 @@ public class Jsouphtml {
             }
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            coverageData = jsouphtml.getCoverageData(9L,"","","");
+            coverageData = jsouphtml.getCoverageData(9L,"","","",1L);
             System.out.println(coverageData.toString());
             String requstUrl = Config.SEND_COVERAGE_URL;
             Data data = HttpUtils.sendPostRequest(requstUrl, coverageData);

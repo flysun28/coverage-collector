@@ -239,7 +239,7 @@ public class ReportGeneratorCov {
             File coveragereport = new File(reportAllCovDirectory, "index.html");
             File diffcoveragereport = new File(reportDiffDirectory, "index.html");
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData coverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),"","","");
+            CoverageData coverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),"","","",null);
             coverageData.setFilterTask(filterTask);
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
@@ -258,7 +258,7 @@ public class ReportGeneratorCov {
             File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData branchCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getBranchTaskID(),appCode,testedBranch,basicBranch);
+            CoverageData branchCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getBranchTaskID(),appCode,testedBranch,basicBranch,null);
             System.out.println(new Date().toString()+branchCoverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_BRANCHCOVERAGE_URL, branchCoverageData);
         }catch (Exception e){
@@ -275,7 +275,7 @@ public class ReportGeneratorCov {
             File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData versionIDCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getVersionId(),appCode,testedBranch,basicBranch);
+            CoverageData versionIDCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),appCode,testedBranch,basicBranch,applicationCodeInfo.getVersionId());
             System.out.println(new Date().toString()+versionIDCoverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_VERSIONCOVERAGE_URL, versionIDCoverageData);
         }catch (Exception e){

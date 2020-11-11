@@ -66,6 +66,16 @@ public class CoverageData {
      * */
     private String diffCoverageReportPath;
 
+    public Long getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
+
+    private Long versionId;
+
     public String getAppCode() {
         return appCode;
     }
