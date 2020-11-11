@@ -519,6 +519,10 @@ public class ColumbusUtils {
                 fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
                 execute.extractFiles(targetPath);
                 jarPackageSet3.add(jarPackage);
+            }else if(jarPackage.toString().contains("lib") && jarPackage.getName().contains("SNAPSHOT.jar")){
+                fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+                execute.extractFiles(targetPath);
+                jarPackageSet3.add(jarPackage);
             }
             else if(!jarPackage.toString().contains("lib")){
                 fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
