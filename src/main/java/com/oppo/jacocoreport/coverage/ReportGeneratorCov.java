@@ -445,7 +445,7 @@ public class ReportGeneratorCov {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
                     try {
                         //当覆盖率报告被删除后，重新生成覆盖率报告
-                        if (allexecutionDataFile.exists() && !reportAllCovDirectory.exists()) {
+                        if (allexecutionDataFile!= null &&allexecutionDataFile.exists() && !reportAllCovDirectory.exists()) {
                             loadExecutionData(allexecutionDataFile);
                             //生成差异化覆盖率报告
                             if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
