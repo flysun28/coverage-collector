@@ -319,22 +319,21 @@ public class ColumbusUtils {
         return downloadFilePath.toString();
     }
     public static String getdeployJarPrefix(String doanloadZipFile){
-        String[] applicationprelist = doanloadZipFile.split("-");
         String applicationpre = "";
         if(doanloadZipFile.contains("bin")){
             applicationpre = doanloadZipFile.substring(0,doanloadZipFile.indexOf("bin")-1);
             return applicationpre;
         }
-
-        if(applicationprelist.length > 2){
-            if(applicationprelist[1].matches("\\d*")){
-                applicationpre = applicationprelist[0];
-            }else{
-                applicationpre = applicationprelist[0]+"-"+applicationprelist[1];
+        int numbeginindex = getNumIndexFormStr(doanloadZipFile);
+        if(numbeginindex == -1){
+            applicationpre =  doanloadZipFile;
+        }else{
+            applicationpre = doanloadZipFile.substring(0,numbeginindex);
+            if(applicationpre.substring(numbeginindex-1,numbeginindex).equals("-") || applicationpre.substring(numbeginindex-1,numbeginindex).equals("_")){
+                applicationpre = doanloadZipFile.substring(0,numbeginindex-1);
             }
-        }else if(applicationprelist.length == 2){
-            applicationpre = applicationprelist[0];
         }
+
         System.out.println("prefix "+applicationpre);
         return applicationpre;
     }
@@ -483,10 +482,6 @@ public class ColumbusUtils {
 
         //还没有找到jar包，再通过应用前缀再搜索一次
         jarPackageSet = getapplicationJarList(new File(localpath),applicationIDPrefix,jarPackageSet);
-        //如果没有找到jar包，通过压缩包前缀再搜索一次
-        if(!deployJarprefix.equals("")&&jarPackageSet.size()==0){
-            jarPackageSet = getapplicationJarList(new File(localpath),deployJarprefix,jarPackageSet);
-        }
 
         HashSet<File> jarPackageSet2 = new HashSet<File>();
         Iterator<File> itr = jarPackageSet.iterator();
@@ -505,7 +500,10 @@ public class ColumbusUtils {
                 jarPackageSet2 = getapplicationJarList(new File(localpath), applicationsrcname.replaceAll("_","-"), jarPackageSet2);
             }
         }
-
+        //如果没有找到jar包，通过压缩包前缀再搜索一次
+        if(!deployJarprefix.equals("")&&jarPackageSet2.size()==0){
+            jarPackageSet2 = getapplicationJarList(new File(localpath),deployJarprefix,jarPackageSet);
+        }
         HashSet<File> jarPackageSet3 = new HashSet<>();
         Iterator<File> itr2 = jarPackageSet2.iterator();
         String jarversion = getMaxCountVersion(jarPackageSet2,applicationID);

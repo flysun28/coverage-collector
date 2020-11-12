@@ -672,14 +672,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10032L;
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/image";
-        String basicBranch = "master";
-        String newTag = "41fb7c2d181c26b432d72dadc942086c90d1cc0f";
-        String oldTag = "ec918df9d7fe6288700c499f66de419fae686f4d";
-        String versionName = "fin-loan-api-20201106111230-368";
-        String applicationID = "fin-loan-api";
+        Long taskID = 10035L;
+        String gitPath = "git@gitlab.os.adc.com:oppo-push/Push_Unicast.git";
+        String testedBranch = "rom/develop";
+        String basicBranch = "rom/feature/fix-lost";
+        String newTag = "6095f00b6c381d49abe7267ed999ff23a800b8e4";
+        String oldTag = "05c0024aa921cbab7dd3d81dcfc260dd1d461bfd";
+        String versionName = "push-open-unicast-service_20201110143900";
+        String applicationID = "push-open-unicast-service";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -690,7 +690,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10032L);
+        applicationCodeInfo.setBranchTaskID(10035L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         applicationCodeInfo.setVersionId(1002L);

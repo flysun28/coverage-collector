@@ -73,7 +73,11 @@ public class Jsouphtml {
 //    }
     public CoverageData getCoverageData(Long taskid,String appCode,String testedBranch,String basicBranch,Long versionId){
         CoverageData coverageData = new CoverageData();
-        coverageData.setId(taskid);
+        long reportid = taskid;
+        if(versionId != null) {
+            reportid = versionId;
+        }
+        coverageData.setId(reportid);
         try {
             //解析整体覆盖率报告
             if(this.totalhtmlreport.exists()) {
@@ -107,7 +111,7 @@ public class Jsouphtml {
                     coverageData.setMissedClasses(missedClasses);
                     totalClasses = elements.get(12).text().replace(",", "");
                     coverageData.setTotalClasses(totalClasses);
-                    totalCoverageReportPath = Config.ReportBaseUrl +totalhtmlreport.toString().substring(totalhtmlreport.toString().indexOf(taskid+"")).replace("\\","/");
+                    totalCoverageReportPath = Config.ReportBaseUrl +totalhtmlreport.toString().substring(totalhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
                     coverageData.setTotalCoverageReportPath(totalCoverageReportPath);
                 }
 
@@ -147,7 +151,7 @@ public class Jsouphtml {
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
 
-                    diffCoverageReportPath = Config.ReportBaseUrl +diffhtmlreport.toString().substring(diffhtmlreport.toString().indexOf(taskid+"")).replace("\\","/");
+                    diffCoverageReportPath = Config.ReportBaseUrl +diffhtmlreport.toString().substring(diffhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
             }
