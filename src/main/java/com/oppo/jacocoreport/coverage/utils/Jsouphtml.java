@@ -77,7 +77,7 @@ public class Jsouphtml {
         if(versionId != null) {
             reportid = versionId;
         }
-        coverageData.setId(reportid);
+        coverageData.setId(taskid);
         try {
             //解析整体覆盖率报告
             if(this.totalhtmlreport.exists()) {
