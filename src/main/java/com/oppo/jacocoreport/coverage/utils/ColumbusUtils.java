@@ -360,7 +360,13 @@ public class ColumbusUtils {
     public static String getApplicationIDPrefix(String applicationID){
         String applicationIDPrex = "";
         if(applicationID.contains("-")) {
-            applicationIDPrex = applicationID.substring(0,applicationID.lastIndexOf("-") );
+            int firstsplit = applicationID.indexOf("-");
+            int secondsplit = applicationID.indexOf("-",firstsplit);
+            if(secondsplit != -1){
+                applicationIDPrex = applicationID.substring(0,secondsplit-1);
+            }else {
+                applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
+            }
         }
        else{
             applicationIDPrex = applicationID;
