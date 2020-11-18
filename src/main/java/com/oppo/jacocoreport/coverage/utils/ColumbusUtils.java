@@ -360,13 +360,8 @@ public class ColumbusUtils {
     public static String getApplicationIDPrefix(String applicationID){
         String applicationIDPrex = "";
         if(applicationID.contains("-")) {
-            int firstsplit = applicationID.indexOf("-");
-            int secondsplit = applicationID.indexOf("-",firstsplit);
-            if(secondsplit != -1){
-                applicationIDPrex = applicationID.substring(0,secondsplit-1);
-            }else {
-                applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
-            }
+            applicationIDPrex = applicationID.substring(0, applicationID.lastIndexOf("-"));
+
         }
        else{
             applicationIDPrex = applicationID;
@@ -479,7 +474,7 @@ public class ColumbusUtils {
         FileOperateUtil fileOperateUtil = new FileOperateUtil();
         Execute execute = new Execute();
         HashSet jarPackageSet = new HashSet();
-        String applicationIDPrefix = getApplicationIDPrefix(applicationID);
+        String applicationIDPrefix = getApplicationIDPrefix(applicationID.replaceAll("_","-"));
         //先通过applicationID查找jar包
         jarPackageSet = getapplicationJarList(new File(localpath), applicationID,jarPackageSet);
         for (String applicationsrcname : applicationsrclist.keySet()) {
