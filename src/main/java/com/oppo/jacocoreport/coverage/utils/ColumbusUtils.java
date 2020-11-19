@@ -362,9 +362,9 @@ public class ColumbusUtils {
         int numbeginindex = getNumIndexFormStr(jarPackage.getName());
         if(numbeginindex == -1){
             if(jarPackage.getName().contains("SNAPSHOT")){
-                return jarPackage.getName().substring(0,jarPackage.getName().indexOf("SNAPSHOT"));
+                return jarPackage.getName().substring(0,jarPackage.getName().indexOf("SNAPSHOT")-1);
             }else{
-                return jarPackage.getName().substring(0,jarPackage.getName().indexOf("."));
+                return jarPackage.getName().substring(0,jarPackage.getName().indexOf(".")-1);
             }
         }else{
             return jarPackage.getName().substring(0,numbeginindex-1);
