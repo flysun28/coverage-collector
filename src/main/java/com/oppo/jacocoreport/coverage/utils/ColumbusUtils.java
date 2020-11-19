@@ -345,6 +345,7 @@ public class ColumbusUtils {
         }
      return -1;
     }
+
     private static  String getJarPackageVersion(File jarPackage){
         int numbeginindex = getNumIndexFormStr(jarPackage.getName());
         if(numbeginindex == -1){
@@ -355,6 +356,19 @@ public class ColumbusUtils {
             numlastindex = jarPackage.getName().indexOf(".jar");
         }
         return jarPackage.getName().substring(numbeginindex,numlastindex);
+
+    }
+    private static  String getJarPackagePre(File jarPackage){
+        int numbeginindex = getNumIndexFormStr(jarPackage.getName());
+        if(numbeginindex == -1){
+            if(jarPackage.getName().contains("SNAPSHOT")){
+                return jarPackage.getName().substring(0,jarPackage.getName().indexOf("SNAPSHOT"));
+            }else{
+                return jarPackage.getName().substring(0,jarPackage.getName().indexOf("."));
+            }
+        }else{
+            return jarPackage.getName().substring(0,numbeginindex-1);
+        }
 
     }
     public static String getApplicationIDPrefix(String applicationID){
@@ -540,8 +554,9 @@ public class ColumbusUtils {
             File jarPackage = itr.next();
             if (jarPackage.toString().contains("lib")) {
                 String jarversion = getJarPackageVersion(jarPackage);
+                String jarpackagepre = getJarPackagePre(jarPackage);
                 //如果jar包包含应用名,直接使用这个jar包的版本号
-                if(jarPackage.getName().contains(applicationID)){
+                if(jarpackagepre.equals(applicationID)){
                     maxMap.put("jarversion", jarversion);
                     break;
                 }

@@ -672,14 +672,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10036L;
-        String gitPath = "git@gitlab.os.adc.com:OCloud/ocloud_album/ocloud-albumio-v2.git";
+        Long taskID = 10037L;
+        String gitPath = "git@gitlab.os.adc.com:credits/credits-center.git";
         String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "0c20267ff2c5e91766268c449b622b6d8f281e68";
-        String oldTag = "0c20267ff2c5e91766268c449b622b6d8f281e68";
-        String versionName = "ocloud_album_io_20201118102730";
-        String applicationID = "ocloud_album_io";
+        String newTag = "d7e2cb142b2b564dd9f9aa99468ef534c5c33eb1";
+        String oldTag = "26d083d4292da6d908a9b1073b5450b09a710458";
+        String versionName = "credits-center_20201119095108";
+        String applicationID = "credits-center";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -690,13 +690,13 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10035L);
+        applicationCodeInfo.setBranchTaskID(10037L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         applicationCodeInfo.setVersionId(1003L);
-        applicationCodeInfo.setIgnorePackage("com.oppo.ocloud.album.io.rest.v5,com.oppo.ocloud.album.io.services.proxy,com.oppo.ocloud.album.io.util.http,com.oppo.ocloud.album.io.rest.tv,com.oppo.ocloud.album.io.rest.inner,com.oppo.ocloud.album.io.service.videothumb");
-        applicationCodeInfo.setIgnoreClass("com.oppo.ocloud.album.io.rest.StatusController,com.oppo.ocloud.album.io.service.AlbumShareService,com.oppo.ocloud.album.io.service.ThumbService");
-        applicationCodeInfo.setContainPackages("com.oppo.ocloud.album.io.service,com.oppo.ocloud.album.io.rest");
+        applicationCodeInfo.setIgnorePackage("");
+        applicationCodeInfo.setIgnoreClass("");
+        applicationCodeInfo.setContainPackages("");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID);
