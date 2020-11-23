@@ -95,6 +95,7 @@ public class GitUtil {
 
         //默认master分支，如果不存在，取release分支
         try {
+            git.reset().setMode(ResetCommand.ResetType.HARD).call();
             System.out.println(repo.getBranch());
             Ref localMasterRef = repo.exactRef("refs/heads/" + oldBranchName);
             gitAdapter.checkOutAndPull(localMasterRef, oldBranchName);

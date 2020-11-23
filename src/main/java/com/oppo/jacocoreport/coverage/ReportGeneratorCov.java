@@ -672,9 +672,9 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10037L;
-        String gitPath = "git@gitlab.os.adc.com:credits/credits-center.git";
-        String testedBranch = "master";
+        Long taskID = 10038L;
+        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/fund-center.git";
+        String testedBranch = "release/heyTapPay-ljj";
         String basicBranch = "master";
         String newTag = "d7e2cb142b2b564dd9f9aa99468ef534c5c33eb1";
         String oldTag = "26d083d4292da6d908a9b1073b5450b09a710458";
