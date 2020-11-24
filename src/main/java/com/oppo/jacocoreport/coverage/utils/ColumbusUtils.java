@@ -9,6 +9,7 @@ import com.oppo.jacocoreport.coverage.cloud.AppVersionResponse;
 import com.oppo.jacocoreport.response.DefinitionException;
 import com.oppo.jacocoreport.response.ErrorEnum;
 import org.apache.commons.codec.binary.Hex;
+import org.eclipse.jgit.util.StringUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -498,6 +499,7 @@ public class ColumbusUtils {
         //还没有找到jar包，再通过应用前缀再搜索一次
         jarPackageSet = getapplicationJarList(new File(localpath),applicationIDPrefix,jarPackageSet);
 
+
         HashSet<File> jarPackageSet2 = new HashSet<File>();
         Iterator<File> itr = jarPackageSet.iterator();
 
@@ -507,8 +509,11 @@ public class ColumbusUtils {
                 jarPackageSet2.add(jarPackage);
             }
         }
-
-
+        //针对特殊应用名处理
+        String specialApplicationIDPrex = getSpecialApplicationIDPrex(applicationID);
+        if(!StringUtils.isEmptyOrNull(specialApplicationIDPrex)){
+            jarPackageSet2 = getapplicationJarList(new File(localpath),specialApplicationIDPrex,jarPackageSet2);
+        }
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
         if(jarPackageSet2.size() == 0) {
             for (String applicationsrcname : applicationsrclist.keySet()) {
@@ -545,6 +550,12 @@ public class ColumbusUtils {
 
         }
         return jarPackageSet3;
+    }
+    private static String getSpecialApplicationIDPrex(String applicationID){
+        if(applicationID.equals("finz-pay-core")){
+           return "dubhe-pay";
+        }
+      return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
         Iterator<File> itr = jarPackageSet.iterator();
