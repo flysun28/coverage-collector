@@ -476,7 +476,7 @@ public class ReportGeneratorCov {
                     }
                 }
             }
-        }, 0, 1800000);
+        }, 0, 600000);
     }
     private void startVersionCoverageTask(Map<String,Object> applicationMap){
         try {
@@ -672,14 +672,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10038L;
-        String gitPath = "git@gitlab.os.adc.com:finance/consumer-finance/fund-center.git";
-        String testedBranch = "release/heyTapPay-ljj";
+        Long taskID = 10039L;
+        String gitPath = "git@gitlab.os.adc.com:fin/wealth/wealth-asset.git";
+        String testedBranch = "master";
         String basicBranch = "master";
-        String newTag = "d7e2cb142b2b564dd9f9aa99468ef534c5c33eb1";
-        String oldTag = "26d083d4292da6d908a9b1073b5450b09a710458";
-        String versionName = "credits-center_20201119095108";
-        String applicationID = "credits-center";
+        String newTag = "de80eeb652642a33e6686f8fa3bbf389bdfd0119";
+        String oldTag = "de80eeb652642a33e6686f8fa3bbf389bdfd0119";
+        String versionName = "wealth-asset-rpc_20201124164946";
+        String applicationID = "wealth-asset-rpc";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -690,12 +690,12 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10037L);
+        applicationCodeInfo.setBranchTaskID(10039L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
-        applicationCodeInfo.setVersionId(1003L);
-        applicationCodeInfo.setIgnorePackage("");
-        applicationCodeInfo.setIgnoreClass("");
+        applicationCodeInfo.setVersionId(1004L);
+        applicationCodeInfo.setIgnorePackage("com.oppo.fin.wealth.asset.domain,com.oppo.fin.wealth.asset.dal,com.oppo.fin.wealth.asset.core.util,com.oppo.fin.wealth.asset.core.strategy,com.oppo.fin.wealth.asset.core.errcode,com.oppo.fin.wealth.asset.core.entity,com.oppo.fin.wealth.asset.dal.example,com.oppo.fin.wealth.asset.dal.model,com.oppo.fin.wealth.asset.domain.dto,com.oppo.fin.wealth.asset.domain.enums,com.oppo.fin.wealth.asset.domain.req,com.oppo.fin.wealth.asset.domain.rsp,com.oppo.fin.wealth.asset.core.constant");
+        applicationCodeInfo.setIgnoreClass("com.oppo.fin.wealth.asset.rpc.task.sxbank.SXBankSettleInterestTask");
         applicationCodeInfo.setContainPackages("");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
