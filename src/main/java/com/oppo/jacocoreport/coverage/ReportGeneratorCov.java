@@ -672,14 +672,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10039L;
-        String gitPath = "git@gitlab.os.adc.com:fin/wealth/wealth-asset.git";
-        String testedBranch = "master";
+        Long taskID = 10040L;
+        String gitPath = "git@gitlab.os.adc.com:cdo-theme-server/cdo-theme.git";
+        String testedBranch = "v7.4";
         String basicBranch = "master";
-        String newTag = "de80eeb652642a33e6686f8fa3bbf389bdfd0119";
-        String oldTag = "de80eeb652642a33e6686f8fa3bbf389bdfd0119";
-        String versionName = "wealth-asset-rpc_20201124164946";
-        String applicationID = "wealth-asset-rpc";
+        String newTag = "536faa7b9ecf21613c71d8db62b822710eea0757";
+        String oldTag = "dea38b6ea8355debae817ab7d5d2a59b92c016c5";
+        String versionName = "cdo-theme-api_20201125202322";
+        String applicationID = "cdo-theme-api";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -693,9 +693,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setBranchTaskID(10039L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
-        applicationCodeInfo.setVersionId(1004L);
-        applicationCodeInfo.setIgnorePackage("com.oppo.fin.wealth.asset.domain,com.oppo.fin.wealth.asset.dal,com.oppo.fin.wealth.asset.core.util,com.oppo.fin.wealth.asset.core.strategy,com.oppo.fin.wealth.asset.core.errcode,com.oppo.fin.wealth.asset.core.entity,com.oppo.fin.wealth.asset.dal.example,com.oppo.fin.wealth.asset.dal.model,com.oppo.fin.wealth.asset.domain.dto,com.oppo.fin.wealth.asset.domain.enums,com.oppo.fin.wealth.asset.domain.req,com.oppo.fin.wealth.asset.domain.rsp,com.oppo.fin.wealth.asset.core.constant");
-        applicationCodeInfo.setIgnoreClass("com.oppo.fin.wealth.asset.rpc.task.sxbank.SXBankSettleInterestTask");
+        applicationCodeInfo.setVersionId(1005L);
+        applicationCodeInfo.setIgnorePackage("com.oppo.theme.business.artist,com.oppo.theme.statistics,com.oppo.cdo.theme.domain,com.oppo.cdo.theme.dal,com.oppo.theme.common,com.oppo.theme.domain");
+        applicationCodeInfo.setIgnoreClass("com.oppo.theme.business.product.WallpaperService,com.oppo.theme.business.product.ThemeService,com.oppo.theme.business.product.ScreenLockService");
         applicationCodeInfo.setContainPackages("");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);

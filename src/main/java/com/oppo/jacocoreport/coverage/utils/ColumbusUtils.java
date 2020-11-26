@@ -558,6 +558,9 @@ public class ColumbusUtils {
         else if(applicationID.equals("usercenter-business-dubbo-provider")){
            return "usercenter-business";
         }
+        else if(applicationID.equals("magzine-service")){
+           return "com-oppo-browser-magzine-service";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
@@ -639,7 +642,7 @@ public class ColumbusUtils {
             }
             else{
                 String fname = f.getName().replaceAll("_","-");
-                if(fname.contains(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")){
+                if(fname.startsWith(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")){
                     jarPackageSet.add(f);
                 }
             }
