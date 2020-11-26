@@ -561,6 +561,9 @@ public class ColumbusUtils {
         else if(applicationID.equals("magzine-service")){
            return "com-oppo-browser-magzine-service";
         }
+        else if(applicationID.equals("compass-de-1-x")){
+            return "compass";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
