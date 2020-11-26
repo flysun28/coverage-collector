@@ -555,6 +555,9 @@ public class ColumbusUtils {
         if(applicationID.equals("finz-pay-core")){
            return "dubhe-pay";
         }
+        else if(applicationID.equals("usercenter-business-dubbo-provider")){
+           return "usercenter-business";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
