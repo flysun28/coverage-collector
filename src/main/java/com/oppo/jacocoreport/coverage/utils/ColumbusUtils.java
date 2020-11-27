@@ -141,10 +141,9 @@ public class ColumbusUtils {
 
         return hashMap;
     }
+    public static void filterIgnoreClass(String[] classArrayList,File basePath) {
 
-    public static void filterIgnoreClass(String[] classArrayList,String[] packageArrayList,File basePath){
-        FileOperateUtil fileOperateUtil = new FileOperateUtil();
-        for(String classname:classArrayList) {
+        for (String classname : classArrayList) {
             if (classname.contains(".")) {
                 String classPathLastStr = classname.substring(classname.lastIndexOf(".") + 1);
                 String classParentpathStr = classname.substring(0, classname.lastIndexOf("."));
@@ -162,13 +161,15 @@ public class ColumbusUtils {
                     }
                 } else {
                     File classfilename = new File(classParentPath, classPathLastStr + ".class");
-                    if(classfilename.exists()){
+                    if (classfilename.exists()) {
                         classfilename.delete();
                     }
                 }
             }
         }
-
+    }
+    public static void filterIgnorePackage(String[] packageArrayList,File basePath){
+        FileOperateUtil fileOperateUtil = new FileOperateUtil();
         for(String packagename:packageArrayList) {
             if (packagename.contains(".")) {
                 String packagenamelastStr = packagename.substring(packagename.lastIndexOf(".") + 1);

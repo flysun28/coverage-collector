@@ -414,7 +414,7 @@ public class ReportGeneratorCov {
                     //上传覆盖率报告
                     sendcoveragedata(reportAllCovDirectory,reportDiffDirectory,0);
 
-                    //过滤class和package文件
+                    //过滤package文件
                     filterClassAndPackage(applicationMap.get("classPath").toString());
                     if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
                         createDiff(classesDirectoryList, filterreportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
@@ -620,6 +620,15 @@ public class ReportGeneratorCov {
         //解压zip包获取class文件
         String classPath = ColumbusUtils.extractColumsBuildVersionClasses(downloadFilePath,new File(coverageReportPath,"classes").toString(),applicationID,sourceapplicationsMap);
 
+        //提前过滤类，兼容某些类classid不一致问题
+        String ignoreclassStr = applicationCodeInfo.getIgnoreClass();
+        String[] ignoreclassList = new String[]{};
+
+        if(ignoreclassStr != null && !ignoreclassStr.equals("")){
+            ignoreclassList = ignoreclassStr.split(",");
+        }
+        //过滤配置的ignore class,package文件
+        ColumbusUtils.filterIgnoreClass(ignoreclassList,new File(classPath));
         projectMap.put("classPath",classPath);
         projectMap.put("applicationID",applicationID);
 
@@ -645,7 +654,8 @@ public class ReportGeneratorCov {
             containPackagesList = containPackagesStr.split(",");
         }
         //过滤配置的ignore class,package文件
-        ColumbusUtils.filterIgnoreClass(ignoreclassList,ignorepackageList,new File(classPath));
+//        ColumbusUtils.filterIgnoreClass(ignoreclassList,new File(classPath));
+        ColumbusUtils.filterIgnorePackage(ignorepackageList,new File(classPath));
         //只统计指定包
         if(containPackagesList!= null && containPackagesList.length >0) {
             HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackagesList,classPath);
