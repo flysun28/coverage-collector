@@ -682,14 +682,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10040L;
-        String gitPath = "git@gitlab.os.adc.com:cdo-theme-server/cdo-theme.git";
-        String testedBranch = "v7.4";
+        Long taskID = 10041L;
+        String gitPath = "git@gitlab.os.adc.com:ads/ad_show/ad_show_performance/ad-show-performance.git";
+        String testedBranch = "release/search";
         String basicBranch = "master";
-        String newTag = "536faa7b9ecf21613c71d8db62b822710eea0757";
-        String oldTag = "dea38b6ea8355debae817ab7d5d2a59b92c016c5";
-        String versionName = "cdo-theme-api_20201125202322";
-        String applicationID = "cdo-theme-api";
+        String newTag = "4e54c0397c0da94099d26f007d8be83ed012149b";
+        String oldTag = "81075db6a54279831b0546f620b3f6a46f602b66";
+        String versionName = "ad-show-performace-search-service-20201127125107-140";
+        String applicationID = "ad-show-performace-search-service";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -704,9 +704,9 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
         applicationCodeInfo.setVersionId(1005L);
-        applicationCodeInfo.setIgnorePackage("com.oppo.theme.business.artist,com.oppo.theme.statistics,com.oppo.cdo.theme.domain,com.oppo.cdo.theme.dal,com.oppo.theme.common,com.oppo.theme.domain");
-        applicationCodeInfo.setIgnoreClass("com.oppo.theme.business.product.WallpaperService,com.oppo.theme.business.product.ThemeService,com.oppo.theme.business.product.ScreenLockService");
-        applicationCodeInfo.setContainPackages("");
+        applicationCodeInfo.setIgnorePackage("");
+        applicationCodeInfo.setIgnoreClass("");
+        applicationCodeInfo.setContainPackages("com.heytap.ad.show.performance.search.service.topic.helper,com.heytap.ad.show.performance.search.service.topic,com.heytap.ad.show.performance.search.service,com.heytap.ad.show.performance.search.config,com.heytap.ad.show.performance.search.cache");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID);

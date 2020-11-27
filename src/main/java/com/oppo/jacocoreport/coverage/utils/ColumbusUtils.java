@@ -565,6 +565,12 @@ public class ColumbusUtils {
         else if(applicationID.equals("compass-de-1-x")){
             return "compass";
         }
+        else if(applicationID.equals("compass-de-1-x")){
+            return "compass";
+        }
+        else if(applicationID.equals("ad-show-performace-search-service")){
+            return "ad-show-performance";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
