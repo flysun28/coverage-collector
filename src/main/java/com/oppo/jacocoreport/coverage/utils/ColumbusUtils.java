@@ -571,6 +571,9 @@ public class ColumbusUtils {
         else if(applicationID.equals("ad-show-performace-search-service")){
             return "ad-show-performance";
         }
+        else if(applicationID.equals("ad-show-frequence-record-service")){
+            return "ad-show-frequence";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){
