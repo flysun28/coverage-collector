@@ -38,6 +38,7 @@ public class ReportGeneratorCov {
     private  String gitName = "";
     private  String gitPassword = "";
     private String gitlocalPath = "";
+    private String projectCovPath = "";
     private CoverageBuilder coverageBuilder;
     private File coverageReportPath;
     private ApplicationCodeInfo applicationCodeInfo;
@@ -317,12 +318,12 @@ public class ReportGeneratorCov {
                 //获取覆盖率生成数据
                 String[] iplist = addressIPList.split(",");
                 //创建被测分支目录
-                File gitlocalexecutionDataPath = new File(gitlocalPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
+                File gitlocalexecutionDataPath = new File(projectCovPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
                 if(!gitlocalexecutionDataPath.exists()){
                     gitlocalexecutionDataPath.mkdir();
                 }
                 //创建项目id目录
-                File versionIdDataPath = new File(gitlocalPath,applicationCodeInfo.getVersionId()+"");
+                File versionIdDataPath = new File(projectCovPath,applicationCodeInfo.getVersionId()+"");
                 if(!versionIdDataPath.exists()){
                     versionIdDataPath.mkdir();
                 }
@@ -480,7 +481,7 @@ public class ReportGeneratorCov {
     }
     private void startVersionCoverageTask(Map<String,Object> applicationMap){
         try {
-            File versionIdDataPath = new File(gitlocalPath,applicationCodeInfo.getVersionId()+"");
+            File versionIdDataPath = new File(projectCovPath,applicationCodeInfo.getVersionId()+"");
             if(!versionIdDataPath.exists()){
                 versionIdDataPath.mkdir();
             }
@@ -523,7 +524,7 @@ public class ReportGeneratorCov {
             File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"",applicationCodeInfo.getTestedBranch().replace("/","_"));
             File branchTaskPath = createCoverageReportPathByTaskid(applicationCodeInfo.getBranchTaskID()+"");
             File branchclassPath = new File(branchTaskPath,"classes");
-            File gitlocalexecutionDataPath = new File(gitlocalPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
+            File gitlocalexecutionDataPath = new File(projectCovPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
             File filterExecFile = filterBranchData(gitlocalexecutionDataPath,branchTaskCoverageReportPath,branchclassPath.toString());
             File sourceDirectory = null;
 
@@ -594,6 +595,14 @@ public class ReportGeneratorCov {
         //生成开发git代码本地路径
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
+        File projectCovPath = new File(Config.ProjectCovPath,projectName);
+        if(!new File(Config.ProjectCovPath).exists()){
+            new File(Config.ProjectCovPath).mkdir();
+        }
+        if(!projectCovPath.exists()){
+            projectCovPath.mkdir();
+        }
+        this.projectCovPath = projectCovPath.toString();
         //clone代码到本地
         String newBranchName = cloneCodeSource(Config.GitName, Config.GitPassword, applicationCodeInfo.getGitPath(), Config.CodePath,applicationCodeInfo.getTestedBranch(),applicationCodeInfo.getBasicBranch(),applicationCodeInfo.getTestedCommitId());
         applicationCodeInfo.setTestedCommitId(newBranchName);
