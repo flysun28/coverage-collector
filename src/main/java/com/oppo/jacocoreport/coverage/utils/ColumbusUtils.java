@@ -574,6 +574,9 @@ public class ColumbusUtils {
         else if(applicationID.equals("ad-show-frequence-record-service")){
             return "ad-show-frequence";
         }
+        else if(applicationID.equals("token-server-dubbo-provider")){
+            return "token-server";
+        }
       return "";
     }
     private static String getMaxCountVersion(HashSet<File> jarPackageSet,String applicationID){

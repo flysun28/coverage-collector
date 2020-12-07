@@ -323,9 +323,12 @@ public class ReportGeneratorCov {
                     gitlocalexecutionDataPath.mkdir();
                 }
                 //创建项目id目录
-                File versionIdDataPath = new File(projectCovPath,applicationCodeInfo.getVersionId()+"");
-                if(!versionIdDataPath.exists()){
-                    versionIdDataPath.mkdir();
+                File versionIdDataPath = null;
+                if(applicationCodeInfo.getVersionId()!= null) {
+                    versionIdDataPath = new File(projectCovPath, applicationCodeInfo.getVersionId() + "");
+                    if (!versionIdDataPath.exists()) {
+                        versionIdDataPath.mkdir();
+                    }
                 }
                 //创建测试taskID目录
                 File coverageexecutionDataPath = new File(coverageReportPath,applicationCodeInfo.getTestedBranch().replace("/","_"));
@@ -343,10 +346,10 @@ public class ReportGeneratorCov {
                                 //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
                                 executionDataFile = new File(gitlocalexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
                                 executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
-
-                                executionDataFile = new File(versionIdDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
-                                executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
-
+                                if(versionIdDataPath != null) {
+                                    executionDataFile = new File(versionIdDataPath, serverip + System.currentTimeMillis() + "_jacoco.exec");//第一步生成的exec的文件
+                                    executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
+                                }
                                 //保存到taskID目录下再存一份
                                 executionDataFile = new File(coverageexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
                                 boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
@@ -390,8 +393,10 @@ public class ReportGeneratorCov {
                     mergeDumpGitLocalPath.executeMerge();
 
                     //合并versionIDPath目录覆盖率
-                    MergeDump versionIDMerge = new MergeDump(versionIdDataPath.toString());
-                    versionIDMerge.executeMerge();
+                    if(versionIdDataPath != null) {
+                        MergeDump versionIDMerge = new MergeDump(versionIdDataPath.toString());
+                        versionIDMerge.executeMerge();
+                    }
 
                     //合并taskID目录代码覆盖率
                     MergeDump mergeDump = new MergeDump(coverageexecutionDataPath.toString());
