@@ -513,6 +513,7 @@ public class ColumbusUtils {
         //针对特殊应用名处理
         String specialApplicationIDPrex = getSpecialApplicationIDPrex(applicationID);
         if(!StringUtils.isEmptyOrNull(specialApplicationIDPrex)){
+            jarPackageSet2 = new HashSet<File>();
             jarPackageSet2 = getapplicationJarList(new File(localpath),specialApplicationIDPrex,jarPackageSet2);
         }
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
