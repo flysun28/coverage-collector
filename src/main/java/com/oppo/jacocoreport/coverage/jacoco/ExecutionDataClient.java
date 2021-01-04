@@ -1,5 +1,7 @@
 package com.oppo.jacocoreport.coverage.jacoco;
 
+import com.oppo.jacocoreport.coverage.utils.Config;
+import com.oppo.jacocoreport.coverage.utils.HttpUtils;
 import org.jacoco.core.data.ExecutionDataWriter;
 import org.jacoco.core.runtime.RemoteControlReader;
 import org.jacoco.core.runtime.RemoteControlWriter;
@@ -7,21 +9,25 @@ import org.jacoco.core.runtime.RemoteControlWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetAddress;
-import java.net.NoRouteToHostException;
 import java.net.Socket;
 
 public class ExecutionDataClient {
 
 
-    public boolean getExecutionData(String address, int port, File destfile) throws IOException {
+    public boolean getExecutionData(String address, int port, File destfile, Integer testedEnv) throws IOException {
         boolean getedExecData = false;
         final FileOutputStream localFile = new FileOutputStream(destfile);
         final ExecutionDataWriter localWriter = new ExecutionDataWriter(localFile);
 
         //连接Jacoco服务
         try {
+
+            if (testedEnv==2){
+                port = getPort(address,port);
+                address = Config.TransferBaseIp;
+            }
+
             final Socket socket = new Socket(InetAddress.getByName(address), port);
             if (socket.isConnected()) {
                 final RemoteControlWriter writer = new RemoteControlWriter(socket.getOutputStream());
@@ -48,6 +54,11 @@ public class ExecutionDataClient {
         return getedExecData;
     }
 
+    private int getPort(String address, int port){
+        String tempUrl = Config.GET_TRANSFER_PORT_URL+"?address="+address+"&port="+port;
+        return Integer.parseInt(HttpUtils.sendGetRequest(tempUrl).toString());
+    }
+
     /**
      * Starts the execution data request.
      *
@@ -56,7 +67,7 @@ public class ExecutionDataClient {
      */
     public static void main(final String[] args) throws IOException {
         ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        executionDataClient.getExecutionData("10.177.118.94", 8098, new File("cdojacoco.exec"));
+        executionDataClient.getExecutionData("10.177.118.94", 8098, new File("cdojacoco.exec"),1);
     }
 
 }

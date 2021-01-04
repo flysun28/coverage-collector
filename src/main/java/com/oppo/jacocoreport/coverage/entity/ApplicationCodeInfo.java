@@ -22,6 +22,11 @@ public class ApplicationCodeInfo {
     private String ip = "";
     private Long versionId;
 
+    /**
+     * 被测环境字段:1-测试;2-生产
+     * */
+    private Integer testedEnv;
+
 
     public String getContainPackages() {
         return containPackages;
@@ -158,9 +163,17 @@ public class ApplicationCodeInfo {
         this.versionId = versionId;
     }
 
+    public Integer getTestedEnv() {
+        return testedEnv;
+    }
+
+    public void setTestedEnv(Integer testedEnv) {
+        this.testedEnv = testedEnv;
+    }
+
     @Override
     public String toString() {
-        return "task info{" +
+        return "ApplicationCodeInfo{" +
                 "id=" + id +
                 ", gitPath='" + gitPath + '\'' +
                 ", testedBranch='" + testedBranch + '\'' +
@@ -171,14 +184,15 @@ public class ApplicationCodeInfo {
                 ", deployKey='" + deployKey + '\'' +
                 ", ignoreClass='" + ignoreClass + '\'' +
                 ", ignorePackage='" + ignorePackage + '\'' +
-                ", isTimerTask='" + isTimerTask + '\'' +
-                ", isBranchTask='" + isBranchTask + '\'' +
+                ", isTimerTask=" + isTimerTask +
                 ", jacocoPort='" + jacocoPort + '\'' +
+                ", isBranchTask=" + isBranchTask +
+                ", branchTaskID=" + branchTaskID +
                 ", containPackages='" + containPackages + '\'' +
-                ", branchTaskID='" + branchTaskID + '\'' +
+                ", applicationID='" + applicationID + '\'' +
                 ", ip='" + ip + '\'' +
-                ", applicationID='" + applicationID + '\''+
-                ", versionId='" + versionId + '\''+
+                ", versionId=" + versionId +
+                ", testedEnv=" + testedEnv +
                 '}';
     }
 

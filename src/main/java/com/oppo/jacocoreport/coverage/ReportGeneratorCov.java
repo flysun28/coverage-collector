@@ -345,14 +345,14 @@ public class ReportGeneratorCov {
                             for (String portNum:portList) {
                                 //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
                                 executionDataFile = new File(gitlocalexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
-                                executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
+                                executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile,applicationCodeInfo.getTestedEnv());
                                 if(versionIdDataPath != null) {
                                     executionDataFile = new File(versionIdDataPath, serverip + System.currentTimeMillis() + "_jacoco.exec");//第一步生成的exec的文件
-                                    executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
+                                    executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile,applicationCodeInfo.getTestedEnv());
                                 }
                                 //保存到taskID目录下再存一份
                                 executionDataFile = new File(coverageexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
-                                boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile);
+                                boolean getedexecdata = executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile,applicationCodeInfo.getTestedEnv());
                                 //如果取得覆盖率数据，判断是否有新版本
                                 if (getedexecdata) {
                                     AnalyNewBuildVersion analyNewBuildVersion = new AnalyNewBuildVersion(applicationMap.get("classPath").toString(), executionDataFile.toString());
