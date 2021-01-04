@@ -56,7 +56,7 @@ public class ExecutionDataClient {
 
     private int getPort(String address, int port){
         String tempUrl = Config.GET_TRANSFER_PORT_URL+"?address="+address+"&port="+port;
-        return Integer.parseInt(HttpUtils.sendGetRequest(tempUrl).toString());
+        return Integer.parseInt(HttpUtils.sendGet(tempUrl));
     }
 
     /**
