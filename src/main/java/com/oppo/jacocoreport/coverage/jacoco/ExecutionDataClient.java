@@ -25,6 +25,9 @@ public class ExecutionDataClient {
 
             if (testedEnv==2){
                 port = getPort(address,port);
+                if (port == -1){
+                    return false;
+                }
                 address = Config.TransferBaseIp;
             }
 
@@ -67,7 +70,7 @@ public class ExecutionDataClient {
      */
     public static void main(final String[] args) throws IOException {
         ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        executionDataClient.getExecutionData("10.177.118.94", 8098, new File("cdojacoco.exec"),1);
+        executionDataClient.getExecutionData("10.177.131.208", 8088, new File("cdojacoco.exec"),2);
     }
 
 }

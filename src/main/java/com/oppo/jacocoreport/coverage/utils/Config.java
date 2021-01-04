@@ -5,8 +5,8 @@ public class Config {
     public final  static String GitName = "80289528";
     public final  static String GitPassword = "Zhc_001";
 
-//    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
-    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v"; //线上环境
+    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
+//    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v"; //线上环境
 //    public final static String ReportBasePath = "D:\\codeCoverage";
     public final  static String CodePath = ReportBasePath+"/codeCoverage";
     public final  static String ProjectCovPath = ReportBasePath+"/projectCovPath";
