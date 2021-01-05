@@ -20,6 +20,6 @@ public class Config {
     public static String SEND_STOPTIMERTASK_URL =BaseUrl+"api/codeCoverage/execution/stop/timerTask?id=";
     public static String RECOVER_TIMERTASK_URL = BaseUrl+"api/codeCoverage/execution/recover/timer/task";
 
-    public final static String TransferBaseIp = "prod-jacoco.proxy.oppoer.me";
-    public static String GET_TRANSFER_PORT_URL = "http://prod-jacoco.proxy.oppoer.me/java/port";
+    public final static String TransferBaseIp = "10.35.174.197";
+    public static String GET_TRANSFER_PORT_URL = "http://10.35.174.197:9099/java/port";
 }
