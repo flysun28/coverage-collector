@@ -23,6 +23,7 @@ public class ColumbusUtils {
     private static String API_VERSION_INFO = "/openapi/version_info";
     private static String app_code = "";
     private static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
+    private static String CLOUD_URL_PROD = "http://prod-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
 
 
     public static ArrayList<AppVersionResponse> getBuildVersionList(String appId,String buildVersionName) {
@@ -84,13 +85,17 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    public static StringBuffer getAppDeployInfoList(String versionName) throws DefinitionException {
+    public static StringBuffer getAppDeployInfoList(String versionName,Integer testedEnv) throws DefinitionException {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
             String ret = null;
             Gson gson = new Gson();
-            ret = HttpUtils.sendGet(CLOUD_URL + versionName);
+            if (testedEnv==2){
+                ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
+            }else {
+                ret = HttpUtils.sendGet(CLOUD_URL + versionName);
+            }
             JsonObject obj = gson.fromJson(ret, JsonObject.class);
             JsonObject listJsonObject = obj.get("data").getAsJsonObject().get("list").getAsJsonObject();
             if (null != listJsonObject && !"null".equals(listJsonObject.get("result").toString())) {
@@ -114,7 +119,7 @@ public class ColumbusUtils {
         }
     }
 
-    public static HashMap getAppDeployInfoFromBuildVersionList(String appID, String buildVersionName) throws DefinitionException {
+    public static HashMap getAppDeployInfoFromBuildVersionList(String appID, String buildVersionName,Integer testedEnv) throws DefinitionException {
         StringBuffer applicationIP = new StringBuffer();
         HashMap<String,Object> hashMap = new HashMap<>();
         String commitID = "";
@@ -130,7 +135,7 @@ public class ColumbusUtils {
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
 
-            applicationIP = ColumbusUtils.getAppDeployInfoList(buildVersionName);
+            applicationIP = ColumbusUtils.getAppDeployInfoList(buildVersionName,testedEnv);
             hashMap.put("applicationIP",applicationIP.toString());
             hashMap.put("commitID",commitID);
             hashMap.put("buildBranch",buildBranch);

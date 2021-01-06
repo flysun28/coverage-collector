@@ -618,7 +618,7 @@ public class ReportGeneratorCov {
         Map sourceapplicationsMap = getApplicationSourceDirectoryp(applicationNames);
         projectMap.put("sourceapplications",sourceapplicationsMap);
 
-        HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,applicationCodeInfo.getVersionName());
+        HashMap<String,Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(applicationID,applicationCodeInfo.getVersionName(),applicationCodeInfo.getTestedEnv());
         String applicationIPList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
         if (!StringUtils.isEmptyOrNull(applicationCodeInfo.getIp())) {
