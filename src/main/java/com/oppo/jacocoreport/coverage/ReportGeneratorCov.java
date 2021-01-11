@@ -610,7 +610,7 @@ public class ReportGeneratorCov {
         this.projectCovPath = projectCovPath.toString();
         //clone代码到本地
         String newBranchName = cloneCodeSource(Config.GitName, Config.GitPassword, applicationCodeInfo.getGitPath(), Config.CodePath,applicationCodeInfo.getTestedBranch(),applicationCodeInfo.getBasicBranch(),applicationCodeInfo.getTestedCommitId());
-        applicationCodeInfo.setTestedCommitId(newBranchName);
+        applicationCodeInfo.setTestedBranch(newBranchName);
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, filelist);
@@ -696,14 +696,14 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10041L;
-        String gitPath = "git@gitlab.os.adc.com:ads/ad_show/ad_show_performance/ad-show-performance.git";
-        String testedBranch = "release/search";
+        Long taskID = 10042L;
+        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
+        String testedBranch = "release/escrow";
         String basicBranch = "master";
-        String newTag = "4e54c0397c0da94099d26f007d8be83ed012149b";
-        String oldTag = "81075db6a54279831b0546f620b3f6a46f602b66";
-        String versionName = "ad-show-performace-search-service-20201127125107-140";
-        String applicationID = "ad-show-performace-search-service";
+        String newTag = "317b45e207fc57fd72b3bc06e971f10f1373e7a5";
+        String oldTag = "470474701bdb5563405dcdd6bdd757da3a9265ad";
+        String versionName = "fin-loan-api-20201218104438-450";
+        String applicationID = "fin-loan-api";
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -720,7 +720,7 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionId(1005L);
         applicationCodeInfo.setIgnorePackage("");
         applicationCodeInfo.setIgnoreClass("");
-        applicationCodeInfo.setContainPackages("com.heytap.ad.show.performance.search.service.topic.helper,com.heytap.ad.show.performance.search.service.topic,com.heytap.ad.show.performance.search.service,com.heytap.ad.show.performance.search.config,com.heytap.ad.show.performance.search.cache");
+        applicationCodeInfo.setContainPackages("");
         try {
             ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
             reportGeneratorCov.startCoverageTask(applicationID);

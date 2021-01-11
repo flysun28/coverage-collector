@@ -549,8 +549,15 @@ public class ColumbusUtils {
                 execute.extractFiles(targetPath);
                 jarPackageSet3.add(jarPackage);
             }
+            //如果是特殊应用，所有jar包都需要解压
+            if("ads-mix-foreign-show".equals(applicationID)){
+                fileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
+                execute.extractFiles(targetPath);
+                jarPackageSet3.add(jarPackage);
+            }
 
         }
+
         return jarPackageSet3;
     }
     private static String getSpecialApplicationIDPrex(String applicationID){
