@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 
 public class ColumbusUtils {
-    private static String url = "http://columbus.os.adc.com";
+    private static String url = "http://columbus.oppoer.me";
     private static String download_version_url = "http://ocs-cn-south.oppoer.me";
     private static String API_VERSION_INFO = "/openapi/version_info";
     private static String app_code = "";
