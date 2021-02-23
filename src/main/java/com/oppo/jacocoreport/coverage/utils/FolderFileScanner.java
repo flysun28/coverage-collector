@@ -41,31 +41,31 @@ public class FolderFileScanner {
 
     /**
      * 执行完毕上传对应文件
-     *@param appCode : 应用id,分支覆盖率数据目录
+     *@param projectName : git项目名称,分支覆盖率数据目录
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
-    public static void fileUpload(String appCode,Long taskId){
-        ArrayList<File> uploadFileList = getUploadFileList(appCode, taskId);
+    public static void fileUpload(String projectName,Long taskId){
+        ArrayList<File> uploadFileList = getUploadFileList(projectName, taskId);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (File file : uploadFileList){
             List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());
             String extensionName = splitList.get(splitList.size()-1);
             OcsUtil.upload(s3,file.getAbsolutePath(),file,"html".equals(extensionName)?"text/html":null);
         }
-        deleteAllFileAfterUpload(appCode, taskId);
+        deleteAllFileAfterUpload(projectName, taskId);
     }
 
-    public static void deleteAllFileAfterUpload(String appCode,Long taskId){
+    public static void deleteAllFileAfterUpload(String projectName,Long taskId){
         String taskPath = Config.ReportBasePath + "/taskID/" + taskId;
-        String branchPath = Config.ReportBasePath + "/projectCovPath/" + appCode;
+        String branchPath = Config.ReportBasePath + "/projectCovPath/" + projectName;
         FileOperateUtil.delAllFile(taskPath);
         FileOperateUtil.delAllFile(branchPath);
     }
 
-    private static ArrayList<File> getUploadFileList(String appCode, Long taskId){
+    private static ArrayList<File> getUploadFileList(String projectName, Long taskId){
         ArrayList<File> result = new ArrayList<>();
         String taskPath = Config.ReportBasePath + "/taskID/" + taskId;
-        String branchPath = Config.ReportBasePath + "/projectCovPath/" + appCode;
+        String branchPath = Config.ReportBasePath + "/projectCovPath/" + projectName;
         ArrayList<File> tempFileList = scanFilesWithRecursion(taskPath);
         if (!CollectionUtils.isEmpty(tempFileList)){
             result.addAll(tempFileList);
