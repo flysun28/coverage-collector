@@ -417,7 +417,7 @@ public class ReportGeneratorCov {
                     if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
                         createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
-                    //生成整体覆盖率报告
+                    //生成未过滤整体覆盖率报告
                     createAll(classesDirectoryList, reportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
                     //上传覆盖率报告
                     sendcoveragedata(reportAllCovDirectory,reportDiffDirectory,0);
@@ -427,9 +427,9 @@ public class ReportGeneratorCov {
                     if (!applicationCodeInfo.getTestedCommitId().equals(applicationCodeInfo.getBasicCommitId())) {
                         createDiff(classesDirectoryList, filterreportDiffDirectory, sourceDirectoryList, coverageReportPath.getName());
                     }
-                    //生成整体覆盖率报告
+                    //生成已过滤整体覆盖率报告
                     createAll(classesDirectoryList, filterreportAllCovDirectory, coverageReportPath.getName(), sourceDirectoryList);
-                    //上传覆盖率报告
+                    //上传已过滤覆盖率报告
                     sendcoveragedata(filterreportAllCovDirectory, filterreportDiffDirectory, 1);
 
                     Thread.sleep(1000);

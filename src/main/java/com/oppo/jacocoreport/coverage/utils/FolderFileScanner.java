@@ -21,6 +21,7 @@ public class FolderFileScanner {
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
     public static void fileDownLoad(String appCode,Long taskId){
+        System.out.println("download file : "+taskId);
         List<String> fileList = getDownloadFileList(appCode, taskId);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (String fileName : fileList){
@@ -45,6 +46,7 @@ public class FolderFileScanner {
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
     public static void fileUpload(String appCode,Long taskId){
+        System.out.println("file upload : "+taskId);
         ArrayList<File> uploadFileList = getUploadFileList(appCode, taskId);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (File file : uploadFileList){
@@ -52,7 +54,7 @@ public class FolderFileScanner {
             String extensionName = splitList.get(splitList.size()-1);
             OcsUtil.upload(s3,file.getAbsolutePath(),file,"html".equals(extensionName)?"text/html":null);
         }
-        deleteAllFileAfterUpload(appCode, taskId);
+//        deleteAllFileAfterUpload(appCode, taskId);
     }
 
     public static void deleteAllFileAfterUpload(String appCode,Long taskId){
