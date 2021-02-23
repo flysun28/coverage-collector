@@ -116,10 +116,9 @@ public class FolderFileScanner {
     }
 
     private static boolean isUploadFile(String extensionName){
-        if ("exec".equals(extensionName)){
-            return true;
-        }
-        if ("html".equals(extensionName)){
+        if ("exec".equals(extensionName) || "gif".equals(extensionName) ||
+            "js".equals(extensionName)|| "css".equals(extensionName)||
+            "html".equals(extensionName)){
             return true;
         }
         return false;
