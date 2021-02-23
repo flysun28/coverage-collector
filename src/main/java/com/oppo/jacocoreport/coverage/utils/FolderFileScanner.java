@@ -90,12 +90,12 @@ public class FolderFileScanner {
         File directory = new File(folderPath);
         //不是目录直接返回
         if (!directory.isDirectory()) {
-            return null;
+            return scanFile;
         }
         //取到目录下所有文件
         File[] fileList = directory.listFiles();
         if (fileList==null || fileList.length<1){
-            return null;
+            return scanFile;
         }
         // 遍历文件,是文件夹则递归,是文件则获取
         for (File file : fileList) {
