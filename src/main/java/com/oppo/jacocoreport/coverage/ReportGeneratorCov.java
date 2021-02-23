@@ -343,7 +343,7 @@ public class ReportGeneratorCov {
                         if (!serverip.isEmpty()) {
                             String[] portList = port.split(",");
                             for (String portNum:portList) {
-                                //保持2分覆盖率数据,源代码gitlocalPath工程下存一份
+                                //保存2份覆盖率数据,源代码gitlocalPath工程下存一份
                                 executionDataFile = new File(gitlocalexecutionDataPath, serverip+System.currentTimeMillis()+"_jacoco.exec");//第一步生成的exec的文件
                                 executionDataClient.getExecutionData(serverip, Integer.valueOf(portNum), executionDataFile,applicationCodeInfo.getTestedEnv());
                                 if(versionIdDataPath != null) {
@@ -367,6 +367,7 @@ public class ReportGeneratorCov {
                                             cancel();
                                             if (applicationCodeInfo.getIsTimerTask() == 1) {
                                                 timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                                                FolderFileScanner.fileUpload(applicationCodeInfo.getApplicationID(),applicationCodeInfo.getId());
                                                 HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
                                             } else {
                                                 throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
@@ -382,7 +383,7 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-
+                        FolderFileScanner.fileUpload(applicationCodeInfo.getApplicationID(),applicationCodeInfo.getId());
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
                     }
 
@@ -405,6 +406,7 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile == null || !allexecutionDataFile.exists()) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                        FolderFileScanner.fileUpload(applicationCodeInfo.getApplicationID(),applicationCodeInfo.getId());
                         if (applicationCodeInfo.getIsTimerTask() == 1) {
                             HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
                         }
@@ -434,6 +436,7 @@ public class ReportGeneratorCov {
                     if (applicationCodeInfo.getIsTimerTask() == 0) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                        FolderFileScanner.fileUpload(applicationCodeInfo.getApplicationID(),applicationCodeInfo.getId());
                     }
                     if (timerMap.containsKey(String.valueOf(applicationCodeInfo.getId()))) {
                         System.out.println(applicationMap.get("applicationID").toString() + " taskId : " + applicationCodeInfo.getId() + " is timertask");
@@ -477,6 +480,7 @@ public class ReportGeneratorCov {
                     cancel();
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), ErrorEnum.OTHER_ERROR.getErrorMsg());
                     timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
+                    FolderFileScanner.fileUpload(applicationCodeInfo.getApplicationID(),applicationCodeInfo.getId());
                     if(applicationCodeInfo.getIsTimerTask() == 1) {
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
                     }

@@ -5,6 +5,7 @@ import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.utils.Config;
+import com.oppo.jacocoreport.coverage.utils.FolderFileScanner;
 import com.oppo.jacocoreport.coverage.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -29,13 +30,15 @@ public class CoverageController {
     }
 
     @GetMapping("/stopcoveragetask")
-    public Data stopcoveragetask(@RequestParam(name="taskID") long taskID){
+    public Data stopcoveragetask(@RequestParam(name="taskID") long taskID,
+                                 @RequestParam(name = "appCode") String appCode){
         try {
             Map<String, Timer> timerMap = ReportGeneratorCov.getTimerMap();
             if(timerMap.containsKey(String.valueOf(taskID))) {
                 System.out.println(String.valueOf(taskID));
                 timerMap.get(String.valueOf(taskID)).cancel();
                 timerMap.remove(String.valueOf(taskID));
+                FolderFileScanner.fileUpload(appCode,taskID);
                 HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL+taskID);
             }
         }catch (Exception e){
