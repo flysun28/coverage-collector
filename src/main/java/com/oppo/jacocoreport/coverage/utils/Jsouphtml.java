@@ -155,9 +155,9 @@ public class Jsouphtml {
                     diffTotalClasses = diffelements.get(12).text().replace(",", "");
                     coverageData.setDiffTotalClasses(diffTotalClasses);
                     if (versionId!=null){
-                        diffCoverageReportPath = Config.ReportBaseUrl  + "projectCovPath/" +projectName +"/"+totalhtmlreport.toString().substring(totalhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
+                        diffCoverageReportPath = Config.ReportBaseUrl  + "projectCovPath/" +projectName +"/"+diffhtmlreport.toString().substring(diffhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
                     }else {
-                        diffCoverageReportPath = Config.ReportBaseUrl  +"taskID/" +totalhtmlreport.toString().substring(totalhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
+                        diffCoverageReportPath = Config.ReportBaseUrl  +"taskID/" +diffhtmlreport.toString().substring(diffhtmlreport.toString().indexOf(reportid+"")).replace("\\","/");
                     }
                     coverageData.setDiffCoverageReportPath(diffCoverageReportPath);
                 }
