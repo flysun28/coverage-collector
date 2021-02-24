@@ -240,7 +240,7 @@ public class ReportGeneratorCov {
             File coveragereport = new File(reportAllCovDirectory, "index.html");
             File diffcoveragereport = new File(reportDiffDirectory, "index.html");
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData coverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),"","","",null);
+            CoverageData coverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),"","","",null,null);
             coverageData.setFilterTask(filterTask);
             System.out.println(new Date().toString()+coverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_COVERAGE_URL, coverageData);
@@ -259,7 +259,7 @@ public class ReportGeneratorCov {
             File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData branchCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getBranchTaskID(),appCode,testedBranch,basicBranch,null);
+            CoverageData branchCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getBranchTaskID(),appCode,testedBranch,basicBranch,null,null);
             System.out.println(new Date().toString()+branchCoverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_BRANCHCOVERAGE_URL, branchCoverageData);
         }catch (Exception e){
@@ -270,13 +270,15 @@ public class ReportGeneratorCov {
     /**
      * 上传项目覆盖率报告
      */
-    public void sendVersionIDCoverageData(File reportAllCovDirectory,File reportDiffDirectory,String appCode,String testedBranch,String basicBranch) throws DefinitionException{
+    public void sendVersionIDCoverageData(File reportAllCovDirectory,File reportDiffDirectory,
+                                          String appCode,String testedBranch,
+                                          String basicBranch ,String projectName) throws DefinitionException{
         try {
             File coveragereport = new File(reportAllCovDirectory, "index.html");
             File  diffcoveragereport = new File(reportDiffDirectory, "index.html");
 
             Jsouphtml jsouphtml = new Jsouphtml(coveragereport, diffcoveragereport);
-            CoverageData versionIDCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),appCode,testedBranch,basicBranch,applicationCodeInfo.getVersionId());
+            CoverageData versionIDCoverageData = jsouphtml.getCoverageData(applicationCodeInfo.getId(),appCode,testedBranch,basicBranch,applicationCodeInfo.getVersionId(),projectName);
             System.out.println(new Date().toString()+versionIDCoverageData.toString());
             Data data = HttpUtils.sendPostRequest(Config.SEND_VERSIONCOVERAGE_URL, versionIDCoverageData);
         }catch (Exception e){
@@ -521,7 +523,7 @@ public class ReportGeneratorCov {
             //生成整体覆盖率报告
             createAll(classesDirectoryList, versionAllCovDirectory, versionCoverageReportBasicPath.getName(), sourceDirectoryList);
             //上传覆盖率报告
-            sendVersionIDCoverageData(versionAllCovDirectory,versionDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch());
+            sendVersionIDCoverageData(versionAllCovDirectory,versionDiffDirectory,applicationMap.get("applicationID").toString(),applicationCodeInfo.getTestedBranch().replace("/","_"),applicationCodeInfo.getBasicBranch(),GitUtil.getLastUrlString(applicationCodeInfo.getGitPath()));
         } catch (DefinitionException e) {
             HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
         } catch (Exception e) {

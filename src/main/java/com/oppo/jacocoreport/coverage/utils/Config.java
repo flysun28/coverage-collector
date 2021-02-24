@@ -11,7 +11,7 @@ public class Config {
     public final  static String CodePath = ReportBasePath+"/codeCoverage";
     public final  static String ProjectCovPath = ReportBasePath+"/projectCovPath";
 //    public final static String ReportBaseUrl = "http://report-test.jacoco.wanyol.com/";
-    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/taskID/";
+    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
     public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
     public final static String SEND_COVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result";
     public final static String SEND_BRANCHCOVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result/branch";
