@@ -86,6 +86,8 @@ public class FolderFileScanner {
         ArrayList<File> result = new ArrayList<>();
         String taskPath = Config.ReportBasePath + "/taskID/" + taskId;
         String branchPath = Config.ReportBasePath + "/projectCovPath/" + projectName;
+        System.out.println("upload path : taskPath"+taskPath);
+        System.out.println("upload path : branchPath"+branchPath);
         ArrayList<File> tempFileList = scanFilesWithRecursion(taskPath,timerFinished);
         if (!CollectionUtils.isEmpty(tempFileList)){
             result.addAll(tempFileList);
@@ -137,12 +139,12 @@ public class FolderFileScanner {
     }
 
     private static boolean isUploadFile(String extensionName,boolean timerFinished){
-
-        if (timerFinished && REPORT_EXTENSION_NAME.contains(extensionName)){
+        //未完成,只上传报告
+        if (!timerFinished && REPORT_EXTENSION_NAME.contains(extensionName)){
             return true;
         }
-
-        if (!timerFinished && FILE_UPLOAD_EXTENSION_NAME.contains(extensionName)){
+        //完成后,全部上传
+        if (timerFinished && FILE_UPLOAD_EXTENSION_NAME.contains(extensionName)){
             return true;
         }
         return false;
