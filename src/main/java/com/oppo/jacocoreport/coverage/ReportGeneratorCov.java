@@ -484,6 +484,8 @@ public class ReportGeneratorCov {
                 }
                 if (timerMap.get(String.valueOf(applicationCodeInfo.getId()))==null){
                     FolderFileScanner.fileUpload(GitUtil.getLastUrlString(applicationCodeInfo.getGitPath()),applicationCodeInfo.getId());
+                }else {
+                    FolderFileScanner.reportUpload(GitUtil.getLastUrlString(applicationCodeInfo.getGitPath()),applicationCodeInfo.getId());
                 }
             }
         }, 0, 600000);
