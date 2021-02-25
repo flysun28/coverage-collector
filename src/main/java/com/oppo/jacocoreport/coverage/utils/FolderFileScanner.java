@@ -21,20 +21,20 @@ public class FolderFileScanner {
 
     /**
      * 执行前下载对应文件
-     *@param appCode : 应用id,分支覆盖率数据目录
+     *@param projectName : 项目名称,分支覆盖率数据目录
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
-    public static void fileDownLoad(String appCode,Long taskId){
-        List<String> fileList = getDownloadFileList(appCode, taskId);
+    public static void fileDownLoad(String projectName,Long taskId){
+        List<String> fileList = getDownloadFileList(projectName, taskId);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (String fileName : fileList){
             OcsUtil.download(s3,fileName,fileName);
         }
     }
 
-    private static List<String> getDownloadFileList(String appCode,Long taskId){
+    private static List<String> getDownloadFileList(String projectName,Long taskId){
         String taskPath = Config.ReportBasePath + "/taskID/" + taskId;
-        String branchPath = Config.ReportBasePath + "/projectCovPath/" + appCode;
+        String branchPath = Config.ReportBasePath + "/projectCovPath/" + projectName;
 
         List<String> result = new ArrayList<>(OcsUtil.query(taskPath));
         result.addAll(OcsUtil.query(branchPath));
