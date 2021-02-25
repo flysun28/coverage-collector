@@ -19,6 +19,9 @@ public class AsyncTask {
         System.out.println(new Date().toString()+"start coverage test "+applicationCodeInfo.toString());
         //将相关文件从OCS下载到本地
         FolderFileScanner.fileDownLoad(applicationID,taskId);
+        if (applicationCodeInfo.getIsBranchTask()!=0){
+            FolderFileScanner.fileDownLoad(applicationID,applicationCodeInfo.getBranchTaskID());
+        }
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
             reportGeneratorCov.startCoverageTask(applicationID);
