@@ -482,10 +482,17 @@ public class ReportGeneratorCov {
                         HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
                     }
                 }
+                String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
                 if (timerMap.get(String.valueOf(applicationCodeInfo.getId()))==null){
-                    FolderFileScanner.fileUpload(GitUtil.getLastUrlString(applicationCodeInfo.getGitPath()),applicationCodeInfo.getId());
+                    FolderFileScanner.fileUpload(projectName,applicationCodeInfo.getId());
+                    if (applicationCodeInfo.getIsBranchTask()==1){
+                        FolderFileScanner.branchReportUpload(applicationCodeInfo.getBranchTaskID());
+                    }
                 }else {
-                    FolderFileScanner.reportUpload(GitUtil.getLastUrlString(applicationCodeInfo.getGitPath()),applicationCodeInfo.getId());
+                    FolderFileScanner.reportUpload(projectName,applicationCodeInfo.getId());
+                    if (applicationCodeInfo.getIsBranchTask()==1){
+                        FolderFileScanner.branchReportUpload(applicationCodeInfo.getBranchTaskID());
+                    }
                 }
             }
         }, 0, 600000);

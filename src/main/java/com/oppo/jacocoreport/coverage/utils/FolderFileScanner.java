@@ -43,12 +43,26 @@ public class FolderFileScanner {
 
 
     /**
-     * 执行完毕上传对应文件
+     * 轮询过程上传报告文件
      *@param projectName : git项目名称,分支覆盖率数据目录
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
     public static void reportUpload(String projectName,Long taskId){
         ArrayList<File> uploadFileList = getUploadFileList(projectName, taskId, false);
+        AmazonS3 s3 = OcsUtil.getAmazonS3();
+        for (File file : uploadFileList){
+            List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());
+            String extensionName = splitList.get(splitList.size()-1);
+            OcsUtil.upload(s3,file.getAbsolutePath(),file,"html".equals(extensionName)?"text/html":null);
+        }
+    }
+
+    /**
+     * 上传分支覆盖率报告文件
+     *@param taskId : 任务id，覆盖率任务相关目录
+     * */
+    public static void branchReportUpload(Long taskId){
+        ArrayList<File> uploadFileList = getUploadFileList("null", taskId, false);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (File file : uploadFileList){
             List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());
@@ -86,8 +100,6 @@ public class FolderFileScanner {
         ArrayList<File> result = new ArrayList<>();
         String taskPath = Config.ReportBasePath + "/taskID/" + taskId;
         String branchPath = Config.ReportBasePath + "/projectCovPath/" + projectName;
-        System.out.println("upload path : taskPath"+taskPath);
-        System.out.println("upload path : branchPath"+branchPath);
         ArrayList<File> tempFileList = scanFilesWithRecursion(taskPath,timerFinished);
         if (!CollectionUtils.isEmpty(tempFileList)){
             result.addAll(tempFileList);
