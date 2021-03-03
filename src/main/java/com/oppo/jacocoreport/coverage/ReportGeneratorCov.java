@@ -495,7 +495,7 @@ public class ReportGeneratorCov {
                     }
                 }
             }
-        }, 0, applicationCodeInfo.getTimerSecond());
+        }, 0, applicationCodeInfo.getTimerInterval());
     }
     private void startVersionCoverageTask(Map<String,Object> applicationMap){
         try {

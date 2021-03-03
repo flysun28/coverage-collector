@@ -15,7 +15,7 @@ public class ApplicationCodeInfo {
     private String ignorePackage = "";
     //默认为0，不开启轮询任务
     private int isTimerTask = 0;
-    private int timerSecond = 600000;
+    private int timerInterval = 600000;
     //默认8098端口
     private String jacocoPort = "";
     // 0 非分支任务 1 分支任务
@@ -32,12 +32,12 @@ public class ApplicationCodeInfo {
      * */
     private Integer testedEnv;
 
-    public int getTimerSecond() {
-        return timerSecond;
+    public int getTimerInterval() {
+        return timerInterval;
     }
 
-    public void setTimerSecond(int timerSecond) {
-        this.timerSecond = timerSecond;
+    public void setTimerInterval(int timerInterval) {
+        this.timerInterval = timerInterval;
     }
 
     public String getContainPackages() {
