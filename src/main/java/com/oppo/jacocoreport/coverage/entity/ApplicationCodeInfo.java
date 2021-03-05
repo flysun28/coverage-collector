@@ -13,10 +13,15 @@ public class ApplicationCodeInfo {
     private String deployKey = "";
     private String ignoreClass = "";
     private String ignorePackage = "";
-    private int isTimerTask = 0;//默认为0，不开启轮询任务
-    private String jacocoPort = "";//默认8098端口
-    private int isBranchTask = 0;// 0 非分支任务 1 分支任务
-    private Long branchTaskID;//分支覆盖率taskID
+    //默认为0，不开启轮询任务
+    private int isTimerTask = 0;
+    private int timerInterval = 600000;
+    //默认8098端口
+    private String jacocoPort = "";
+    // 0 非分支任务 1 分支任务
+    private int isBranchTask = 0;
+    //分支覆盖率taskID
+    private Long branchTaskID;
     private String containPackages = "";
     private String applicationID = "";
     private String ip = "";
@@ -27,6 +32,13 @@ public class ApplicationCodeInfo {
      * */
     private Integer testedEnv;
 
+    public int getTimerInterval() {
+        return timerInterval;
+    }
+
+    public void setTimerInterval(int timerInterval) {
+        this.timerInterval = timerInterval;
+    }
 
     public String getContainPackages() {
         return containPackages;

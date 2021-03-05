@@ -3,6 +3,7 @@ package com.oppo.jacocoreport.component;
 import com.oppo.jacocoreport.coverage.ReportGeneratorCov;
 import com.oppo.jacocoreport.coverage.entity.ApplicationCodeInfo;
 import com.oppo.jacocoreport.coverage.utils.FolderFileScanner;
+import com.oppo.jacocoreport.coverage.utils.GitUtil;
 import com.oppo.jacocoreport.coverage.utils.HttpUtils;
 import com.oppo.jacocoreport.response.DefinitionException;
 import org.springframework.scheduling.annotation.Async;
@@ -18,7 +19,11 @@ public class AsyncTask {
         String applicationID = applicationCodeInfo.getApplicationID();
         System.out.println(new Date().toString()+"start coverage test "+applicationCodeInfo.toString());
         //将相关文件从OCS下载到本地
-        FolderFileScanner.fileDownLoad(applicationID,taskId);
+        String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
+        FolderFileScanner.fileDownLoad(projectName,taskId);
+        if (applicationCodeInfo.getIsBranchTask()!=0){
+            FolderFileScanner.fileDownLoad(projectName,applicationCodeInfo.getBranchTaskID());
+        }
         ReportGeneratorCov reportGeneratorCov = new ReportGeneratorCov(applicationCodeInfo);
         try {
             reportGeneratorCov.startCoverageTask(applicationID);
