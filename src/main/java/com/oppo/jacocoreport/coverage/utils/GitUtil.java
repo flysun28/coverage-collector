@@ -4,22 +4,23 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.oppo.jacocoreport.response.DefinitionException;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.*;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.util.FS;
 import org.jacoco.core.internal.diff.GitAdapter;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class GitUtil {
     private String gitName;
@@ -27,11 +28,6 @@ public class GitUtil {
 
 
     public GitUtil(){
-
-    }
-    public GitUtil(String gitName,String gitPassword){
-        this.gitName = gitName;
-        this.gitPassword = gitPassword;
 
     }
     final SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
@@ -71,13 +67,11 @@ public class GitUtil {
     return "success";
     }
 
-    public  String cloneRepository(String url,File localPath)
+    public  String cloneRepository(String url,File localPath,String newBranchName,String oldBranchName)
     {
         try{
             System.out.println("开始下载......");
-            GitAdapter.setCredentialsProvider(gitName, gitPassword);
-            CloneCommand cc = Git.cloneRepository().setURI(url).setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.gitName,this.gitPassword));
-            cc.setDirectory(localPath).call();
+            Git.cloneRepository().setURI(url).setDirectory(localPath).setBranch(newBranchName).call();
             System.out.println("下载完成......");
             return  "success";
         }catch(Exception e)
@@ -87,27 +81,59 @@ public class GitUtil {
             return "error";
         }
     }
+    private boolean checkBranchNewVersion(Git git,Ref localRef) throws GitAPIException {
+        String localRefName = localRef.getName();
+        String localRefObjectId = localRef.getObjectId().getName();
+        Collection<Ref> remoteRefs = ((LsRemoteCommand)git.lsRemote()).setHeads(true).call();
+        Iterator var5 = remoteRefs.iterator();
+
+        String remoteRefName;
+        String remoteRefObjectId;
+        do {
+            if (!var5.hasNext()) {
+                return false;
+            }
+
+            Ref remoteRef = (Ref)var5.next();
+            remoteRefName = remoteRef.getName();
+            remoteRefObjectId = remoteRef.getObjectId().getName();
+        } while(!remoteRefName.equals(localRefName));
+
+        if (remoteRefObjectId.equals(localRefObjectId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void checkOutAndPull(Git git,Ref localRef, String branchName) throws GitAPIException {
+        boolean isCreateBranch = localRef == null;
+        if (isCreateBranch || !this.checkBranchNewVersion(git,localRef)) {
+            git.checkout().setCreateBranch(isCreateBranch).setName(branchName).setStartPoint("origin/" + branchName).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+            git.pull().call();
+        }
+    }
     public String checkoutBranch(String gitPath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
-        GitAdapter.setCredentialsProvider(gitName, gitPassword);
+
         GitAdapter gitAdapter = new GitAdapter(gitPath);
         Git git = gitAdapter.getGit();
         Repository repo = gitAdapter.getRepository();
-
         //默认master分支，如果不存在，取release分支
         try {
+
+
             git.reset().setMode(ResetCommand.ResetType.HARD).call();
             System.out.println(repo.getBranch());
             Ref localMasterRef = repo.exactRef("refs/heads/" + oldBranchName);
-            gitAdapter.checkOutAndPull(localMasterRef, oldBranchName);
+            gitAdapter.checkOutAndPull(localMasterRef,oldBranchName);
             gitAdapter.checkOut(oldBranchName);
             git.pull().call();
 
 
             Ref localBranchRef = repo.exactRef("refs/heads/" + newBranchName);
+//            git.checkout().setCreateBranch(true).setName(newBranchName).setStartPoint("origin/" + newBranchName).call();
             gitAdapter.checkOutAndPull(localBranchRef, newBranchName);
             gitAdapter.checkOut(newBranchName);
             git.pull().call();
-
             git.reset().setMode(ResetCommand.ResetType.HARD).setRef(newTag).call();
 //            ObjectId head = repo.resolve(newTag + "^{tree}");
 //            //Instanciate a reader to read the data from the Git database
@@ -174,6 +200,6 @@ public class GitUtil {
 //        gitUtil.cloneRepository(urlString,projectPath);
 
         GitUtil gitUtil1 = new GitUtil();
-        gitUtil1.cloneRepositoryBySSH("git@gitlab.os.adc.com:cql/CIdemo.git",new File("D:\\codeCoverage\\CIdemo"));
+        gitUtil1.cloneRepository("git@gitlab.os.adc.com:bot/java/bot-dm-system.git",new File("D:\\codeCoverage\\bot-dm-system"),"revolution","3.4.2");
     }
 }
