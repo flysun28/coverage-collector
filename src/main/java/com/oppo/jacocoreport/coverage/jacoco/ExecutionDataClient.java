@@ -70,7 +70,7 @@ public class ExecutionDataClient {
      */
     public static void main(final String[] args) throws IOException {
         ExecutionDataClient executionDataClient = new ExecutionDataClient();
-        executionDataClient.getExecutionData("10.177.131.208", 8088, new File("cdojacoco.exec"),2);
+        executionDataClient.getExecutionData("10.177.245.87", 8098, new File("cdojacoco.exec"),1);
     }
 
 }

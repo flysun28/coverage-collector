@@ -67,8 +67,6 @@ public class ReportGeneratorCov {
         if("".equals(this.port) ||"0".equals(this.port)|| null == this.port){
           this.port = ""+Config.Port;
         }
-        this.gitName = Config.GitName;
-        this.gitPassword = Config.GitPassword;
         this.applicationCodeInfo = applicationCodeInfo;
 
     }
@@ -447,6 +445,10 @@ public class ReportGeneratorCov {
                     if(applicationCodeInfo.getIsBranchTask() == 1){
                         startBranchCoverageTask(applicationMap);
                     }
+                    //删除源代码
+                    FileOperateUtil.delAllFile(gitlocalPath);
+                    new File(gitlocalPath).delete();
+
 
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
@@ -567,15 +569,15 @@ public class ReportGeneratorCov {
         }
     }
 
-    private String cloneCodeSource(String gitName,String gitPassword,String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
+    private String cloneCodeSource(String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
-        GitUtil gitUtil = new GitUtil(gitName,gitPassword);
+        GitUtil gitUtil = new GitUtil();
         String projectName = gitUtil.getLastUrlString(urlString);
         File localPath = new File(codePath,projectName);
         //如果工程目录已存在，则不需要clone代码，直接返回
         if(!localPath.exists()){
             System.out.println("开始下载开发项目代码到本地");
-            gitUtil.cloneRepository(urlString, localPath);
+            gitUtil.cloneRepository(urlString, localPath,newBranchName,oldBranchName);
         }
         //checkout分支代码
         newBranchName = gitUtil.checkoutBranch(localPath.toString(),newBranchName,oldBranchName,newTag);
@@ -613,7 +615,7 @@ public class ReportGeneratorCov {
         }
         this.projectCovPath = projectCovPath.toString();
         //clone代码到本地
-        String newBranchName = cloneCodeSource(Config.GitName, Config.GitPassword, applicationCodeInfo.getGitPath(), Config.CodePath,applicationCodeInfo.getTestedBranch(),applicationCodeInfo.getBasicBranch(),applicationCodeInfo.getTestedCommitId());
+        String newBranchName = cloneCodeSource(applicationCodeInfo.getGitPath(), Config.CodePath,applicationCodeInfo.getTestedBranch(),applicationCodeInfo.getBasicBranch(),applicationCodeInfo.getTestedCommitId());
         applicationCodeInfo.setTestedBranch(newBranchName);
         ArrayList filelist = new ArrayList();
         //解析工程中各个模块路径
@@ -677,7 +679,9 @@ public class ReportGeneratorCov {
         //只统计指定包
         if(containPackagesList!= null && containPackagesList.length >0) {
             HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackagesList,classPath);
-            ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
+            if(containPackagesSet != null && containPackagesSet.size() > 0) {
+                ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
+            }
         }
     }
 
@@ -700,14 +704,24 @@ public class ReportGeneratorCov {
      * @throws IOException
      */
     public static void main(final String[] args) throws Exception {
-        Long taskID = 10042L;
-        String gitPath = "git@gitlab.os.adc.com:fin/p2p-loan-id/fin-loan.git";
-        String testedBranch = "release/escrow";
+        Long taskID = 15684L;
+        String gitPath = "git@gitlab.os.adc.com:bot/java/bot-dm-system.git";
+        String testedBranch = "revolution";
         String basicBranch = "master";
-        String newTag = "317b45e207fc57fd72b3bc06e971f10f1373e7a5";
-        String oldTag = "470474701bdb5563405dcdd6bdd757da3a9265ad";
-        String versionName = "fin-loan-api-20201218104438-450";
-        String applicationID = "fin-loan-api";
+        String newTag = "392248450f953e33971df5f925c1665437ed1161";
+        String oldTag = "ff0a7604de09bebf2bb39c13f567489da19aaf0b";
+        String versionName = "bot-dm-system_20210207164200_revolution";
+        String applicationID = "bot-dm-system";
+
+//        Long taskID = 16076L;
+//        String gitPath = "git@gitlab.os.adc.com:fin/insurance/insurance-activity.git";
+//        String testedBranch = "feature-7.4.0";
+//        String basicBranch = "master";
+//        String newTag = "567065c72c1cb2d09bd109553e6d6f42b6423c2d";
+//        String oldTag = "538aa264b76db3684645027ef251d83b01b05b33";
+//        String versionName = "insurance-activity-rpc-20210225212259-4";
+//        String applicationID = "insurance-activity-rpc";
+
         ApplicationCodeInfo applicationCodeInfo = new ApplicationCodeInfo();
         applicationCodeInfo.setId(taskID);
         applicationCodeInfo.setGitPath(gitPath);
@@ -718,10 +732,10 @@ public class ReportGeneratorCov {
         applicationCodeInfo.setVersionName(versionName);
         applicationCodeInfo.setApplicationID(applicationID);
         applicationCodeInfo.setIsTimerTask(0);
-        applicationCodeInfo.setBranchTaskID(10039L);
+        applicationCodeInfo.setBranchTaskID(10040L);
         applicationCodeInfo.setIsBranchTask(0);
         applicationCodeInfo.setJacocoPort("8098");
-        applicationCodeInfo.setVersionId(1005L);
+        applicationCodeInfo.setVersionId(1006L);
         applicationCodeInfo.setIgnorePackage("");
         applicationCodeInfo.setIgnoreClass("");
         applicationCodeInfo.setContainPackages("");
