@@ -589,6 +589,8 @@ public class ColumbusUtils {
         }
         else if(applicationID.equals("token-server-dubbo-provider")){
             return "token-server";
+        }else if ("userhistory-dubbo-provider".equals(applicationID)){
+            return "userhistory";
         }
       return "";
     }
