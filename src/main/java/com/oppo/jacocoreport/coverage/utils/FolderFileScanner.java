@@ -61,8 +61,8 @@ public class FolderFileScanner {
      * 上传分支覆盖率报告文件
      *@param taskId : 任务id，覆盖率任务相关目录
      * */
-    public static void branchReportUpload(Long taskId){
-        ArrayList<File> uploadFileList = getUploadFileList("null", taskId, false);
+    public static void branchReportUpload(String projectName,Long taskId){
+        ArrayList<File> uploadFileList = getUploadFileList(projectName, taskId, false);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (File file : uploadFileList){
             List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());

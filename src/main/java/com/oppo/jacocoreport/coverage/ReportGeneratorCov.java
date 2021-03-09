@@ -488,12 +488,12 @@ public class ReportGeneratorCov {
                 if (timerMap.get(String.valueOf(applicationCodeInfo.getId()))==null){
                     FolderFileScanner.fileUpload(projectName,applicationCodeInfo.getId());
                     if (applicationCodeInfo.getIsBranchTask()==1){
-                        FolderFileScanner.branchReportUpload(applicationCodeInfo.getBranchTaskID());
+                        FolderFileScanner.branchReportUpload(projectName,applicationCodeInfo.getBranchTaskID());
                     }
                 }else {
                     FolderFileScanner.reportUpload(projectName,applicationCodeInfo.getId());
                     if (applicationCodeInfo.getIsBranchTask()==1){
-                        FolderFileScanner.branchReportUpload(applicationCodeInfo.getBranchTaskID());
+                        FolderFileScanner.branchReportUpload(projectName,applicationCodeInfo.getBranchTaskID());
                     }
                 }
             }
