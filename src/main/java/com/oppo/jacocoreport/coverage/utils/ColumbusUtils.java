@@ -256,7 +256,7 @@ public class ColumbusUtils {
                     int containresult = packageContainPath(containpackageSet,f);
                     //如果不是指定包名
                     if (containresult == 2) {
-                        fileOperateUtil.delAllFile(f.toString());
+                        FileOperateUtil.delAllFile(f.toString());
                     }
                     //如果包含包名
                     else if(containresult == 0){
@@ -396,7 +396,7 @@ public class ColumbusUtils {
         if("".equals(downloadZipFile) || downloadZipFile == null){
             System.out.println("please input extract path:");
         }
-        fileOperateUtil.delAllFile(targetPath);
+        FileOperateUtil.delAllFile(targetPath);
 
         System.out.println("extract path:"+basicPath);
 
@@ -433,7 +433,7 @@ public class ColumbusUtils {
             fileOperateUtil.copyFolder(packagePath.toString(), targetPath);
         }
         zipfile.delete();
-        fileOperateUtil.delAllFile(resultPath);
+        FileOperateUtil.delAllFile(resultPath);
 
         return targetPath;
     }
@@ -566,31 +566,30 @@ public class ColumbusUtils {
         return jarPackageSet3;
     }
     private static String getSpecialApplicationIDPrex(String applicationID){
-        if(applicationID.equals("finz-pay-core")){
+        if("finz-pay-core".equals(applicationID)){
            return "dubhe-pay";
         }
-        else if(applicationID.equals("usercenter-business-dubbo-provider")){
+        else if("usercenter-business-dubbo-provider".equals(applicationID)){
            return "usercenter-business";
         }
-        else if(applicationID.equals("magzine-service")){
+        else if("magzine-service".equals(applicationID)){
            return "com-oppo-browser-magzine-service";
         }
-        else if(applicationID.equals("compass-de-1-x")){
+        else if("compass-de-1-x".equals(applicationID)){
             return "compass";
         }
-        else if(applicationID.equals("compass-de-1-x")){
-            return "compass";
-        }
-        else if(applicationID.equals("ad-show-performace-search-service")){
+        else if("ad-show-performace-search-service".equals(applicationID)){
             return "ad-show-performance";
         }
-        else if(applicationID.equals("ad-show-frequence-record-service")){
+        else if("ad-show-frequence-record-service".equals(applicationID)){
             return "ad-show-frequence";
         }
-        else if(applicationID.equals("token-server-dubbo-provider")){
+        else if("token-server-dubbo-provider".equals(applicationID)){
             return "token-server";
         }else if ("userhistory-dubbo-provider".equals(applicationID)){
             return "userhistory";
+        }else if ("dubhe-order".equals(applicationID)){
+            return "order-center";
         }
       return "";
     }

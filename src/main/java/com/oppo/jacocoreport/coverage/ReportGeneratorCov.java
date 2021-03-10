@@ -445,11 +445,6 @@ public class ReportGeneratorCov {
                     if(applicationCodeInfo.getIsBranchTask() == 1){
                         startBranchCoverageTask(applicationMap);
                     }
-                    //删除源代码
-                    FileOperateUtil.delAllFile(gitlocalPath);
-                    new File(gitlocalPath).delete();
-
-
                 } catch (DefinitionException e) {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), e.getErrorMsg());
                     try {
@@ -490,6 +485,9 @@ public class ReportGeneratorCov {
                     if (applicationCodeInfo.getIsBranchTask()==1){
                         FolderFileScanner.branchReportUpload(projectName,applicationCodeInfo.getBranchTaskID());
                     }
+                    //删除源代码
+                    FileOperateUtil.delAllFile(gitlocalPath);
+                    new File(gitlocalPath).delete();
                 }else {
                     FolderFileScanner.reportUpload(projectName,applicationCodeInfo.getId());
                     if (applicationCodeInfo.getIsBranchTask()==1){
@@ -581,7 +579,7 @@ public class ReportGeneratorCov {
     private String cloneCodeSource(String urlString,String codePath,String newBranchName,String oldBranchName,String newTag) throws DefinitionException{
 
         GitUtil gitUtil = new GitUtil();
-        String projectName = gitUtil.getLastUrlString(urlString);
+        String projectName = GitUtil.getLastUrlString(urlString);
         File localPath = new File(codePath,projectName);
         //如果工程目录已存在，则不需要clone代码，直接返回
         if(!localPath.exists()){
