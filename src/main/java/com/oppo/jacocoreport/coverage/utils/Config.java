@@ -3,14 +3,20 @@ package com.oppo.jacocoreport.coverage.utils;
 public class Config {
     public final static  int Port = 8098;
 
-//    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";  //测试环境
-    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v"; //线上环境
+    //测试环境
+    public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
+    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
+    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
+    //线上环境
+//    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
+//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
+//    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
+
+
 //    public final static String ReportBasePath = "D:\\codeCoverage";
     public final  static String CodePath = ReportBasePath+"/codeCoverage";
     public final  static String ProjectCovPath = ReportBasePath+"/projectCovPath";
-//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
-    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
-    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
+
     public final static String SEND_COVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result";
     public final static String SEND_BRANCHCOVERAGE_URL = BaseUrl+"api/codeCoverage/execution/result/branch";
     public final static String SEND_VERSIONCOVERAGE_URL = BaseUrl+"api/codeCoverage/record/project/result";
