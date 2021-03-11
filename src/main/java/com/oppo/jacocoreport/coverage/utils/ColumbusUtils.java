@@ -590,6 +590,8 @@ public class ColumbusUtils {
             return "userhistory";
         }else if ("dubhe-order".equals(applicationID)){
             return "order-center";
+        }else if ("dubhe-fund".equals(applicationID)){
+            return "fund-center";
         }
       return "";
     }
