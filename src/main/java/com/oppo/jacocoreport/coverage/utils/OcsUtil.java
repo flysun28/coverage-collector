@@ -87,12 +87,10 @@ public class OcsUtil {
 
             for (S3ObjectSummary objectSummary : res.getObjectSummaries()) {
                 result.add(objectSummary.getKey());
-                System.out.printf(" - %s (size: %d)\n", objectSummary.getKey(), objectSummary.getSize());
             }
             // If there are more than maxKeys keys in the bucket, get a continuation token
             // and list the next objects.
             String token = res.getNextContinuationToken();
-            System.out.println("Next Continuation Token: " + token);
             req.setContinuationToken(token);
         } while (res.isTruncated());
 
