@@ -592,6 +592,8 @@ public class ColumbusUtils {
             return "order-center";
         }else if ("dubhe-fund".equals(applicationID)){
             return "fund-center";
+        }else if ("used-device-dubbo-provider".equals(applicationID)){
+            return "used-device";
         }
       return "";
     }
