@@ -594,6 +594,8 @@ public class ColumbusUtils {
             return "fund-center";
         }else if ("used-device-dubbo-provider".equals(applicationID)){
             return "used-device";
+        }else if ("phecda-variable-external-biz".equals(applicationID)){
+            return "phecda-variable";
         }
       return "";
     }
