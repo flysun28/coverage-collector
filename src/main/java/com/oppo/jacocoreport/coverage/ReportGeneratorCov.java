@@ -10,6 +10,7 @@ import com.oppo.jacocoreport.coverage.jacoco.MergeDump;
 import com.oppo.jacocoreport.coverage.utils.*;
 import com.oppo.jacocoreport.response.DefinitionException;
 import com.oppo.jacocoreport.response.ErrorEnum;
+import com.oppo.jacocoreport.response.TimerTaskStopReasonEnum;
 import org.eclipse.jgit.util.StringUtils;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -367,7 +368,7 @@ public class ReportGeneratorCov {
                                             cancel();
                                             if (applicationCodeInfo.getIsTimerTask() == 1) {
                                                 timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+ TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NEW_VERSION);
                                             } else {
                                                 throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
                                             }
@@ -382,7 +383,7 @@ public class ReportGeneratorCov {
                     if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NO_UPDATE_ONE_DAY);
                     }
 
                     sourceDirectoryList = getSourceCode(applicationMap);
@@ -405,7 +406,7 @@ public class ReportGeneratorCov {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                         if (applicationCodeInfo.getIsTimerTask() == 1) {
-                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NO_JACOCO_ALL);
                         }
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
@@ -476,7 +477,7 @@ public class ReportGeneratorCov {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), ErrorEnum.OTHER_ERROR.getErrorMsg());
                     timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                     if(applicationCodeInfo.getIsTimerTask() == 1) {
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId());
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.OTHER_ERROR);
                     }
                 }
                 String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
