@@ -596,6 +596,8 @@ public class ColumbusUtils {
             return "used-device";
         }else if ("phecda-variable-external-biz".equals(applicationID)){
             return "phecda-variable";
+        }else if ("magzine-media-service".equals(applicationID)){
+            return "com-oppo-browser-magzine-media-service";
         }
       return "";
     }
