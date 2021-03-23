@@ -13,7 +13,8 @@ public enum TimerTaskStopReasonEnum {
     NEW_VERSION(2,"被测机器已部署新版本"),
     NO_UPDATE_ONE_DAY(3,"超过一天覆盖率数据无变化"),
     NO_JACOCO_ALL(4,"无法获取到覆盖率文件"),
-    OTHER_ERROR(5,"轮询期间发生错误")
+    OTHER_ERROR(5,"轮询期间发生错误"),
+    NO_UPDATE_NOTIFY(6,"${appCode}应用的覆盖率轮询统计任务:${id},版本:${version},覆盖率文件超过24H未更新,请关注并及时停止")
     ;
 
     private Integer code;

@@ -4,13 +4,13 @@ public class Config {
     public final static  int Port = 8098;
 
     //测试环境
-//    public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
-//    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
-//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
+    public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
+    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
+    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
     //线上环境
-    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
-    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
-    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
+//    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
+//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
+//    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
 
 
 //    public final static String ReportBasePath = "D:\\codeCoverage";
@@ -24,6 +24,7 @@ public class Config {
     public static String SEND_ERRORMESSAGE_URL = BaseUrl+"api/codeCoverage/execution/failed";
     public static String SEND_STOPTIMERTASK_URL =BaseUrl+"api/codeCoverage/execution/stop/timerTask?id=";
     public static String RECOVER_TIMERTASK_URL = BaseUrl+"api/codeCoverage/execution/recover/timer/task";
+    public static String SEND_TT_NOTIFY = BaseUrl + "api/codeCoverage/execution/notify?id=";
 
     public final static String TransferBaseIp = "10.35.174.197";
     public static String GET_TRANSFER_PORT_URL = "http://10.35.174.197:9099/java/port";
