@@ -368,7 +368,7 @@ public class ReportGeneratorCov {
                                             cancel();
                                             if (applicationCodeInfo.getIsTimerTask() == 1) {
                                                 timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
-                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+ TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NEW_VERSION);
+                                                HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+ TimerTaskStopReasonEnum.BASE.getReasonMsg()+TimerTaskStopReasonEnum.NEW_VERSION.getReasonMsg());
                                             } else {
                                                 throw new DefinitionException(ErrorEnum.DETECTED_NEW_VERSION.getErrorCode(), ErrorEnum.DETECTED_NEW_VERSION.getErrorMsg());
                                             }
@@ -389,7 +389,7 @@ public class ReportGeneratorCov {
                                 .replace("${id}",applicationCodeInfo.getId().toString())
                                 .replace("${version}",applicationCodeInfo.getVersionName());
                         System.out.println("24h覆盖率未更新:"+notifyMsg);
-                        HttpUtils.sendGet(Config.SEND_TT_NOTIFY + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+notifyMsg);
+                        HttpUtils.sendGet(Config.SEND_TT_NOTIFY + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE.getReasonMsg()+notifyMsg);
                     }
 
                     sourceDirectoryList = getSourceCode(applicationMap);
@@ -412,7 +412,7 @@ public class ReportGeneratorCov {
                         cancel();
                         timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                         if (applicationCodeInfo.getIsTimerTask() == 1) {
-                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NO_JACOCO_ALL);
+                            HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE.getReasonMsg()+TimerTaskStopReasonEnum.NO_JACOCO_ALL.getReasonMsg());
                         }
                         throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(),ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
                     }
@@ -483,7 +483,7 @@ public class ReportGeneratorCov {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), ErrorEnum.OTHER_ERROR.getErrorMsg());
                     timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                     if(applicationCodeInfo.getIsTimerTask() == 1) {
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.OTHER_ERROR);
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE.getReasonMsg()+TimerTaskStopReasonEnum.OTHER_ERROR.getReasonMsg());
                     }
                 }
                 String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
