@@ -380,7 +380,7 @@ public class ReportGeneratorCov {
                     }
 
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
+                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,1)) {
                         //cancel();
                         //timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                         //HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NO_UPDATE_ONE_DAY);
@@ -388,6 +388,7 @@ public class ReportGeneratorCov {
                                 .replace("${appCode}",applicationCodeInfo.getApplicationID())
                                 .replace("${id}",applicationCodeInfo.getId().toString())
                                 .replace("${version}",applicationCodeInfo.getVersionName());
+                        System.out.println("24h覆盖率未更新:"+notifyMsg);
                         HttpUtils.sendGet(Config.SEND_TT_NOTIFY + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+notifyMsg);
                     }
 
