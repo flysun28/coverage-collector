@@ -4,7 +4,6 @@ import com.oppo.jacocoreport.coverage.entity.CoverageData;
 import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.entity.ErrorMsg;
 import org.springframework.http.*;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
@@ -95,12 +94,15 @@ public class HttpUtils {
         HttpEntity<Object> requestEntity = new HttpEntity<>(obj,headers);
         try {
             //执行HTTP请求，将返回的结构格式化
-            response = client.postForEntity(url, requestEntity, Data.class);
+            response = RestUtil.postForEntity(client,url,requestEntity);
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return response.getBody();
+        if (response != null){
+            return response.getBody();
+        }
+        return null;
     }
 
     /**
