@@ -380,7 +380,7 @@ public class ReportGeneratorCov {
                     }
 
                     //如果超过24小时，覆盖率文件不更新，取消定时任务，避免CPU资源消耗
-                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,1)) {
+                    if (allexecutionDataFile.exists() && !AnalyNewBuildVersion.fileNotUpdateByHours(allexecutionDataFile,24)) {
                         //cancel();
                         //timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                         //HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE+TimerTaskStopReasonEnum.NO_UPDATE_ONE_DAY);
