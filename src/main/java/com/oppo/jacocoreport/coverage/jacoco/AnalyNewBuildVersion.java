@@ -53,8 +53,9 @@ public class AnalyNewBuildVersion implements ISessionInfoVisitor, IExecutionData
     }
 
     public static boolean fileNotUpdateByHours(File execFile,int hour){
+        execFile.length();
         long modifedtime = execFile.lastModified();
-        long currenttime = new Date().getTime();
+        long currenttime = System.currentTimeMillis();
         double result = (currenttime - modifedtime)*1.0/(1000*60*60);
         if(result <= hour){
            return true;

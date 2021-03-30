@@ -16,6 +16,7 @@ public class HttpUtils {
     private static final String USER_AGENT = "Mozilla/5.0";
 
     public static String sendGet(String url){
+        System.out.println("\nSending 'GET' request to URL : " + url);
         return RestUtil.getForObject(new RestTemplate(),url,String.class);
     }
 
