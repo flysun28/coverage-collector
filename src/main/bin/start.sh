@@ -35,7 +35,7 @@ fi
 # JAVA_OPTS="${JAVA_OPTS} -server -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8"
 
 # jvm 相关参数
-MEM_OPTS="-Xms${Xms:-4g} -Xmx${Xmx:-4g} -Xss256k -XX:NewRatio=2"
+MEM_OPTS="-Xms${Xms:-8g} -Xmx${Xmx:-8g} -Xss512k -XX:NewRatio=2"
 
 # 发生内存溢出的时候把内存快照dump下来
 OOM_OPTS="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$base/../${appName}.hprof "
