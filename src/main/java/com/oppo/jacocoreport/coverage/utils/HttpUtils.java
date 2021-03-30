@@ -15,7 +15,11 @@ import java.net.URL;
 public class HttpUtils {
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    public static String sendGet(String url) {
+    public static String sendGet(String url){
+        return RestUtil.getForObject(new RestTemplate(),url,String.class);
+    }
+
+    public static String sendGet2(String url) {
         StringBuffer response = new StringBuffer();
         try {
             URL obj = new URL(url);
