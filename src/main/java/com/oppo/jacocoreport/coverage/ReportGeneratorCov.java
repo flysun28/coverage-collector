@@ -483,11 +483,12 @@ public class ReportGeneratorCov {
                     HttpUtils.sendErrorMSG(applicationCodeInfo.getId(), ErrorEnum.OTHER_ERROR.getErrorMsg());
                     timerMap.remove(String.valueOf(applicationCodeInfo.getId()));
                     if(applicationCodeInfo.getIsTimerTask() == 1) {
-                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE.getReasonMsg()+TimerTaskStopReasonEnum.OTHER_ERROR.getReasonMsg());
+                        HttpUtils.sendGet(Config.SEND_STOPTIMERTASK_URL + applicationCodeInfo.getId()+TimerTaskStopReasonEnum.BASE.getReasonMsg()+TimerTaskStopReasonEnum.OTHER_ERROR.getReasonMsg()+":"+e.getMessage());
                     }
                 }
                 String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
                 if (timerMap.get(String.valueOf(applicationCodeInfo.getId()))==null){
+                    System.out.println("轮询任务结束,文件清理:"+applicationCodeInfo.getId());
                     FolderFileScanner.fileUpload(projectName,applicationCodeInfo.getId());
                     if (applicationCodeInfo.getIsBranchTask()==1){
                         FolderFileScanner.branchReportUpload(projectName,applicationCodeInfo.getBranchTaskID());
