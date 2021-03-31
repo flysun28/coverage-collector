@@ -600,6 +600,8 @@ public class ColumbusUtils {
             return "com-oppo-browser-magzine-media-service";
         }else if ("cdo-page-rpc-store".equals(applicationID)){
             return "cdo-page";
+        }else if ("cdo-admix-rpc".equals(applicationID)){
+            return "cdo-admix";
         }
       return "";
     }
