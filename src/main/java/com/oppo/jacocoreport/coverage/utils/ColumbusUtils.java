@@ -602,6 +602,8 @@ public class ColumbusUtils {
             return "cdo-page";
         }else if ("cdo-admix-rpc".equals(applicationID)){
             return "cdo-admix";
+        }else if("cdo-detail-api-store".equals(applicationID)){
+            return "cdo-detail";
         }
       return "";
     }
