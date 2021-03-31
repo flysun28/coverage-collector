@@ -598,6 +598,8 @@ public class ColumbusUtils {
             return "phecda-variable";
         }else if ("magzine-media-service".equals(applicationID)){
             return "com-oppo-browser-magzine-media-service";
+        }else if ("cdo-page-rpc-store".equals(applicationID)){
+            return "cdo-page";
         }
       return "";
     }
