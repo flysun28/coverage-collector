@@ -149,7 +149,13 @@ public class ReportGeneratorCov {
 
     private void createDiff(ArrayList<File> classesDirectoryList,File reportDiffDirectory,ArrayList<File> sourceDirectoryList,String title) throws Exception {
         //差异化代码覆盖率
-        List<ClassInfo> classInfos = CodeDiff.diffTagToTag(gitlocalPath, applicationCodeInfo.getTestedBranch(), applicationCodeInfo.getTestedCommitId(), applicationCodeInfo.getBasicCommitId());
+        List<ClassInfo> classInfos = null;
+        try {
+            classInfos = CodeDiff.diffTagToTag(gitlocalPath, applicationCodeInfo.getTestedBranch(), applicationCodeInfo.getTestedCommitId(), applicationCodeInfo.getBasicCommitId());
+        } catch (IllegalArgumentException e) {
+            System.out.println("exception in createDiff : "+gitlocalPath + "," +e.getMessage());
+            throw e;
+        }
         if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
             createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
