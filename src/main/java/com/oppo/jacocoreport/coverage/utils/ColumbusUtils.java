@@ -604,6 +604,9 @@ public class ColumbusUtils {
             return "cdo-admix";
         }else if("cdo-detail-api-store".equals(applicationID)){
             return "cdo-detail";
+        }else if (applicationID.startsWith("cdo-")){
+            String[] appCodeArray = applicationID.split("-");
+            return appCodeArray[0]+"-"+appCodeArray[1];
         }
       return "";
     }
