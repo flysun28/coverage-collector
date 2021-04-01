@@ -10,6 +10,7 @@ import com.oppo.jacocoreport.response.DefinitionException;
 import com.oppo.jacocoreport.response.ErrorEnum;
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -727,7 +728,7 @@ public class ColumbusUtils {
 //        HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackages,"\"D:\\\\codeCoverage\\\\taskID\\\\10016\\\\classes");
 //        ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\taskID\\10015\\classes"));
 
-        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
-
+//        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
+        System.out.println(getSpecialApplicationIDPrex("cdo-store-api"));
     }
 }

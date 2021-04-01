@@ -4,13 +4,13 @@ public class Config {
     public final static  int Port = 8098;
 
     //测试环境
-//    public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
-//    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
-//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
+    public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
+    public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
+    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
     //线上环境
-    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
-    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
-    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
+//    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
+//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
+//    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
 
 
 //    public final static String ReportBasePath = "D:\\codeCoverage";
