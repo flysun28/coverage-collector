@@ -2,6 +2,7 @@
 
 # 加载平台下发的环境变量
 source $(dirname $0)/../../env.sh
+source $(dirname $0)/agent.sh
 
 case "`uname`" in
     Linux)
@@ -57,7 +58,7 @@ if [ ! -d "logs" ]; then
   mkdir logs
 fi
 
-java $JACOCO_OPTS $JAVA_OPTS $MEM_OPTS $OOM_OPTS $GC_OPTS -classpath 'conf:lib/*:.' -jar lib/jacococoverage-0.0.1-SNAPSHOT.jar 1>>logs/server.log 2>&1 &
+java $traceAgent $JACOCO_OPTS $JAVA_OPTS $MEM_OPTS $OOM_OPTS $GC_OPTS -classpath 'conf:lib/*:.' -jar lib/jacococoverage-0.0.1-SNAPSHOT.jar 1>>logs/server.log 2>&1 &
 
 # 把进程号写入 server.pid文件里面  此文件主要是云平台在使用
 echo $! > $base/bin/server.pid
