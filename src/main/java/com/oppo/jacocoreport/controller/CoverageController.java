@@ -7,6 +7,7 @@ import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.utils.Config;
 import com.oppo.jacocoreport.coverage.utils.FolderFileScanner;
 import com.oppo.jacocoreport.coverage.utils.HttpUtils;
+import com.oppo.trace.agent.annotation.Tracing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,8 @@ public class CoverageController {
         super();
     }
     //@GetMapping("/startcoveragetask")
+
+    @Tracing
     @PostMapping("/startcoveragetask")
     public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
