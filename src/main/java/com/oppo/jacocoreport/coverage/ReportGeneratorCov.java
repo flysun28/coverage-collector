@@ -499,9 +499,6 @@ public class ReportGeneratorCov {
                     if (applicationCodeInfo.getIsBranchTask()==1){
                         FolderFileScanner.branchReportUpload(projectName,applicationCodeInfo.getBranchTaskID());
                     }
-                    //删除源代码
-                    FileOperateUtil.delAllFile(gitlocalPath);
-                    new File(gitlocalPath).delete();
                 }else {
                     FolderFileScanner.reportUpload(projectName,applicationCodeInfo.getId());
                     if (applicationCodeInfo.getIsBranchTask()==1){
@@ -627,6 +624,13 @@ public class ReportGeneratorCov {
         //生成开发git代码本地路径
         File localPath = new File(Config.CodePath,projectName);
         this.gitlocalPath = localPath.toString();
+        //先删除原目录
+        if(localPath.exists()){
+            //删除源代码
+            FileOperateUtil.delAllFile(gitlocalPath);
+            new File(gitlocalPath).delete();
+        }
+
         File projectCovPath = new File(Config.ProjectCovPath,projectName);
         if(!new File(Config.ProjectCovPath).exists()){
             new File(Config.ProjectCovPath).mkdir();
