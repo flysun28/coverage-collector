@@ -603,8 +603,10 @@ public class ColumbusUtils {
             return "cdo-page";
         }else if ("cdo-admix-rpc".equals(applicationID)){
             return "cdo-admix";
-        }else if("cdo-detail-api-store".equals(applicationID)){
+        }else if("cdo-detail-api-store".equals(applicationID)) {
             return "cdo-detail";
+        }else if("ads-sms-gateway".equals(applicationID)){
+            return "ads-sms-gateway-svc";
         }else if (applicationID.startsWith("cdo-")){
             String[] appCodeArray = applicationID.split("-");
             return appCodeArray[0]+"-"+appCodeArray[1];
