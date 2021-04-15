@@ -1,0 +1,102 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2019 Mountainminds GmbH & Co. KG and Contributors
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Marc R. Hoffmann - initial API and implementation
+ *
+ *******************************************************************************/
+package com.oppo.test.coverage.backend.biz.jacoco;
+
+import org.jacoco.core.analysis.Analyzer;
+import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.ICoverageVisitor;
+import org.jacoco.core.data.ExecutionDataStore;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+/**
+ * This example reads Java class files, directories or JARs given as program
+ * arguments and dumps information about the classes.
+ */
+public final class ClassInfo implements ICoverageVisitor {
+
+    private final Analyzer analyzer;
+    private Set<String> classIDSet;
+    private Set<String> classNameSet;
+    private String classpath;
+
+
+    public HashMap<Long, String> getClassMap() {
+        return classMap;
+    }
+
+    private HashMap<Long, String> classMap;
+
+    /**
+     * Creates a new example instance printing to the given stream.
+     */
+    public ClassInfo(final String classpath) {
+        this.classIDSet = new HashSet<>();
+        this.classNameSet = new HashSet<>();
+        this.classpath = classpath;
+        this.classMap = new HashMap<>();
+        analyzer = new Analyzer(new ExecutionDataStore(), this);
+    }
+
+
+    /**
+     * Run this example with the given parameters.
+     *
+     * @throws IOException in case of error reading a input file
+     */
+    public void execute() throws IOException {
+        analyzer.analyzeAll(new File(this.classpath));
+    }
+
+    @Override
+    public void visitCoverage(final IClassCoverage coverage) {
+        this.classIDSet.add(Long.toHexString(coverage.getId()));
+        this.classNameSet.add(coverage.getName());
+        this.classMap.put(coverage.getId(), coverage.getName());
+    }
+
+    public Set<String> getClassNameSet() {
+        return classNameSet;
+    }
+
+    public Set<String> getClassIDSet() {
+        return classIDSet;
+    }
+
+    /**
+     * Entry point to run this examples as a Java application.
+     *
+     * @param args list of program arguments
+     * @throws IOException in case of errors executing the example
+     */
+    public static void main(final String[] args) throws IOException {
+        String execfile = "D:\\codeCoverage\\taskID\\10040\\classes";
+        ClassInfo classInfo = new ClassInfo(execfile);
+        classInfo.execute();
+        Iterator iterator = classInfo.getClassNameSet().iterator();
+        Iterator iterator1 = classInfo.getClassIDSet().iterator();
+
+        for (Long key : classInfo.classMap.keySet()) {
+            System.out.println(Long.toHexString(key) + " " + classInfo.classMap.get(key));
+        }
+//        while(iterator.hasNext()){
+//            System.out.println(iterator.next().toString());
+//            System.out.println(iterator1.next().toString());
+//        }
+    }
+
+}
