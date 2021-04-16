@@ -598,11 +598,11 @@ public class ReportGenerateTask implements Runnable {
      * 将taskId下的exec复制到branch、version文件目录下
      */
     private void copyExecToBranchAndVersionDirectory(File executionDataFile, String serverIp) {
-        File branchFile = createFile(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
+        File branchFile = new File(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
 
         FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
         if (taskEntity.getAppInfo().getVersionId() != null) {
-            File versionFile = createFile(taskEntity.getVersionIdDataPath().getPath(),serverIp + System.currentTimeMillis() + "_jacoco.exec");
+            File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(),serverIp + System.currentTimeMillis() + "_jacoco.exec");
             FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());
         }
     }
