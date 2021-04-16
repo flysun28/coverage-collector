@@ -91,25 +91,25 @@ public class TaskBiz {
         logger.info("任务开始 : {}, {}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
 
         //将相关文件从OCS下载到本地,分支统计需要下载历史数据
-//        String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
-//        folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getId());
-//        if (applicationCodeInfo.getIsBranchTask() != 0) {
-//            folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getBranchTaskID());
-//        }
+        String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
+        folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getId());
+        if (applicationCodeInfo.getIsBranchTask() != 0) {
+            folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getBranchTaskID());
+        }
 
         logger.info("文件下载完毕 : {} ,{}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
 
         ReportGenerateTask task = new ReportGenerateTask(applicationCodeInfo);
 
-//        if (applicationCodeInfo.getIsTimerTask() == 1) {
-//            timerTaskBiz.addTimerTask(task, applicationCodeInfo.getTimerInterval());
-//            logger.info("add timer task : {}", applicationCodeInfo.getId());
-//            return;
-//        }
-//
-//        logger.info("once task : {}", applicationCodeInfo.getId());
-//
-//        cacheThreadPool.submit(task);
+        if (applicationCodeInfo.getIsTimerTask() == 1) {
+            timerTaskBiz.addTimerTask(task, applicationCodeInfo.getTimerInterval());
+            logger.info("add timer task : {}", applicationCodeInfo.getId());
+            return;
+        }
+
+        logger.info("once task : {}", applicationCodeInfo.getId());
+
+        cacheThreadPool.submit(task);
     }
 
     /**
