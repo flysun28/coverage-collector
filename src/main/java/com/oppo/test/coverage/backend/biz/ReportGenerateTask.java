@@ -29,6 +29,7 @@ import org.jacoco.report.MultiSourceFileLocator;
 import org.jacoco.report.html.HTMLFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -323,7 +324,10 @@ public class ReportGenerateTask implements Runnable {
                 throw new IllegalStateException("Unexpected value: " + resultType);
         }
 
-        HttpRequestUtil.postForObject(url, new HashMap<>(0), JSON.toJSONBytes(coverageData), Data.class, 1);
+        Map<CharSequence,CharSequence> headersMap = new HashMap<>(1);
+        headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
+
+        HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(coverageData), Data.class, 1);
     }
 
 
