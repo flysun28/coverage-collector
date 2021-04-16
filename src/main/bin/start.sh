@@ -3,7 +3,7 @@
 # 加载平台下发的环境变量
 source $(dirname $0)/../../env.sh
 source $(dirname $0)/agent.sh
-
+SKYWALKING_AGENT=-javaagent:/home/service/tools/apache-skywalking-apm-bin/agent/skywalking-agent.jar # SkyWalking Agent jar 地址。
 case "`uname`" in
     Linux)
                 bin_abs_path=$(readlink -f $(dirname $0))
@@ -58,7 +58,7 @@ if [ ! -d "logs" ]; then
   mkdir logs
 fi
 
-java $traceAgent $JACOCO_OPTS $JAVA_OPTS $MEM_OPTS $OOM_OPTS $GC_OPTS -classpath 'conf:lib/*:.' -jar lib/jacococoverage-0.0.1-SNAPSHOT.jar 1>>logs/server.log 2>&1 &
+java $SKYWALKING_AGENT $traceAgent $JACOCO_OPTS $JAVA_OPTS $MEM_OPTS $OOM_OPTS $GC_OPTS -classpath 'conf:lib/*:.' -jar lib/jacococoverage-0.0.1-SNAPSHOT.jar 1>>logs/server.log 2>&1 &
 
 # 把进程号写入 server.pid文件里面  此文件主要是云平台在使用
 echo $! > $base/bin/server.pid

@@ -9,7 +9,6 @@ public class ESATraceFilter {
     @Bean
     public FilterRegistrationBean traceFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        System.out.println("hello world");
         registration.setFilter(new TraceFilter());
         registration.addUrlPatterns("/*");
         registration.setName("traceFilter");

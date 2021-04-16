@@ -176,6 +176,11 @@
             <artifactId>framework-trace-servlet</artifactId>
             <version>6.1.7.GA</version>
         </dependency>
+        <dependency>
+            <groupId>com.oppo</groupId>
+            <artifactId>framework-trace-threadpool</artifactId>
+            <version>6.1.7.GA</version>
+        </dependency>
     </dependencies>
 
     <build>
