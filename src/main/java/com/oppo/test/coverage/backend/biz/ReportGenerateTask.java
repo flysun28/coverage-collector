@@ -68,7 +68,7 @@ public class ReportGenerateTask implements Runnable {
         initOnce();
     }
 
-    private void initBean(){
+    private void initBean() {
         this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
         this.executionDataClient = (ExecutionDataClient) SpringContextUtil.getBean("executionDataClient");
         this.timerTaskBiz = (TimerTaskBiz) SpringContextUtil.getBean("timerTaskBiz");
@@ -532,10 +532,10 @@ public class ReportGenerateTask implements Runnable {
         try {
             generateReportAndSend(classesDirectoryList);
         } catch (IOException e) {
-            logger.error("生成报告失败: {}, {}, {}", taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getId(),e.getMessage());
+            logger.error("生成报告失败: {}, {}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
             errorEnum = ErrorEnum.PRODUCT_REPORT;
-            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), "报告生成失败 :"+e.getMessage());
+            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), "报告生成失败 :" + e.getMessage());
         }
 
         //生成分支数据
@@ -548,7 +548,7 @@ public class ReportGenerateTask implements Runnable {
             startVersionCoverageTask();
         }
 
-        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName());
+        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName());
     }
 
     /**
@@ -594,9 +594,12 @@ public class ReportGenerateTask implements Runnable {
      * 将taskId下的exec复制到branch、version文件目录下
      */
     private void copyExecToBranchAndVersionDirectory(File executionDataFile, String serverIp) {
-        FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), taskEntity.getTestedBranchCoverageDirectory() + serverIp + System.currentTimeMillis() + "_jacoco.exec");
+        File branchFile = createFile(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
+
+        FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
         if (taskEntity.getAppInfo().getVersionId() != null) {
-            FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), taskEntity.getVersionIdDataPath() + serverIp + System.currentTimeMillis() + "_jacoco.exec");
+            File versionFile = createFile(taskEntity.getVersionIdDataPath().getPath(),serverIp + System.currentTimeMillis() + "_jacoco.exec");
+            FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());
         }
     }
 
