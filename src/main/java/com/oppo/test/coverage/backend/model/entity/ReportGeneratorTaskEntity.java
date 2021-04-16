@@ -1,11 +1,11 @@
 package com.oppo.test.coverage.backend.model.entity;
 
 import com.oppo.test.coverage.backend.util.GitUtil;
+import com.oppo.test.coverage.backend.util.SpringContextUtil;
 import com.oppo.test.coverage.backend.util.SystemConfig;
 import org.jacoco.core.tools.ExecFileLoader;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +19,7 @@ import java.util.Map;
 
 public class ReportGeneratorTaskEntity {
 
-    @Resource
-    SystemConfig systemConfig;
+    private SystemConfig systemConfig;
 
     /**
      * 管理模块下发的信息
@@ -140,6 +139,8 @@ public class ReportGeneratorTaskEntity {
 
 
     public ReportGeneratorTaskEntity(ApplicationCodeInfo codeInfo){
+
+        this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
 
         this.appInfo = codeInfo;
 
