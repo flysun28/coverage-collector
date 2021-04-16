@@ -11,6 +11,7 @@ import com.oppo.test.coverage.backend.model.entity.ReportGeneratorTaskEntity;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import com.oppo.test.coverage.backend.util.ColumbusUtils;
 import com.oppo.test.coverage.backend.util.GitUtil;
+import com.oppo.test.coverage.backend.util.SpringContextUtil;
 import com.oppo.test.coverage.backend.util.SystemConfig;
 import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
 import com.oppo.test.coverage.backend.util.http.HttpRequestUtil;
@@ -30,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -43,19 +43,14 @@ public class ReportGenerateTask implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportGenerateTask.class);
 
-    @Resource
-    SystemConfig systemConfig;
+    private SystemConfig systemConfig;
 
-    @Resource
     private ExecutionDataClient executionDataClient;
 
-    @Resource
     private TimerTaskBiz timerTaskBiz;
 
-    @Resource
     private TaskBiz taskBiz;
 
-    @Resource
     private HttpUtils httpUtils;
 
     private ReportGeneratorTaskEntity taskEntity;
@@ -69,7 +64,16 @@ public class ReportGenerateTask implements Runnable {
      */
     ReportGenerateTask(ApplicationCodeInfo applicationCodeInfo) {
         taskEntity = new ReportGeneratorTaskEntity(applicationCodeInfo);
+        initBean();
         initOnce();
+    }
+
+    private void initBean(){
+        this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
+        this.executionDataClient = (ExecutionDataClient) SpringContextUtil.getBean("executionDataClient");
+        this.timerTaskBiz = (TimerTaskBiz) SpringContextUtil.getBean("timerTaskBiz");
+        this.taskBiz = (TaskBiz) SpringContextUtil.getBean("taskBiz");
+        this.httpUtils = (HttpUtils) SpringContextUtil.getBean("httpUtils");
     }
 
 

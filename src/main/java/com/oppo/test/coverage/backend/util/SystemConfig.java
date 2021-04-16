@@ -2,11 +2,12 @@ package com.oppo.test.coverage.backend.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author 80264236
  */
-@Component
+@Service
 public class SystemConfig {
 
     @Value("${jacoco.base.port}")
