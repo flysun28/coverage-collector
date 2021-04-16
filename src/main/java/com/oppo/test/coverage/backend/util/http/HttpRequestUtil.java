@@ -1,6 +1,7 @@
 package com.oppo.test.coverage.backend.util.http;
 
 import com.alibaba.fastjson.JSONObject;
+import esa.commons.netty.core.Buffers;
 import esa.httpclient.core.HttpRequest;
 import esa.httpclient.core.HttpResponse;
 import org.slf4j.Logger;
@@ -27,7 +28,10 @@ public class HttpRequestUtil {
                 e.printStackTrace();
                 continue;
             }
-            t = JSONObject.parseObject(response.body().toString(),tClass);
+            if (response.body() != Buffers.EMPTY_BUFFER){
+                t = JSONObject.parseObject(response.body().toString(),tClass);
+            }
+            break;
         }
         return t;
     }
@@ -48,6 +52,7 @@ public class HttpRequestUtil {
                 continue;
             }
             t = JSONObject.parseObject(response.body().toString(),tClass);
+            break;
         }
         return t;
     }
