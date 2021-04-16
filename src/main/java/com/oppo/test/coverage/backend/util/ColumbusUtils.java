@@ -42,8 +42,7 @@ public class ColumbusUtils {
 
         try {
             String signature = HMAC_MD5_encode("123456789", sortedParams);
-            String ret = null;
-            ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=100&fuzzyQuery=0&versionName=");
+            String ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=100&fuzzyQuery=0&versionName=");
             appVersionResponses = new Gson().fromJson(ret, new TypeToken<List<AppVersionResponse>>() {
             }.getType());
             for (AppVersionResponse appVersionResponse : appVersionResponses) {
@@ -684,6 +683,7 @@ public class ColumbusUtils {
 //        ColumbusUtils.filterContainPackages(containPackagesSet,new File("D:\\codeCoverage\\taskID\\10015\\classes"));
 
 //        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
-        System.out.println(getSpecialApplicationIDPrex("cdo-store-api"));
+//        System.out.println(getSpecialApplicationIDPrex("cdo-store-api"));
+        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo","ci-demo-20210326163909-181",1));
     }
 }

@@ -7,6 +7,7 @@ import esa.httpclient.core.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +30,7 @@ public class HttpRequestUtil {
                 continue;
             }
             if (response.body() != Buffers.EMPTY_BUFFER){
-                t = JSONObject.parseObject(response.body().toString(),tClass);
+                t = JSONObject.parseObject(response.body().string(StandardCharsets.UTF_8),tClass);
             }
             break;
         }
