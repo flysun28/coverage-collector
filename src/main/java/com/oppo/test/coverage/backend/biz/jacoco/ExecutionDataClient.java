@@ -59,8 +59,7 @@ public class ExecutionDataClient {
             gotExecData = true;
 
         } catch (Exception e) {
-            logger.error("getExecutionData connect error : {} , {} , {}", address, port, testedEnv == 2 ? "生产环境" : "测试环境");
-            e.printStackTrace();
+            logger.error("getExecutionData connect failed : {} , {} , {}", address, port, testedEnv == 2 ? "生产环境" : "测试环境");
             localFile.close();
             destFile.delete();
         } finally {

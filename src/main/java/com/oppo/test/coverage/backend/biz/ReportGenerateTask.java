@@ -152,7 +152,7 @@ public class ReportGenerateTask implements Runnable {
         //创建测试taskID目录
         taskEntity.setCoverageExecutionDataPath(createFile(taskEntity.getCoverageReportPath().getPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_")));
         //创建jacocoAll汇总文件
-        taskEntity.setAllExecutionDataFile(createFile(taskEntity.getCoverageExecutionDataPath().getPath(), "jacocoAll.exec"));
+        taskEntity.setAllExecutionDataFile(new File(taskEntity.getCoverageExecutionDataPath().getPath(), "jacocoAll.exec"));
 
     }
 
@@ -559,14 +559,15 @@ public class ReportGenerateTask implements Runnable {
      * 在某一机器某一端口上获取exec文件
      */
     private boolean getExecDataFromMachine(File executionDataFile, String serverIp, String portNum) {
+        boolean result;
         try {
-            executionDataClient.getExecutionData(serverIp, Integer.parseInt(portNum), executionDataFile, taskEntity.getAppInfo().getTestedEnv());
+            result = executionDataClient.getExecutionData(serverIp, Integer.parseInt(portNum), executionDataFile, taskEntity.getAppInfo().getTestedEnv());
         } catch (Exception e) {
             logger.warn("获取覆盖率失败: 应用-{} , taskId-{}, ip-{}:{}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId(), serverIp, portNum, e.getMessage());
             e.printStackTrace();
             return false;
         }
-        return true;
+        return result;
     }
 
     /**
