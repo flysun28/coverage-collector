@@ -34,9 +34,9 @@
 
         <!-- jdbc的数据库连接，每个context必须要有一个jdbcConnection或者connectionFactory元素 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.52.44.192:33066/db_loan_data_platform"
-                        userId="finance"
-                        password="finance_test@2018">
+                        connectionURL="jdbc:mysql://10.52.55.38:33066/coveragedb"
+                        userId="coveragedev"
+                        password="ul6vM10KEsz9ipnJwBPC6JM8KckMqiBH1WcDy7tiJ1-kB3Kg2ov-OghVLNMx4-95">
         </jdbcConnection>
 
         <!-- 对于mysql的DECIMAL和NUMERIC统一使用java的BigDecimal类型 -->
@@ -49,24 +49,25 @@
         </javaTypeResolver>
 
         <!-- 实体类生成配置 -->
-        <javaModelGenerator targetPackage="com.oppo.finance.loantest.server.entity" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.oppo.jacocoreport.record.entity" targetProject="src/main/java">
             <!-- 是否允许子包，即targetPackage.schemaName.tableName -->
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="false"/>
         </javaModelGenerator>
 
         <!-- *mapper.xml生成配置 -->
-        <sqlMapGenerator targetPackage="com.oppo.finance.loantest.server.mapper" targetProject="src/main/resources">
+        <sqlMapGenerator targetPackage="com.oppo.jacocoreport.record.mapper" targetProject="src/main/resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
         <!-- dao生成配置 -->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.oppo.finance.loantest.server.mapper"
-                             implementationPackage="com.oppo.finance.loantest.server.entity"
+                             targetPackage="com.oppo.jacocoreport.record.mapper"
+                             implementationPackage="com.oppo.jacocoreport.record.entity"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
-        <table tableName="generate_template_queue" domainObjectName="GenerateTemplateQueue"/>
+        <table tableName="test_record" domainObjectName="TestRecord"/>
+<!--        <table tableName="invoke_record" domainObjectName="InvokeRecord"/>-->
     </context>
 </generatorConfiguration>

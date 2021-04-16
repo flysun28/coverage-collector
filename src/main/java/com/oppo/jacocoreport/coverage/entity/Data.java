@@ -5,6 +5,7 @@ public class Data<T> {
     private int code;
     private T data;
 
+
     public int getCode() {
         return code;
     }
