@@ -437,8 +437,10 @@ public class ReportGenerateTask implements Runnable {
             //上传覆盖率报告
             sendCoverageDataResult(versionAllCovDirectory, versionDiffDirectory, 1, 3);
         } catch (DefinitionException e) {
+            logger.error("版本报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getErrorMsg());
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
         } catch (Exception e) {
+            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getMessage());
             e.printStackTrace();
         }
     }
@@ -474,8 +476,10 @@ public class ReportGenerateTask implements Runnable {
             //上传覆盖率报告
             sendCoverageDataResult(reportAllCovDirectory, reportDiffDirectory, 1, 2);
         } catch (DefinitionException e) {
+            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getErrorMsg());
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
         } catch (Exception e) {
+            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getMessage());
             e.printStackTrace();
         }
     }
@@ -657,6 +661,7 @@ public class ReportGenerateTask implements Runnable {
 
         //过滤package文件
         filterClassAndPackage(taskEntity.getClassPath());
+        logger.info("完成jar过滤 : {}", taskEntity.getAppInfo().getId());
         //生成已过滤差异覆盖率报告
         if (taskEntity.getAppInfo().isNeedDiff()) {
             createDiff(classesDirectoryList, taskEntity.getFilterReportDiffDirectory(), taskEntity.getSourceDirectoryList(), taskEntity.getCoverageReportPath().getName());
