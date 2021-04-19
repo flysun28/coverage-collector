@@ -191,7 +191,7 @@ public class ColumbusUtils {
                 File packageNameParentFile = new File(basePath, packageParentNamePath);
                 if (packageNameLastStr.endsWith("*")) {
                     if (packageNameParentFile.exists()) {
-                        for (File packageFile : packageNameParentFile.listFiles()) {
+                        for (File packageFile : Objects.requireNonNull(packageNameParentFile.listFiles())) {
                             String prefix = packageNameLastStr.substring(0, packageNameLastStr.indexOf("*"));
                             if (packageFile.getName().contains(prefix) && packageFile.exists()) {
                                 FileOperateUtil.delAllFile(packageFile.toString());
@@ -212,18 +212,18 @@ public class ColumbusUtils {
         }
     }
 
-    public static HashSet getcontainPackageHashSet(String[] containPackageList, String localPath) {
-        HashSet containpackageSet = new HashSet();
-        for (String packagename : containPackageList) {
-            String packagenamePath = packagename.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
-            String packagPath = localPath + File.separator + packagenamePath;
-            if (new File(packagPath).exists()) {
-                containpackageSet.add(packagenamePath);
-            } else if (packagename.contains("*")) {
-                containpackageSet.add(packagenamePath);
+    public static HashSet getContainPackageHashSet(String[] containPackageList, String localPath) {
+        HashSet<String> containPackageSet = new HashSet<>();
+        for (String packageName : containPackageList) {
+            String packageNamePath = packageName.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+            String packagePath = localPath + File.separator + packageNamePath;
+            if (new File(packagePath).exists()) {
+                containPackageSet.add(packageNamePath);
+            } else if (packageName.contains("*")) {
+                containPackageSet.add(packageNamePath);
             }
         }
-        return containpackageSet;
+        return containPackageSet;
     }
 
     public static int packageContainPath(HashSet containpackageSet, File basePath) {

@@ -95,9 +95,8 @@ public class ReportGenerateTask implements Runnable {
         taskEntity.setProjectCovPath(projectCovPath.toString());
 
         //clone代码到本地
-        String newBranchName = cloneCodeSource(taskEntity.getAppInfo().getGitPath(), systemConfig.getCodePath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getBasicBranch(), taskEntity.getAppInfo().getTestedCommitId());
-
-        taskEntity.getAppInfo().setTestedBranch(newBranchName);
+//        String newBranchName = cloneCodeSource(taskEntity.getAppInfo().getGitPath(), systemConfig.getCodePath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getBasicBranch(), taskEntity.getAppInfo().getTestedCommitId());
+//        taskEntity.getAppInfo().setTestedBranch(newBranchName);
 
         ArrayList<File> fileList = new ArrayList<>();
         //解析工程中各个模块路径 : /home/service/app/coveragebackend/xxxxxxx/codeCoverage,源码路径
@@ -389,7 +388,7 @@ public class ReportGenerateTask implements Runnable {
 
         //只统计指定包
         if (containPackagesList != null && containPackagesList.length > 0) {
-            HashSet containPackagesSet = ColumbusUtils.getcontainPackageHashSet(containPackagesList, classPath);
+            HashSet containPackagesSet = ColumbusUtils.getContainPackageHashSet(containPackagesList, classPath);
             if (containPackagesSet.size() > 0) {
                 ColumbusUtils.filterContainPackages(containPackagesSet, new File(classPath));
             }
@@ -491,11 +490,12 @@ public class ReportGenerateTask implements Runnable {
         ErrorEnum errorEnum = null;
 
         //重新下载代码,因为过滤条件会删除源码,导致未过滤数据丢失
-        cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
+        String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
                 systemConfig.getCodePath(),
                 taskEntity.getAppInfo().getTestedBranch(),
                 taskEntity.getAppInfo().getBasicBranch(),
                 taskEntity.getAppInfo().getTestedCommitId());
+        taskEntity.getAppInfo().setTestedBranch(newBranch);
 
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断

@@ -40,10 +40,10 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.oppo</groupId>
-			<artifactId>framework-trace-restlight-starter</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.oppo</groupId>-->
+<!--			<artifactId>framework-trace-restlight-starter</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>com.oppo.basic.heracles</groupId>
 			<artifactId>heracles-client</artifactId>
