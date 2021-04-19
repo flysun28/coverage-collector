@@ -523,7 +523,7 @@ public class ReportGenerateTask implements Runnable {
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
             logger.error("获取覆盖率数据失败");
-            timerTaskBiz.stopTimerTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED);
+            timerTaskBiz.stopTimerTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,taskEntity.getAppInfo().getApplicationID());
             return;
         }
 
