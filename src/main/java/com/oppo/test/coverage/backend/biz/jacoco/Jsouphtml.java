@@ -36,7 +36,7 @@ public class Jsouphtml {
 
     public CoverageData getCoverageData(Long taskId, String appCode, String testedBranch, String basicBranch, Long versionId, String projectName) {
         Long reportId = taskId;
-        if (versionId != null) {
+        if (versionId != null && versionId!=0) {
             reportId = versionId;
         }
         coverageData.setId(taskId);

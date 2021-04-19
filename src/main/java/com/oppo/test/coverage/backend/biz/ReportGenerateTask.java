@@ -145,7 +145,7 @@ public class ReportGenerateTask implements Runnable {
         //创建被测分支目录
         taskEntity.setTestedBranchCoverageDirectory(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_")));
         //创建项目id目录
-        if (taskEntity.getAppInfo().getVersionId() != null) {
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
             taskEntity.setVersionIdDataPath(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getVersionId().toString()));
         }
         //创建测试taskID目录
@@ -552,7 +552,7 @@ public class ReportGenerateTask implements Runnable {
         }
 
         //生成版本数据
-        if (taskEntity.getAppInfo().getVersionId() != null) {
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
             startVersionCoverageTask();
         }
 
@@ -606,7 +606,7 @@ public class ReportGenerateTask implements Runnable {
         File branchFile = new File(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
 
         FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
-        if (taskEntity.getAppInfo().getVersionId() != null) {
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
             File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(),serverIp + System.currentTimeMillis() + "_jacoco.exec");
             FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());
         }
@@ -655,7 +655,10 @@ public class ReportGenerateTask implements Runnable {
             createDiff(classesDirectoryList, taskEntity.getReportDiffDirectory(), taskEntity.getSourceDirectoryList(), taskEntity.getCoverageReportPath().getName());
         }
         //生成未过滤整体覆盖率报告
-        createCoverageReport(classesDirectoryList, taskEntity.getReportAllCovDirectory(), taskEntity.getCoverageReportPath().getName(), taskEntity.getSourceDirectoryList());
+        createCoverageReport(classesDirectoryList,
+                taskEntity.getReportAllCovDirectory(),
+                taskEntity.getCoverageReportPath().getName(),
+                taskEntity.getSourceDirectoryList());
         //上传覆盖率报告
         sendCoverageDataResult(taskEntity.getReportAllCovDirectory(), taskEntity.getReportDiffDirectory(), 0, 1);
 
