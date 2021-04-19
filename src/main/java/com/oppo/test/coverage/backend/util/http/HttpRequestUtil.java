@@ -52,7 +52,9 @@ public class HttpRequestUtil {
                 e.printStackTrace();
                 continue;
             }
-            t = JSONObject.parseObject(response.body().toString(),tClass);
+            if (response.body() != Buffers.EMPTY_BUFFER){
+                t = JSONObject.parseObject(response.body().string(StandardCharsets.UTF_8),tClass);
+            }
             break;
         }
         return t;
