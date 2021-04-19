@@ -115,7 +115,7 @@ public class TaskBiz {
     /**
      * 结束覆盖率任务执行
      */
-    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName) {
+    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName,String appCode) {
 
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
@@ -127,7 +127,7 @@ public class TaskBiz {
         //轮询中止,异常停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum != null) {
             logger.error("timer task error and stop : {} , {}", taskId, errorEnum.getErrorMsg());
-            timerTaskBiz.stopTimerTask(taskId, errorEnum);
+            timerTaskBiz.stopTimerTask(taskId, errorEnum,appCode);
         }
 
         //非轮询,正常停止
@@ -141,11 +141,13 @@ public class TaskBiz {
             httpUtils.sendErrorMsg(taskId, errorEnum.getErrorMsg());
         }
 
-        folderFileScanner.fileUpload(projectName, taskId);
+        if (!timerTaskBiz.stillTimerTask(appCode)){
+            folderFileScanner.fileUpload(projectName, taskId);
+        }
     }
 
     public Data stopTimerTask(Long taskId, String appCode) {
-        timerTaskBiz.stopTimerTask(taskId, null);
+        timerTaskBiz.stopTimerTask(taskId, null,appCode);
         folderFileScanner.fileUpload(appCode, taskId);
         return new Data(200, "success");
     }

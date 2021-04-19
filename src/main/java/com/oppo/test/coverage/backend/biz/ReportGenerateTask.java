@@ -556,7 +556,7 @@ public class ReportGenerateTask implements Runnable {
             startVersionCoverageTask();
         }
 
-        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName());
+        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID());
     }
 
     /**

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,20 +34,24 @@ public class TimerTaskBiz {
 
     private Map<Long, ScheduledFuture<?>> timerTaskMap = new HashMap<>(100);
 
+    private Set<String> appCodeSet = new HashSet<>();
+
     /**
      * 添加轮询任务
      * */
     public void addTimerTask(ReportGenerateTask task,int timeInterval){
         ScheduledFuture<?> future = scheduledThreadPoolExecutor.schedule(task,timeInterval, TimeUnit.MILLISECONDS);
         timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(),future);
+        appCodeSet.add(task.getTaskEntity().getAppInfo().getApplicationID());
     }
 
 
-    public void stopTimerTask(Long taskId,ErrorEnum errorEnum){
+    public void stopTimerTask(Long taskId,ErrorEnum errorEnum,String appCode){
 
         //remove
         timerTaskMap.get(taskId).cancel(false);
         timerTaskMap.remove(taskId);
+        appCodeSet.remove(appCode);
 
         String url = systemConfig.getSendStopTimerTaskUrl() + taskId;
 
@@ -58,6 +64,10 @@ public class TimerTaskBiz {
 
     public boolean isTimerTask(Long taskId){
         return timerTaskMap.get(taskId) != null;
+    }
+
+    public boolean stillTimerTask(String appCode){
+        return appCodeSet.contains(appCode);
     }
 
 
