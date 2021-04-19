@@ -127,7 +127,7 @@ public class ReportGenerateTask implements Runnable {
             //解压zip包获取class文件
             classPath = ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, new File(coverageReportPath, "classes").toString(), taskEntity.getAppInfo().getApplicationID(), sourceApplicationsMap);
 
-            //提前过滤类，兼容某些类classId不一致问题
+            //提前过滤类,兼容某些类classId不一致问题
             //过滤配置的ignore class,package文件
             ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
         } catch (Exception e) {
