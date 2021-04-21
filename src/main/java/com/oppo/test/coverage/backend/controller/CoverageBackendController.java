@@ -25,8 +25,7 @@ public class CoverageBackendController {
     @PostMapping("/startcoveragetask")
     public Data startCoverageTask(@RequestBody ApplicationCodeInfo applicationCodeInfo) {
         logger.info("receive task : {}", JSON.toJSONString(applicationCodeInfo));
-        coverageBackendService.startCoverageTask(applicationCodeInfo);
-        return new Data();
+        return coverageBackendService.startCoverageTask(applicationCodeInfo);
     }
 
     @GetMapping("/stopcoveragetask")

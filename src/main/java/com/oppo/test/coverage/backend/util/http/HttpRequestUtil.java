@@ -26,6 +26,7 @@ public class HttpRequestUtil {
             try {
                 response = HttpClientUtil.getHttpClient().execute(HttpRequest.get(url).build()).get();
             } catch (InterruptedException | ExecutionException e) {
+                logger.warn("get for object exception : {}, {}",url,e.getMessage());
                 e.printStackTrace();
                 continue;
             }
@@ -49,6 +50,7 @@ public class HttpRequestUtil {
                 HttpRequest request = HttpRequest.post(url).addHeaders(headers).body(body).build();
                 response = HttpClientUtil.getHttpClient().execute(request).get();
             } catch (InterruptedException | ExecutionException e) {
+                logger.warn("post for object exception : {}, {}",url,e.getMessage());
                 e.printStackTrace();
                 continue;
             }

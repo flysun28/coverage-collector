@@ -663,6 +663,7 @@ public class ReportGenerateTask implements Runnable {
         sendCoverageDataResult(taskEntity.getReportAllCovDirectory(), taskEntity.getReportDiffDirectory(), 0, 1);
 
         //过滤package文件
+        logger.info("开始jar过滤 : {}", taskEntity.getAppInfo().getId());
         filterClassAndPackage(taskEntity.getClassPath());
         logger.info("完成jar过滤 : {}", taskEntity.getAppInfo().getId());
         //生成已过滤差异覆盖率报告

@@ -63,8 +63,10 @@ public class ColumbusUtils {
      * @param params
      * @return
      */
-    public static String sortParams(Map<String, String> params) {
-        if (params == null || params.isEmpty()) throw new RuntimeException("params can't be empty");
+    private static String sortParams(Map<String, String> params) {
+        if (params == null || params.isEmpty()) {
+            throw new RuntimeException("params can't be empty");
+        }
         List<String> keyList = new ArrayList<>(params.keySet());
         Collections.sort(keyList);
         StringBuilder sb = new StringBuilder();
@@ -75,7 +77,7 @@ public class ColumbusUtils {
         return sb.toString().substring(0, sb.length() - 1);
     }
 
-    public static String HMAC_MD5_encode(String appsecret, String message) throws Exception {
+    private static String HMAC_MD5_encode(String appsecret, String message) throws Exception {
         SecretKeySpec keySpec = new SecretKeySpec(
                 appsecret.getBytes(),
                 "HmacMD5"
@@ -87,7 +89,7 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    public static StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
+    private static StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
@@ -110,7 +112,7 @@ public class ColumbusUtils {
                 iplist.append(",");
 
             }
-            if (iplist.toString().equals("")) {
+            if ("".equals(iplist.toString())) {
                 System.out.println("test environment ip is null");
                 throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(), ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
             }
@@ -129,10 +131,6 @@ public class ColumbusUtils {
         String repositoryUrl;
         ArrayList<AppVersionResponse> appVersionList = ColumbusUtils.getBuildVersionList(appId, buildVersionName);
         if (appVersionList.size() > 0) {
-            for (AppVersionResponse appVersionResponse : appVersionList) {
-                System.out.println(appVersionResponse.getSourceBranch());
-                System.out.println(appVersionResponse.getCommitId());
-            }
             commitID = appVersionList.get(0).getCommitId();
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
