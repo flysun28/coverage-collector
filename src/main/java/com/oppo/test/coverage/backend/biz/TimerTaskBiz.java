@@ -40,7 +40,7 @@ public class TimerTaskBiz {
      * 添加轮询任务
      * */
     public void addTimerTask(ReportGenerateTask task,int timeInterval){
-        ScheduledFuture<?> future = scheduledThreadPoolExecutor.schedule(task,timeInterval, TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> future = scheduledThreadPoolExecutor.scheduleWithFixedDelay(task,1000,timeInterval,TimeUnit.MILLISECONDS);
         timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(),future);
         appCodeSet.add(task.getTaskEntity().getAppInfo().getApplicationID());
     }
