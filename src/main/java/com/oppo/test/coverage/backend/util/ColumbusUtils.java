@@ -180,6 +180,11 @@ public class ColumbusUtils {
     }
 
     public static void filterIgnorePackage(String[] packageArrayList, File basePath) {
+
+        if (packageArrayList==null || packageArrayList.length<1){
+            return;
+        }
+
         for (String packageName : packageArrayList) {
             if (packageName.contains(".")) {
                 String packageNameLastStr = packageName.substring(packageName.lastIndexOf(".") + 1);
