@@ -297,7 +297,8 @@ public class ReportGenerateTask implements Runnable {
 
         Jsouphtml jsouphtml = new Jsouphtml(coverageReport, diffCoverageReport);
 
-        CoverageData coverageData = jsouphtml.getCoverageData(taskEntity.getAppInfo().getId(),
+        CoverageData coverageData = jsouphtml.getCoverageData(
+                resultType==2?taskEntity.getAppInfo().getBranchTaskID():taskEntity.getAppInfo().getId(),
                 taskEntity.getAppInfo().getApplicationID(),
                 taskEntity.getAppInfo().getTestedBranch().replace("/", "_"),
                 taskEntity.getAppInfo().getBasicBranch(),

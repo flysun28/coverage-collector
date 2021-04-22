@@ -40,22 +40,19 @@ public class Jsouphtml {
             reportId = versionId;
         }
         coverageData.setId(taskId);
+        coverageData.setAppCode(appCode);
+        coverageData.setTestedBranch(testedBranch);
+        coverageData.setBasicBranch(basicBranch);
+        coverageData.setVersionId(versionId);
         try {
             //解析整体覆盖率报告
             if (this.totalHtmlReport.exists()) {
                 totalHtmlReportAnalyze(versionId, projectName, reportId);
             }
-
             //解析差异化覆盖率
             if (this.diffHtmlReport.exists()) {
                 diffHtmlReportAnalyze(versionId, projectName, reportId);
             }
-
-            coverageData.setAppCode(appCode);
-            coverageData.setTestedBranch(testedBranch);
-            coverageData.setBasicBranch(basicBranch);
-            coverageData.setVersionId(versionId);
-
             return coverageData;
         } catch (Exception e) {
             logger.error("Jsouphtml error : {} , {}, {} , {} ,{} ,{}", taskId, appCode, totalHtmlReport.getAbsolutePath(), diffHtmlReport.getAbsolutePath(), e.getMessage(), e.getCause());
