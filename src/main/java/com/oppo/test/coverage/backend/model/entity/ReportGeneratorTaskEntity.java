@@ -34,7 +34,7 @@ public class ReportGeneratorTaskEntity {
     /**
      * 本地代码存储路径
      */
-    private String gitLocalPath = "";
+    private File gitLocalPath;
 
     /**
      * 存储分支的覆盖率数据路径: xxx/projectCovPath/${projectName}
@@ -205,11 +205,11 @@ public class ReportGeneratorTaskEntity {
         this.projectName = projectName;
     }
 
-    public String getGitLocalPath() {
+    public File getGitLocalPath() {
         return gitLocalPath;
     }
 
-    public void setGitLocalPath(String gitLocalPath) {
+    public void setGitLocalPath(File gitLocalPath) {
         this.gitLocalPath = gitLocalPath;
     }
 

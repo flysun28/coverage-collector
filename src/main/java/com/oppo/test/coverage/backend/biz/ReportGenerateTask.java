@@ -87,8 +87,8 @@ public class ReportGenerateTask implements Runnable {
     private void initOnce() {
 
         //生成开发git代码本地路径
-        File localPath = createFile(systemConfig.getCodePath(), taskEntity.getProjectName());
-        taskEntity.setGitLocalPath(localPath.toString());
+        File localPath = new File(systemConfig.getCodePath(), taskEntity.getProjectName());
+        taskEntity.setGitLocalPath(localPath);
 
         File projectCovPath = createFile(systemConfig.getProjectCovPath(), taskEntity.getProjectName());
 
@@ -218,14 +218,10 @@ public class ReportGenerateTask implements Runnable {
      */
     private String cloneCodeSource(String urlString, String codePath, String newBranchName, String oldBranchName, String newTag) throws DefinitionException {
         //localPath  : /home/service/app/coveragebackend/2qpiyetftazy/codeCoverage/pandora
-        File localPath = createFile(codePath, taskEntity.getProjectName());
-        //如果工程目录已存在，则不需要clone代码，直接返回
-        if (!localPath.exists()) {
-            logger.info("开始下载开发项目代码到本地 : {} , {}", urlString, localPath);
-            GitUtil.cloneRepository(urlString, localPath, newBranchName);
-        }
+        logger.info("开始下载开发项目代码到本地 : {} , {}", urlString, taskEntity.getGitLocalPath().getPath());
+        GitUtil.cloneRepository(urlString, taskEntity.getGitLocalPath(), newBranchName);
         //checkout分支代码
-        newBranchName = GitUtil.checkoutBranch(localPath.toString(), newBranchName, oldBranchName, newTag);
+        newBranchName = GitUtil.checkoutBranch(taskEntity.getGitLocalPath().getPath(), newBranchName, oldBranchName, newTag);
         return newBranchName;
     }
 
@@ -238,7 +234,7 @@ public class ReportGenerateTask implements Runnable {
         //基于分支比较覆盖，参数1：本地仓库，参数2：开发分支（预发分支），参数3：基线分支(不传时默认为master)
         //本地Git路径，新分支 第三个参数不传时默认比较maser，传参数为待比较的基线分支
         //基于Tag比较的覆盖 参数1：本地仓库，参数2：代码分支，参数3：新Tag(预发版本)，参数4：基线Tag（变更前的版本）
-        CoverageBuilder coverageBuilder = new CoverageBuilder(taskEntity.getGitLocalPath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getTestedCommitId(), taskEntity.getAppInfo().getBasicCommitId());
+        CoverageBuilder coverageBuilder = new CoverageBuilder(taskEntity.getGitLocalPath().getPath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getTestedCommitId(), taskEntity.getAppInfo().getBasicCommitId());
 
         final Analyzer analyzer = new Analyzer(taskEntity.getExecFileLoader().getExecutionDataStore(), coverageBuilder);
         for (File classesDirectory : classesDirectoryList) {
@@ -369,7 +365,7 @@ public class ReportGenerateTask implements Runnable {
         //差异化代码覆盖率
         List<ClassInfo> classInfos;
         try {
-            classInfos = CodeDiff.diffTagToTag(taskEntity.getGitLocalPath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getTestedCommitId(), taskEntity.getAppInfo().getBasicCommitId());
+            classInfos = CodeDiff.diffTagToTag(taskEntity.getGitLocalPath().getPath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getTestedCommitId(), taskEntity.getAppInfo().getBasicCommitId());
         } catch (IllegalArgumentException e) {
             logger.error("exception in createDiff : {}, {}", taskEntity.getGitLocalPath(), e.getMessage());
             throw e;
