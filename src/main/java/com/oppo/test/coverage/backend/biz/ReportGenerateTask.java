@@ -145,7 +145,7 @@ public class ReportGenerateTask implements Runnable {
         //创建被测分支目录
         taskEntity.setTestedBranchCoverageDirectory(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_")));
         //创建项目id目录
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
             taskEntity.setVersionIdDataPath(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getVersionId().toString()));
         }
         //创建测试taskID目录
@@ -295,11 +295,11 @@ public class ReportGenerateTask implements Runnable {
         Jsouphtml jsouphtml = new Jsouphtml(coverageReport, diffCoverageReport);
 
         CoverageData coverageData = jsouphtml.getCoverageData(
-                resultType==2?taskEntity.getAppInfo().getBranchTaskID():taskEntity.getAppInfo().getId(),
+                resultType == 2 ? taskEntity.getAppInfo().getBranchTaskID() : taskEntity.getAppInfo().getId(),
                 taskEntity.getAppInfo().getApplicationID(),
                 taskEntity.getAppInfo().getTestedBranch().replace("/", "_"),
                 taskEntity.getAppInfo().getBasicBranch(),
-                taskEntity.getAppInfo().getVersionId(),
+                resultType == 3 ? taskEntity.getAppInfo().getVersionId() : null,
                 taskEntity.getProjectName());
 
         coverageData.setFilterTask(filterTask);
@@ -321,7 +321,7 @@ public class ReportGenerateTask implements Runnable {
                 throw new IllegalStateException("Unexpected value: " + resultType);
         }
 
-        Map<CharSequence,CharSequence> headersMap = new HashMap<>(1);
+        Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
         HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(coverageData), Data.class, 1);
@@ -434,10 +434,10 @@ public class ReportGenerateTask implements Runnable {
             //上传覆盖率报告
             sendCoverageDataResult(versionAllCovDirectory, versionDiffDirectory, 1, 3);
         } catch (DefinitionException e) {
-            logger.error("版本报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getErrorMsg());
+            logger.error("版本报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getErrorMsg());
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
         } catch (Exception e) {
-            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getMessage());
+            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
         }
     }
@@ -473,10 +473,10 @@ public class ReportGenerateTask implements Runnable {
             //上传覆盖率报告
             sendCoverageDataResult(reportAllCovDirectory, reportDiffDirectory, 1, 2);
         } catch (DefinitionException e) {
-            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getErrorMsg());
+            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getErrorMsg());
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
         } catch (Exception e) {
-            logger.error("分支报告生成失败 : {},{}",taskEntity.getAppInfo().getId(),e.getMessage());
+            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
         }
     }
@@ -521,7 +521,7 @@ public class ReportGenerateTask implements Runnable {
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
             logger.error("获取覆盖率数据失败");
-            timerTaskBiz.stopTimerTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,taskEntity.getAppInfo().getApplicationID());
+            timerTaskBiz.stopTimerTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getAppInfo().getApplicationID());
             return;
         }
 
@@ -550,11 +550,11 @@ public class ReportGenerateTask implements Runnable {
         }
 
         //生成版本数据
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
             startVersionCoverageTask();
         }
 
-        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID());
+        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
     }
 
     /**
@@ -604,8 +604,8 @@ public class ReportGenerateTask implements Runnable {
         File branchFile = new File(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
 
         FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId()!=0) {
-            File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(),serverIp + System.currentTimeMillis() + "_jacoco.exec");
+        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
+            File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
             FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());
         }
     }

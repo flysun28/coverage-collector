@@ -19,8 +19,6 @@ import java.util.Map;
 
 public class ReportGeneratorTaskEntity {
 
-    private SystemConfig systemConfig;
-
     /**
      * 管理模块下发的信息
      */
@@ -28,7 +26,7 @@ public class ReportGeneratorTaskEntity {
 
     /**
      * 根据git地址解析出的工程名称
-     * */
+     */
     private String projectName;
 
     /**
@@ -41,8 +39,6 @@ public class ReportGeneratorTaskEntity {
      */
     private String projectCovPath;
 
-
-
     /**
      * jacoco配置端口
      */
@@ -50,36 +46,35 @@ public class ReportGeneratorTaskEntity {
 
     /**
      * ip列表
-     * */
+     */
     private List<String> ipList;
 
     /**
      * 解析应用模块对应的代码路径和部署的IP地址
-     * */
-    private Map<String,Object> sourceApplicationsMap;
+     */
+    private Map<String, Object> sourceApplicationsMap;
 
     /**
      * 忽略类集合
-     * */
+     */
     private String[] ignoreClassList;
 
     /**
      * 忽略包集合
-     * */
+     */
     private String[] ignorePackageList;
 
     /**
      * 仅包含包集合
-     * */
+     */
     private String[] containPackageList;
 
     /**
      * class文件路径
-     * */
+     */
     private String classPath;
 
     private ExecFileLoader execFileLoader;
-
 
 
     //-------------------------------------------- file start----------------------------------------------------
@@ -91,79 +86,78 @@ public class ReportGeneratorTaskEntity {
 
     /**
      * 源码路径列表
-     * */
+     */
     private ArrayList<File> sourceDirectoryList;
 
     /**
      * 未过滤覆盖率全量报告文件
-     * */
+     */
     private File reportAllCovDirectory;
 
     /**
      * 未过滤覆盖率增量报告文件
-     * */
+     */
     private File reportDiffDirectory;
 
     /**
      * 已过滤覆盖率全量报告文件
-     * */
+     */
     private File filterReportAllCovDirectory;
 
     /**
      * 已过滤覆盖率增量报告文件
-     * */
+     */
     private File filterReportDiffDirectory;
 
     /**
      * 被测分支目录
-     * */
+     */
     private File testedBranchCoverageDirectory;
 
     /**
      * 版本测试报告数据存储
-     * */
+     */
     private File versionIdDataPath;
 
     /**
      * 当前taskId-branch数据目录
-     * */
+     */
     private File coverageExecutionDataPath;
 
     /**
      * jacocoAll文件
-     * */
+     */
     private File allExecutionDataFile;
 
     //-------------------------------------------- file end----------------------------------------------------
 
 
+    public ReportGeneratorTaskEntity(ApplicationCodeInfo codeInfo) {
 
-    public ReportGeneratorTaskEntity(ApplicationCodeInfo codeInfo){
-
-        this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
+        SystemConfig systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
 
         this.appInfo = codeInfo;
 
         this.projectName = GitUtil.getLastUrlString(appInfo.getGitPath());
 
-        if (StringUtils.isEmpty(appInfo.getJacocoPort()) || "0".equals(appInfo.getJacocoPort())){
+        if (StringUtils.isEmpty(appInfo.getJacocoPort()) || "0".equals(appInfo.getJacocoPort())) {
             this.appInfo.setJacocoPort(systemConfig.getPort());
         }
         this.port = appInfo.getJacocoPort().split(",");
 
-        if (!StringUtils.isEmpty(codeInfo.getIp())){
+        if (!StringUtils.isEmpty(codeInfo.getIp())) {
             this.ipList = Arrays.asList(codeInfo.getIp().split(","));
         }
 
-        if (!StringUtils.isEmpty(codeInfo.getIgnoreClass())){
+        if (!StringUtils.isEmpty(codeInfo.getIgnoreClass())) {
             this.ignoreClassList = codeInfo.getIgnoreClass().split(",");
         }
 
-        if (!StringUtils.isEmpty(codeInfo.getIgnorePackage())){
+        if (!StringUtils.isEmpty(codeInfo.getIgnorePackage())) {
             this.ignorePackageList = codeInfo.getIgnorePackage().split(",");
         }
 
-        if (!StringUtils.isEmpty(codeInfo.getContainPackages())){
+        if (!StringUtils.isEmpty(codeInfo.getContainPackages())) {
             this.containPackageList = codeInfo.getContainPackages().split(",");
         }
 
@@ -245,11 +239,11 @@ public class ReportGeneratorTaskEntity {
         this.ipList = ipList;
     }
 
-    public Map<String,Object> getSourceApplicationsMap() {
+    public Map<String, Object> getSourceApplicationsMap() {
         return sourceApplicationsMap;
     }
 
-    public void setSourceApplicationsMap(Map<String,Object> sourceApplicationsMap) {
+    public void setSourceApplicationsMap(Map<String, Object> sourceApplicationsMap) {
         this.sourceApplicationsMap = sourceApplicationsMap;
     }
 

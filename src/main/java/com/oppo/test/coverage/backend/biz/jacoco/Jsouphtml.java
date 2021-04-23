@@ -27,16 +27,16 @@ public class Jsouphtml {
     private CoverageData coverageData = new CoverageData();
 
 
-    public Jsouphtml(File totalhtmlreport, File diffhtmlreport) {
-        this.totalHtmlReport = totalhtmlreport;
-        this.diffHtmlReport = diffhtmlreport;
+    public Jsouphtml(File totalHtmlReport, File diffHtmlReport) {
+        this.totalHtmlReport = totalHtmlReport;
+        this.diffHtmlReport = diffHtmlReport;
         this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
     }
 
 
     public CoverageData getCoverageData(Long taskId, String appCode, String testedBranch, String basicBranch, Long versionId, String projectName) {
         Long reportId = taskId;
-        if (versionId != null && versionId!=0) {
+        if (versionId != null && versionId != 0) {
             reportId = versionId;
         }
         coverageData.setId(taskId);
@@ -55,7 +55,7 @@ public class Jsouphtml {
             }
             return coverageData;
         } catch (Exception e) {
-            logger.error("Jsouphtml error : {} , {}, {} , {} ,{} ,{}", taskId, appCode, totalHtmlReport.getAbsolutePath(), diffHtmlReport.getAbsolutePath(), e.getMessage(), e.getCause());
+            logger.error("Jsouphtml error : {} ,{} , {}, {} , {} ,{} ,{}", taskId, versionId, appCode, totalHtmlReport.getAbsolutePath(), diffHtmlReport.getAbsolutePath(), e.getMessage(), e.getCause());
             e.printStackTrace();
         }
         return coverageData;
@@ -87,7 +87,7 @@ public class Jsouphtml {
             coverageData.setMissedClasses(elements.get(11).text().replace(",", ""));
             coverageData.setTotalClasses(elements.get(12).text().replace(",", ""));
 
-            if (versionId != null && versionId!=0) {
+            if (versionId != null && versionId != 0) {
                 coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
             } else {
                 coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
@@ -122,7 +122,7 @@ public class Jsouphtml {
             coverageData.setDiffMissedClasses(diffElements.get(11).text().replace(",", ""));
             coverageData.setDiffTotalClasses(diffElements.get(12).text().replace(",", ""));
 
-            if (versionId != null && versionId!=0) {
+            if (versionId != null && versionId != 0) {
                 coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
             } else {
                 coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
