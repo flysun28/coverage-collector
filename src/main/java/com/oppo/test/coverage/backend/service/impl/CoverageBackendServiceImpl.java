@@ -7,6 +7,7 @@ import com.oppo.test.coverage.backend.service.CoverageBackendService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * @author 80264236
@@ -26,5 +27,10 @@ public class CoverageBackendServiceImpl implements CoverageBackendService {
     @Override
     public Data stopTimerTask(Long taskId, String appCode) {
         return taskBiz.stopTimerTask(taskId, appCode);
+    }
+
+    @Override
+    public BlockingQueue<ApplicationCodeInfo> appInfoQueue() {
+        return taskBiz.getTaskQueue();
     }
 }

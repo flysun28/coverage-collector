@@ -35,5 +35,10 @@ public class CoverageBackendController {
         return coverageBackendService.stopTimerTask(taskId, appCode);
     }
 
+    @GetMapping("/app-info-queue")
+    public String appInfoQueue() {
+        return JSON.toJSONString(coverageBackendService.appInfoQueue().toArray());
+    }
+
 
 }
