@@ -133,6 +133,8 @@ public class FolderFileScanner {
      * @param path 文件夹完整绝对路径
      */
     public static void delAllFile(String path){
+        FileOperateUtil.delAllFile(path);
+        /**
         ArrayList<File> fileArrayList = scanFilesWithRecursion(path,true,false);
         if (CollectionUtils.isEmpty(fileArrayList)){
             return;
@@ -141,7 +143,7 @@ public class FolderFileScanner {
             if (!file.delete()){
                 logger.warn("delete failed : {}",file.getAbsolutePath());
             }
-        }
+        }*/
     }
 
 

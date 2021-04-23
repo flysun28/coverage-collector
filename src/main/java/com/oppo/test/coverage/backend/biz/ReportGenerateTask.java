@@ -217,6 +217,7 @@ public class ReportGenerateTask implements Runnable {
      * @param newTag        : 被测commitId
      */
     private String cloneCodeSource(String urlString, String codePath, String newBranchName, String oldBranchName, String newTag) throws DefinitionException {
+        //localPath  : /home/service/app/coveragebackend/2qpiyetftazy/codeCoverage/pandora
         File localPath = createFile(codePath, taskEntity.getProjectName());
         //如果工程目录已存在，则不需要clone代码，直接返回
         if (!localPath.exists()) {
