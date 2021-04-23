@@ -81,12 +81,17 @@ public class FolderFileScanner {
     public static void fileUpload(String projectName,Long taskId){
         ArrayList<File> uploadFileList = getUploadFileList(projectName, taskId, true);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
+        boolean canDelete = true;
         for (File file : uploadFileList){
             List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());
             String extensionName = splitList.get(splitList.size()-1);
-            OcsUtil.upload(s3,file.getAbsolutePath(),file,"html".equals(extensionName)?"text/html":null);
+            if (!OcsUtil.upload(s3,file.getAbsolutePath(),file,"html".equals(extensionName)?"text/html":null)){
+                canDelete = false;
+            }
         }
-        deleteAllFileAfterUpload(projectName, taskId);
+        if (canDelete){
+            deleteAllFileAfterUpload(projectName, taskId);
+        }
     }
 
     private static void deleteAllFileAfterUpload(String projectName, Long taskId){

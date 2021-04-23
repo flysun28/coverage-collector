@@ -38,8 +38,9 @@ public class OcsUtil {
      * @param key : /path/fileName
      * @param file : 文件
      * */
-    public static void upload(AmazonS3 s3,String key, File file,String contentType) {
-        getS3Result(s3,1,key,null,file,null,contentType);
+    public static boolean upload(AmazonS3 s3,String key, File file,String contentType) {
+        Object result = getS3Result(s3,1,key,null,file,null,contentType);
+        return result != null;
     }
 
     /**
