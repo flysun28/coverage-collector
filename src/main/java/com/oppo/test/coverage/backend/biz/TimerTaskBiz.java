@@ -38,38 +38,39 @@ public class TimerTaskBiz {
 
     /**
      * 添加轮询任务
-     * */
-    public void addTimerTask(ReportGenerateTask task,int timeInterval){
-        ScheduledFuture<?> future = scheduledThreadPoolExecutor.scheduleWithFixedDelay(task,1000,timeInterval,TimeUnit.MILLISECONDS);
-        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(),future);
+     */
+    public void addTimerTask(ReportGenerateTask task, int timeInterval) {
+        ScheduledFuture<?> future = scheduledThreadPoolExecutor.scheduleWithFixedDelay(task, 1000, timeInterval, TimeUnit.MILLISECONDS);
+        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(), future);
         appCodeSet.add(task.getTaskEntity().getAppInfo().getApplicationID());
     }
 
 
-    public void stopTimerTask(Long taskId,ErrorEnum errorEnum,String appCode){
+    public void stopTimerTask(Long taskId, ErrorEnum errorEnum, String appCode) {
 
         //remove
-        timerTaskMap.get(taskId).cancel(false);
-        timerTaskMap.remove(taskId);
-        appCodeSet.remove(appCode);
+        ScheduledFuture<?> task = timerTaskMap.get(taskId);
+        if (task != null) {
+            task.cancel(false);
+            timerTaskMap.remove(taskId);
+            appCodeSet.remove(appCode);
+        }
 
         String url = systemConfig.getSendStopTimerTaskUrl() + taskId;
 
-        if (errorEnum!=null){
+        if (errorEnum != null) {
             url = url + TimerTaskStopReasonEnum.BASE.getReasonMsg() + errorEnum.getErrorMsg();
         }
-
         HttpUtils.sendGet(url);
     }
 
-    public boolean isTimerTask(Long taskId){
+    public boolean isTimerTask(Long taskId) {
         return timerTaskMap.get(taskId) != null;
     }
 
-    public boolean stillTimerTask(String appCode){
+    public boolean stillTimerTask(String appCode) {
         return appCodeSet.contains(appCode);
     }
-
 
 
 }
