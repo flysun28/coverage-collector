@@ -13,14 +13,24 @@ import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.*;
 import java.util.regex.Matcher;
 
 public class ColumbusUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(ColumbusUtils.class);
+
     private static String url = "http://columbus.oppoer.me";
     private static String download_version_url = "http://ocs-cn-south.oppoer.me";
     private static String API_VERSION_INFO = "/openapi/version_info";
@@ -181,7 +191,7 @@ public class ColumbusUtils {
 
     public static void filterIgnorePackage(String[] packageArrayList, File basePath) {
 
-        if (packageArrayList==null || packageArrayList.length<1){
+        if (packageArrayList == null || packageArrayList.length < 1) {
             return;
         }
 
@@ -293,19 +303,19 @@ public class ColumbusUtils {
 
 
     public static String downloadColumbusBuildVersion(String repositoryUrl, String downloadPath) throws Exception {
-        String fileName = "";
+        String fileName;
         File downloadFilePath = null;
-        Map<String, String> headers = new HashMap<>();
-        String nonce = String.valueOf(new Random().nextInt(10000));
-        String curTime = String.valueOf((new Date()).getTime() / 1000L);
+        //Map<String, String> headers = new HashMap<>();
+        //String nonce = String.valueOf(new Random().nextInt(10000));
+        //String curTime = String.valueOf((new Date()).getTime() / 1000L);
         // 设置请求的header
-        headers.put("Nonce", nonce);
-        headers.put("CurTime", curTime);
-        headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        //headers.put("Nonce", nonce);
+        //headers.put("CurTime", curTime);
+        //headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
         fileName = repositoryUrl.substring(repositoryUrl.lastIndexOf("/") + 1);
         String downloadUrl = download_version_url + "/" + repositoryUrl;
-        System.out.println(downloadUrl);
+        logger.info("columbus build version download : {}", downloadUrl);
         try {
             downloadFilePath = new File(downloadPath, "downloadzip");
             if (!downloadFilePath.exists()) {
@@ -323,20 +333,35 @@ public class ColumbusUtils {
 //                            }
 //
 //                        }, headers);
-                HttpUtils.httpDownloadFile(downloadUrl, downloadFilePath.toString(), headers);
+                fileDownload(downloadUrl, downloadFilePath.toString());
             }
 
         } catch (Exception e) {
+            logger.error(" downloadColumbusBuildVersion fail : {} , {}", downloadUrl, e.getMessage());
             e.printStackTrace();
             Thread.sleep(10000);
             try {
-                HttpUtils.httpDownloadFile(downloadUrl, downloadFilePath.toString(), headers);
+                fileDownload(downloadUrl, downloadFilePath.toString());
             } catch (Exception en) {
                 en.printStackTrace();
                 throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
             }
         }
         return downloadFilePath.toString();
+    }
+
+    public static void fileDownload(String url, String filePath) {
+        try {
+            URL httpUrl = new URL(url);
+            ReadableByteChannel rbc = Channels.newChannel(httpUrl.openStream());
+            FileOutputStream fos = new FileOutputStream(filePath);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            fos.close();
+            rbc.close();
+        } catch (IOException e) {
+            logger.error("download file error : {} , {}, {}", url, filePath, e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static String getdeployJarPrefix(String doanloadZipFile) {
@@ -687,6 +712,6 @@ public class ColumbusUtils {
 
 //        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
 //        System.out.println(getSpecialApplicationIDPrex("cdo-store-api"));
-        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo","ci-demo-20210326163909-181",1));
+        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo", "ci-demo-20210326163909-181", 1));
     }
 }

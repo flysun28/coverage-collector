@@ -76,8 +76,8 @@ public class TaskBiz {
 
     private void startTakeQueue() {
         logger.info("start take");
+        ApplicationCodeInfo applicationCodeInfo;
         while (true) {
-            ApplicationCodeInfo applicationCodeInfo;
             try {
                 applicationCodeInfo = taskQueue.take();
                 startCoverageTask(applicationCodeInfo);
