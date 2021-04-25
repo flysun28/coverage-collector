@@ -488,6 +488,12 @@ public class ReportGenerateTask implements Runnable {
         ErrorEnum errorEnum = null;
 
         //重新下载代码,因为过滤条件会删除源码,导致未过滤数据丢失
+        //先删除原目录
+        if(taskEntity.getGitLocalPath().exists()){
+            //删除源代码
+            FileOperateUtil.delAllFile(taskEntity.getGitLocalPath().getPath());
+            taskEntity.getGitLocalPath().delete();
+        }
         String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
                 systemConfig.getCodePath(),
                 taskEntity.getAppInfo().getTestedBranch(),
@@ -520,8 +526,8 @@ public class ReportGenerateTask implements Runnable {
 
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
-            logger.error("获取覆盖率数据失败");
-            timerTaskBiz.stopTimerTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getAppInfo().getApplicationID());
+            logger.error("获取覆盖率数据失败 : {}, {}, {}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getIpList());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),ErrorEnum.JACOCO_EXEC_FAILED,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
             return;
         }
 

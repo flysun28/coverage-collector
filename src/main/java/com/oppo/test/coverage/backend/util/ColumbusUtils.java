@@ -103,7 +103,7 @@ public class ColumbusUtils {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
-            String ret = null;
+            String ret;
             Gson gson = new Gson();
             if (testedEnv == 2) {
                 ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
