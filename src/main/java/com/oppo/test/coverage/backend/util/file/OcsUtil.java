@@ -22,19 +22,19 @@ import java.util.List;
 /**
  * @author 80264236
  * @date 2021/2/18 15:08
- *
+ * <p>
  * 上传到OCS的文件目录
- *
+ * <p>
  * 任务id目录
  * /home/service/app/coverageBackend/${unique}/taskID/${taskId}/ xxxreport or classes or downloadzip
  * 其中classes与downloadZip内是class文件,需压缩上传、下载解压(打包减少请求次数)
  * 各report目录直接上传
- *
+ * <p>
  * 项目路径目录
- *  /home/service/app/coverageBackend/${unique}/projectCovPath/${projectName}/ versionId or branch
+ * /home/service/app/coverageBackend/${unique}/projectCovPath/${projectName}/ versionId or branch
  * 其中versionId仅两个exec文件,其余为report报告
- *
- *
+ * <p>
+ * 处理/task/下的classes 和 downloadzip 目录文件
  */
 public class OcsUtil {
 

@@ -24,24 +24,25 @@ public class FileOperateUtil {
      * @param zipFilePath 压缩的文件完整名称(目录+文件名)
      * @param srcPathName 需要被压缩的文件或文件夹
      */
-    public void compressFiles(String zipFilePath, String srcPathName) {
+    static void compressFiles(String zipFilePath, String srcPathName) {
         File zipFile = new File(zipFilePath);
-        File srcdir = new File(srcPathName);
-        if (!srcdir.exists()) {
-            throw new RuntimeException(srcPathName + "不存在！");
+        File srcDir = new File(srcPathName);
+        if (!srcDir.exists()) {
+            logger.warn("需压缩目录不存在 : {}", srcPathName);
+            return;
         }
         Project prj = new Project();
         FileSet fileSet = new FileSet();
         fileSet.setProject(prj);
-        if (srcdir.isDirectory()) {
+        if (srcDir.isDirectory()) {
             //是目录
-            fileSet.setDir(srcdir);
+            fileSet.setDir(srcDir);
             //包括哪些文件或文件夹 eg:zip.setIncludes("*.java");
-            fileSet.setIncludes("*.csv");
+            //fileSet.setIncludes("*.*");
             //排除哪些文件或文件夹
             //fileSet.setExcludes(...);
         } else {
-            fileSet.setFile(srcdir);
+            fileSet.setFile(srcDir);
         }
         Zip zip = new Zip();
         zip.setProject(prj);
@@ -51,6 +52,7 @@ public class FileOperateUtil {
         zip.addFileset(fileSet);
         zip.execute();
     }
+
     /**
      * 解压文件到指定目录
      *
@@ -59,13 +61,13 @@ public class FileOperateUtil {
      * @author isDelete 是否删除目标文件
      */
     @SuppressWarnings("unchecked")
-    public static void unZipFiles(String zipFilePath, String fileSavePath, boolean isDelete) {
+    static void unZipFiles(String zipFilePath, String fileSavePath, boolean isDelete) {
         boolean isUnZipSuccess = true;
         try {
             (new File(fileSavePath)).mkdirs();
             File f = new File(zipFilePath);
             if ((!f.exists()) && (f.length() <= 0)) {
-                throw new RuntimeException("not find "+zipFilePath+"!");
+                throw new RuntimeException("not find " + zipFilePath + "!");
             }
             //一定要加上编码，之前解压另外一个文件，没有加上编码导致不能解压
             ZipFile zipFile = new ZipFile(f, "gbk");
@@ -108,14 +110,14 @@ public class FileOperateUtil {
             }
             zipFile.close();
         } catch (Exception e) {
-            logger.error("解压文件出现异常: {}, {} - {}", zipFilePath,e.getMessage(),e.getCause());
+            logger.error("解压文件出现异常: {}, {} - {}", zipFilePath, e.getMessage(), e.getCause());
             isUnZipSuccess = false;
 //            fileOperateUtil.WriteStringToFile(fileOperateUtil.logPath, "extract file error: " + zipFilePath);
         }
-         //文件不能删除的原因：
-         //1.看看是否被别的进程引用，手工删除试试(删除不了就是被别的进程占用)
-         //2.file是文件夹 并且不为空，有别的文件夹或文件，
-         //3.极有可能有可能自己前面没有关闭此文件的流(我遇到的情况)
+        //文件不能删除的原因：
+        //1.看看是否被别的进程引用，手工删除试试(删除不了就是被别的进程占用)
+        //2.file是文件夹 并且不为空，有别的文件夹或文件，
+        //3.极有可能有可能自己前面没有关闭此文件的流(我遇到的情况)
         if (isDelete && isUnZipSuccess) {
             boolean flag = new File(zipFilePath).delete();
         }
@@ -123,6 +125,7 @@ public class FileOperateUtil {
 
     /**
      * 删除指定文件夹下所有文件
+     *
      * @param path 文件夹完整绝对路径
      */
     public static void delAllFile(String path) {
@@ -134,7 +137,7 @@ public class FileOperateUtil {
             return;
         }
         String[] tempList = file.list();
-        if (tempList==null){
+        if (tempList == null) {
             return;
         }
         File temp;
@@ -196,6 +199,7 @@ public class FileOperateUtil {
 
     /**
      * 复制整个文件夹内容
+     *
      * @param oldPath String 原文件路径 如c:/fqf
      * @param newPath String 复制后路径 如f:/fqf/ff
      */
@@ -205,10 +209,10 @@ public class FileOperateUtil {
             (new File(newPath)).mkdirs();
             File a = new File(oldPath);
             String[] file = a.list();
-            if (file==null){
+            if (file == null) {
                 return;
             }
-            File temp = null;
+            File temp;
             for (String s : file) {
                 if (oldPath.endsWith(File.separator)) {
                     temp = new File(oldPath + s);
@@ -234,13 +238,15 @@ public class FileOperateUtil {
                 }
             }
         } catch (Exception e) {
-            logger.error("复制整个文件夹内容操作出错 : {}",oldPath);
+            logger.error("复制整个文件夹内容操作出错 : {}", oldPath);
             e.printStackTrace();
         }
 
     }
+
     /**
      * 写内容到指定文件
+     *
      * @param filePath
      * @param content
      */
@@ -259,13 +265,15 @@ public class FileOperateUtil {
     }
 
     //------------------------------------------------------------------------------------------------------
+
     /**
      * 解压tar.gz 文件
-     * @param file 要解压的tar.gz文件对象
+     *
+     * @param file      要解压的tar.gz文件对象
      * @param outputDir 要解压到某个指定的目录下
      * @throws IOException
      */
-    public static void unTarGz(File file,String outputDir) throws IOException{
+    static void unTarGz(File file, String outputDir) throws IOException {
         try (TarInputStream tarIn = new TarInputStream(new GZIPInputStream(
                 new BufferedInputStream(new FileInputStream(file))),
                 1024 * 2)) {
@@ -301,17 +309,18 @@ public class FileOperateUtil {
 
     /**
      * 构建目录
+     *
      * @param outputDir
      * @param subDir
      */
-    public static void createDirectory(String outputDir,String subDir){
+    private static void createDirectory(String outputDir, String subDir) {
         File file = new File(outputDir);
-        if(!(subDir == null || "".equals(subDir.trim()))){
+        if (!(subDir == null || "".equals(subDir.trim()))) {
             //子目录不为空
             file = new File(outputDir + "/" + subDir);
         }
-        if(!file.exists()){
-            if(!file.getParentFile().exists()) {
+        if (!file.exists()) {
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
             file.mkdirs();
@@ -320,6 +329,8 @@ public class FileOperateUtil {
 
     public static void main(String[] args) throws Exception {
 //        unTarGz(new File("D:\\coverreport\\browser-feeds-media-service-1.1.0-20200806-20200806-8075471.tar.gz"),"D:\\coverreport");
-        copyFile("F:\\业务场景\\play31\\log_1618383328444.txt","F:\\业务场景\\test.txt");
+        //copyFile("F:\\业务场景\\play31\\log_1618383328444.txt","F:\\业务场景\\test.txt");
+        //compressFiles("F:\\业务场景\\play\\script\\test.zip","F:\\业务场景\\play\\script");
+        unZipFiles("F:\\业务场景\\play\\script\\test.zip", "F:\\业务场景\\play\\script", true);
     }
 }
