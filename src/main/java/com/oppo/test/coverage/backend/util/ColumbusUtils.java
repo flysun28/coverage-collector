@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 
 public class ColumbusUtils {
@@ -333,7 +334,7 @@ public class ColumbusUtils {
 //                            }
 //
 //                        }, headers);
-                fileDownload(downloadUrl, downloadFilePath.toString());
+                download(downloadUrl, downloadFilePath.toString());
             }
 
         } catch (Exception e) {
@@ -341,7 +342,7 @@ public class ColumbusUtils {
             e.printStackTrace();
             Thread.sleep(10000);
             try {
-                fileDownload(downloadUrl, downloadFilePath.toString());
+                download(downloadUrl, downloadFilePath.toString());
             } catch (Exception en) {
                 en.printStackTrace();
                 throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
@@ -350,18 +351,27 @@ public class ColumbusUtils {
         return downloadFilePath.toString();
     }
 
-    public static void fileDownload(String url, String filePath) {
+    public static void download(String url, String filePath) throws InterruptedException, ExecutionException, TimeoutException {
+        CompletableFuture future = CompletableFuture.supplyAsync(() -> fileDownload(url, filePath));
+        future.get(60, TimeUnit.SECONDS);
+    }
+
+
+    public static boolean fileDownload(String url, String filePath) {
         try {
             URL httpUrl = new URL(url);
             ReadableByteChannel rbc = Channels.newChannel(httpUrl.openStream());
             FileOutputStream fos = new FileOutputStream(filePath);
+
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             fos.close();
             rbc.close();
         } catch (IOException e) {
             logger.error("download file error : {} , {}, {}", url, filePath, e.getMessage());
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public static String getdeployJarPrefix(String doanloadZipFile) {
