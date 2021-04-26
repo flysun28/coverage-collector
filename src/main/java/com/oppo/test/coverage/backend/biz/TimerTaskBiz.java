@@ -1,5 +1,6 @@
 package com.oppo.test.coverage.backend.biz;
 
+import com.google.common.collect.Sets;
 import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
 import com.oppo.test.coverage.backend.model.constant.TimerTaskStopReasonEnum;
 import com.oppo.test.coverage.backend.util.SystemConfig;
@@ -29,7 +30,7 @@ public class TimerTaskBiz {
     @Resource
     ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
-    private Map<Long, ScheduledFuture<?>> timerTaskMap = new HashMap<>(100);
+    private Map<Long, ReportGenerateTask> timerTaskMap = new HashMap<>(100);
 
     private Set<String> appCodeSet = new HashSet<>();
 
@@ -38,7 +39,7 @@ public class TimerTaskBiz {
      */
     public void addTimerTask(ReportGenerateTask task, int timeInterval) {
         ScheduledFuture<?> future = scheduledThreadPoolExecutor.scheduleWithFixedDelay(task, 1000, timeInterval, TimeUnit.MILLISECONDS);
-        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(), future);
+        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(), task);
         appCodeSet.add(task.getTaskEntity().getAppInfo().getApplicationID());
     }
 
@@ -46,9 +47,9 @@ public class TimerTaskBiz {
     public void stopTimerTask(Long taskId, ErrorEnum errorEnum, String appCode) {
 
         //remove
-        ScheduledFuture<?> task = timerTaskMap.get(taskId);
+        ReportGenerateTask task = timerTaskMap.get(taskId);
         if (task != null) {
-            task.cancel(false);
+            scheduledThreadPoolExecutor.remove(task);
             timerTaskMap.remove(taskId);
             appCodeSet.remove(appCode);
         }
@@ -70,7 +71,13 @@ public class TimerTaskBiz {
     }
 
     public Set<Long> getTimerTaskIdList(){
-        return timerTaskMap.keySet();
+        Set<Long> result = Sets.newHashSet();
+        timerTaskMap.forEach((key, value) -> {
+            if (value != null) {
+                result.add(key);
+            }
+        });
+        return result;
     }
 
 
