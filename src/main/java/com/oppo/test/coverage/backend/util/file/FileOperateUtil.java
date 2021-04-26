@@ -38,9 +38,9 @@ public class FileOperateUtil {
             //是目录
             fileSet.setDir(srcDir);
             //包括哪些文件或文件夹 eg:zip.setIncludes("*.java");
-            //fileSet.setIncludes("*.*");
+            fileSet.setIncludes("*.class");
             //排除哪些文件或文件夹
-            //fileSet.setExcludes(...);
+            fileSet.setExcludes("*.zip");
         } else {
             fileSet.setFile(srcDir);
         }
