@@ -324,26 +324,17 @@ public class ColumbusUtils {
             }
             downloadFilePath = new File(downloadFilePath, fileName);
             if (!downloadFilePath.exists()) {
-//                HttpClientUtils.getInstance().download(
-//                        downloadUrl, downloadFilePath.toString(),
-//                        new HttpClientUtils.HttpClientDownLoadProgress() {
-//
-//                            @Override
-//                            public void onProgress(int progress) {
-////                            System.out.println("download progress = " + progress);
-//                            }
-//
-//                        }, headers);
                 download(downloadUrl, downloadFilePath.toString());
             }
 
         } catch (Exception e) {
             logger.error(" downloadColumbusBuildVersion fail : {} , {}", downloadUrl, e.getMessage());
             e.printStackTrace();
-            Thread.sleep(10000);
             try {
+                Thread.sleep(10000);
                 download(downloadUrl, downloadFilePath.toString());
             } catch (Exception en) {
+                logger.error("download retry fail : {} , {}",downloadUrl,e.getMessage());
                 en.printStackTrace();
                 throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
             }

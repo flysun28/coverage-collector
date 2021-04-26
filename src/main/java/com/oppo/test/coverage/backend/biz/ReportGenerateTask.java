@@ -48,13 +48,13 @@ public class ReportGenerateTask implements Runnable {
 
     private ExecutionDataClient executionDataClient;
 
-    private TimerTaskBiz timerTaskBiz;
-
     private TaskBiz taskBiz;
 
     private HttpUtils httpUtils;
 
     private ReportGeneratorTaskEntity taskEntity;
+
+    private boolean isFirstRun = true;
 
     ReportGeneratorTaskEntity getTaskEntity() {
         return taskEntity;
@@ -72,7 +72,6 @@ public class ReportGenerateTask implements Runnable {
     private void initBean() {
         this.systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
         this.executionDataClient = (ExecutionDataClient) SpringContextUtil.getBean("executionDataClient");
-        this.timerTaskBiz = (TimerTaskBiz) SpringContextUtil.getBean("timerTaskBiz");
         this.taskBiz = (TaskBiz) SpringContextUtil.getBean("taskBiz");
         this.httpUtils = (HttpUtils) SpringContextUtil.getBean("httpUtils");
     }
@@ -90,51 +89,27 @@ public class ReportGenerateTask implements Runnable {
         File localPath = new File(systemConfig.getCodePath(), taskEntity.getProjectName());
         taskEntity.setGitLocalPath(localPath);
 
+        // 项目路径 : /home/service/app/coveragebackend/${uniqueId}/projectCovPath/${projectName}
         File projectCovPath = createFile(systemConfig.getProjectCovPath(), taskEntity.getProjectName());
-
         taskEntity.setProjectCovPath(projectCovPath.toString());
-
-        //clone代码到本地
-//        String newBranchName = cloneCodeSource(taskEntity.getAppInfo().getGitPath(), systemConfig.getCodePath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getBasicBranch(), taskEntity.getAppInfo().getTestedCommitId());
-//        taskEntity.getAppInfo().setTestedBranch(newBranchName);
 
         ArrayList<File> fileList = new ArrayList<>();
         //解析工程中各个模块路径 : /home/service/app/coveragebackend/xxxxxxx/codeCoverage,源码路径
         ArrayList<File> applicationNames = GitUtil.getApplicationNames(localPath, fileList);
         //模块绑定source地址
         Map<String, Object> sourceApplicationsMap = getApplicationSourceDirectory(applicationNames);
-
         taskEntity.setSourceApplicationsMap(sourceApplicationsMap);
         taskEntity.initSourceDirectoryList();
 
-        // TODO: 2021/4/13 动态更新ip
-        HashMap<String, Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv());
-        String applicationIpList = applicationHash.get("applicationIP").toString();
-        String repositoryUrl = applicationHash.get("repositoryUrl").toString();
+        createFileDirectory();
+    }
 
-        if (CollectionUtils.isEmpty(taskEntity.getIpList())) {
-            taskEntity.setIpList(Arrays.asList(applicationIpList.split(",")));
-        }
+
+    private void createFileDirectory(){
 
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskId(taskEntity.getAppInfo().getId().toString());
         taskEntity.setCoverageReportPath(coverageReportPath);
-
-        String classPath = null;
-        try {
-            //获取下载buildVersion.zip包
-            String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, coverageReportPath.toString());
-            //解压zip包获取class文件
-            classPath = ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, new File(coverageReportPath, "classes").toString(), taskEntity.getAppInfo().getApplicationID(), sourceApplicationsMap);
-
-            //提前过滤类,兼容某些类classId不一致问题
-            //过滤配置的ignore class,package文件
-            ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
-        } catch (Exception e) {
-            logger.error("classPath 解析流程异常: {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), e.getMessage());
-            e.printStackTrace();
-        }
-        taskEntity.setClassPath(classPath);
 
         //创建未过滤报告存储地址
         taskEntity.setReportAllCovDirectory(createFile(taskEntity.getCoverageReportPath().getPath(), "coveragereport"));
@@ -153,6 +128,31 @@ public class ReportGenerateTask implements Runnable {
         //创建jacocoAll汇总文件
         taskEntity.setAllExecutionDataFile(new File(taskEntity.getCoverageExecutionDataPath().getPath(), "jacocoAll.exec"));
 
+    }
+
+
+    private void classFileInit() throws Exception {
+        // TODO: 2021/4/13 动态更新ip
+        HashMap<String, Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv());
+        String applicationIpList = applicationHash.get("applicationIP").toString();
+        String repositoryUrl = applicationHash.get("repositoryUrl").toString();
+        if (CollectionUtils.isEmpty(taskEntity.getIpList())) {
+            taskEntity.setIpList(Arrays.asList(applicationIpList.split(",")));
+        }
+        String classPath = null;
+        //获取下载buildVersion.zip包
+        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
+        try {
+            //解压zip包获取class文件
+            classPath = ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, new File(taskEntity.getCoverageReportPath(), "classes").toString(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
+            //提前过滤类,兼容某些类classId不一致问题
+            //过滤配置的ignore class,package文件
+            ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
+        } catch (Exception e) {
+            logger.error("classPath 解析流程存在异常: {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), e.getMessage());
+            e.printStackTrace();
+        }
+        taskEntity.setClassPath(classPath);
     }
 
     /**
@@ -484,8 +484,24 @@ public class ReportGenerateTask implements Runnable {
 
     @Override
     public void run() {
+
         //每次轮询起始,注意:异常处理,结果聚合避免重复回调
         ErrorEnum errorEnum = null;
+
+        //第一次执行从哥伦布下载版本包,获取class文件
+        if (isFirstRun){
+            try {
+                classFileInit();
+            } catch (Exception e) {
+                logger.error("class init failed : {} , {} ,{}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getId(),e.getMessage());
+                e.printStackTrace();
+                errorEnum = ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED;
+                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
+                return;
+            }finally {
+                isFirstRun = false;
+            }
+        }
 
         //重新下载代码,因为过滤条件会删除源码,导致未过滤数据丢失
         //先删除原目录
