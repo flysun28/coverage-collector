@@ -3,6 +3,7 @@ package com.oppo.test.coverage.backend.service;
 import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
 import com.oppo.test.coverage.backend.model.entity.Data;
 
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -34,5 +35,11 @@ public interface CoverageBackendService {
      * @return : 阻塞队列
      */
     BlockingQueue<ApplicationCodeInfo> appInfoQueue();
+
+    /**
+     * 获取轮询任务列表
+     * @return : Id集合
+     * */
+    Set<Long> getTimerTaskIdList();
 
 }

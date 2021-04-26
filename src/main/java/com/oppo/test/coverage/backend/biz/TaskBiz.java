@@ -124,6 +124,8 @@ public class TaskBiz {
      */
     public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask) {
 
+        logger.info("end task : {} ,{} ,{} ,{} ,{}" , taskId,errorEnum,projectName,appCode,isBranchTask);
+
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
             folderFileScanner.reportUpload(projectName, taskId);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 
 /**
@@ -38,6 +39,11 @@ public class CoverageBackendController {
     @GetMapping("/app-info-queue")
     public String appInfoQueue() {
         return JSON.toJSONString(coverageBackendService.appInfoQueue().toArray());
+    }
+
+    @GetMapping("/timer-task-set")
+    public Set<Long> getTimerTaskIdList(){
+        return coverageBackendService.getTimerTaskIdList();
     }
 
 

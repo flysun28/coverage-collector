@@ -437,7 +437,7 @@ public class ReportGenerateTask implements Runnable {
             logger.error("版本报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getErrorMsg());
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
         } catch (Exception e) {
-            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
+            logger.error("版本报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
         }
     }

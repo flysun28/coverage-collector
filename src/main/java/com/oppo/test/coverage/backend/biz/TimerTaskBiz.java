@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +67,10 @@ public class TimerTaskBiz {
 
     public boolean stillTimerTask(String appCode) {
         return appCodeSet.contains(appCode);
+    }
+
+    public Set<Long> getTimerTaskIdList(){
+        return timerTaskMap.keySet();
     }
 
 
