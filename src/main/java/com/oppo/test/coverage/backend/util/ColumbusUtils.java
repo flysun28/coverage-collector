@@ -344,7 +344,7 @@ public class ColumbusUtils {
 
     public static void download(String url, String filePath) throws InterruptedException, ExecutionException, TimeoutException {
         CompletableFuture future = CompletableFuture.supplyAsync(() -> fileDownload(url, filePath));
-        future.get(60, TimeUnit.SECONDS);
+        future.get(180, TimeUnit.SECONDS);
     }
 
 

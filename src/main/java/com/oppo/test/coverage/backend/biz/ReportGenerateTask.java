@@ -613,7 +613,7 @@ public class ReportGenerateTask implements Runnable {
             return false;
         }
         //如果存在新版本,删除本次覆盖率数据
-        if (executionDataFile.delete()) {
+        if (!executionDataFile.delete()) {
             logger.warn("新版本覆盖率数据删除失败 : {}", executionDataFile.getPath());
         }
         return true;
