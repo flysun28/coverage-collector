@@ -1,8 +1,13 @@
 package com.oppo.test.coverage.backend.model.response;
 
+import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
+
 public class DefinitionException extends RuntimeException {
-    protected Integer errorCode;
-    protected String errorMsg;
+    private Integer errorCode;
+    private String errorMsg;
+
+    private ErrorEnum errorEnum;
+
     public Integer getErrorCode() {
         return errorCode;
     }
@@ -19,13 +24,18 @@ public class DefinitionException extends RuntimeException {
         this.errorMsg = errorMsg;
     }
 
+    public ErrorEnum getErrorEnum() {
+        return errorEnum;
+    }
+
     public DefinitionException(){
 
     }
 
-    public DefinitionException(Integer errorCode,String errorMsg){
-        this.errorCode = errorCode;
-        this.errorMsg = errorMsg;
+    public DefinitionException(ErrorEnum errorEnum){
+        this.errorEnum = errorEnum;
+        this.errorCode = errorEnum.getErrorCode();
+        this.errorMsg = errorEnum.getErrorMsg();
     }
 
 }

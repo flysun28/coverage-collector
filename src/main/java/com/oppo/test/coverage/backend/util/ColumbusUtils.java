@@ -125,12 +125,12 @@ public class ColumbusUtils {
             }
             if ("".equals(iplist.toString())) {
                 System.out.println("test environment ip is null");
-                throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(), ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.GET_ENVIRONMENT_IP);
             }
             return iplist;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(), ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
+            throw new DefinitionException(ErrorEnum.GET_ENVIRONMENT_IP);
         }
     }
 
@@ -152,7 +152,7 @@ public class ColumbusUtils {
             hashMap.put("buildBranch", buildBranch);
             hashMap.put("repositoryUrl", repositoryUrl);
         } else {
-            throw new DefinitionException(ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorCode(), ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorMsg());
+            throw new DefinitionException(ErrorEnum.GET_DOWNLOAD_PACKAGE_FAILED);
         }
 
         return hashMap;
@@ -336,7 +336,7 @@ public class ColumbusUtils {
             } catch (Exception en) {
                 logger.error("download retry fail : {} , {}",downloadUrl,e.getMessage());
                 en.printStackTrace();
-                throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED);
             }
         }
         return downloadFilePath.toString();

@@ -216,7 +216,7 @@ public class ReportGenerateTask implements Runnable {
      * @param oldBranchName : 基线分支
      * @param newTag        : 被测commitId
      */
-    private String cloneCodeSource(String urlString, String codePath, String newBranchName, String oldBranchName, String newTag) throws DefinitionException {
+    private String cloneCodeSource(String urlString, String newBranchName, String oldBranchName, String newTag) throws DefinitionException {
         //localPath  : /home/service/app/coveragebackend/2qpiyetftazy/codeCoverage/pandora
         logger.info("开始下载开发项目代码到本地 : {} , {}", urlString, taskEntity.getGitLocalPath().getPath());
         GitUtil.cloneRepository(urlString, taskEntity.getGitLocalPath(), newBranchName);
@@ -368,6 +368,7 @@ public class ReportGenerateTask implements Runnable {
             classInfos = CodeDiff.diffTagToTag(taskEntity.getGitLocalPath().getPath(), taskEntity.getAppInfo().getTestedBranch(), taskEntity.getAppInfo().getTestedCommitId(), taskEntity.getAppInfo().getBasicCommitId());
         } catch (IllegalArgumentException e) {
             logger.error("exception in createDiff : {}, {}", taskEntity.getGitLocalPath(), e.getMessage());
+            e.printStackTrace();
             throw e;
         }
         if (classInfos != null && classInfos.size() > 0) {
@@ -422,7 +423,7 @@ public class ReportGenerateTask implements Runnable {
 
             //合并taskID目录代码覆盖率
             if (!filterExecFile.exists()) {
-                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(), ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED);
             }
             loadExecutionData(filterExecFile);
             //生成差异化覆盖率
@@ -460,7 +461,7 @@ public class ReportGenerateTask implements Runnable {
 
             //合并taskID目录代码覆盖率
             if (!filterExecFile.exists()) {
-                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED.getErrorCode(), ErrorEnum.JACOCO_EXEC_FAILED.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED);
             }
             loadExecutionData(filterExecFile);
 
@@ -495,7 +496,7 @@ public class ReportGenerateTask implements Runnable {
             } catch (Exception e) {
                 logger.error("class init failed : {} , {} ,{}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getId(),e.getMessage());
                 e.printStackTrace();
-                errorEnum = ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED;
+                errorEnum = ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED;
                 taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
                 return;
             }finally {
@@ -510,12 +511,19 @@ public class ReportGenerateTask implements Runnable {
             FileOperateUtil.delAllFile(taskEntity.getGitLocalPath().getPath());
             taskEntity.getGitLocalPath().delete();
         }
-        String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
-                systemConfig.getCodePath(),
-                taskEntity.getAppInfo().getTestedBranch(),
-                taskEntity.getAppInfo().getBasicBranch(),
-                taskEntity.getAppInfo().getTestedCommitId());
-        taskEntity.getAppInfo().setTestedBranch(newBranch);
+        try {
+            String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
+                    taskEntity.getAppInfo().getTestedBranch(),
+                    taskEntity.getAppInfo().getBasicBranch(),
+                    taskEntity.getAppInfo().getTestedCommitId());
+            taskEntity.getAppInfo().setTestedBranch(newBranch);
+        } catch (DefinitionException e) {
+            errorEnum = e.getErrorEnum();
+            e.printStackTrace();
+            logger.error("下载源码失败 : {} , {} , {}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getGitPath());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
+            return;
+        }
 
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
