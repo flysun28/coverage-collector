@@ -10,6 +10,7 @@ import com.oppo.test.coverage.backend.model.response.AppVersionResponse;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import com.oppo.test.coverage.backend.util.file.FileExtractUtil;
 import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
+import com.oppo.test.coverage.backend.util.http.HttpRequestUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
@@ -328,13 +329,13 @@ public class ColumbusUtils {
             }
 
         } catch (Exception e) {
-            logger.error(" downloadColumbusBuildVersion fail : {} , {}", downloadUrl, e.getMessage());
+            logger.error(" downloadColumbusBuildVersion fail , retrying: {} , {}", downloadUrl, e.getMessage());
             e.printStackTrace();
             try {
                 Thread.sleep(10000);
                 download(downloadUrl, downloadFilePath.toString());
             } catch (Exception en) {
-                logger.error("download retry fail : {} , {}",downloadUrl,e.getMessage());
+                logger.error("download retry fail : {} , {}", downloadUrl, e.getMessage());
                 en.printStackTrace();
                 throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED);
             }
@@ -343,8 +344,10 @@ public class ColumbusUtils {
     }
 
     public static void download(String url, String filePath) throws InterruptedException, ExecutionException, TimeoutException {
-        CompletableFuture future = CompletableFuture.supplyAsync(() -> fileDownload(url, filePath));
-        future.get(180, TimeUnit.SECONDS);
+        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> HttpRequestUtil.downloadBuildVersionFile(url, filePath));
+        if (!future.get(180, TimeUnit.SECONDS)) {
+            throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED);
+        }
     }
 
 
