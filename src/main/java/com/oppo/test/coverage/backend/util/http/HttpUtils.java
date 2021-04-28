@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +33,6 @@ public class HttpUtils {
     SystemConfig systemConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
-
-    private static final String USER_AGENT = "Mozilla/5.0";
 
     public static String sendGet(String url){
         System.out.println("\nSending 'GET' request to URL : " + url);
@@ -126,6 +125,12 @@ public class HttpUtils {
                 httpGet.addHeader(key, headMap.get(key));
             }
         }
+    }
+
+    public static void main(String[] args) {
+        HttpClientUtil httpClientUtil = new HttpClientUtil();
+
+        sendGet("http://atms-test.itest.wanyol.com/api/codeCoverage/execution/stop/timerTask?id=747&msg="+URLEncoder.encode("获取测试环境覆盖率文件失败,请检查jacoco服务是否正确部署"));
     }
 
 }

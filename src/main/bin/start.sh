@@ -42,10 +42,12 @@ fi
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
+  mkdir -p logs/server-backup
 fi
 if [ ! -d "tmp" ]; then
     mkdir tmp
 fi
+mv logs/server.log logs/server-backup/server-`date +%s`.log
 
 
 ## set java path

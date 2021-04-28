@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class TimerTaskBiz {
         RunnableScheduledFuture<?> task = timerTaskMap.get(taskId);
         if (task != null) {
             logger.info("stop timer task : {} , {} ,{}", taskId, appCode, errorEnum);
+            task.cancel(false);
             scheduledThreadPoolExecutor.remove(task);
             timerTaskMap.remove(taskId);
             appCodeSet.remove(appCode);
@@ -61,7 +63,7 @@ public class TimerTaskBiz {
         String url = systemConfig.getSendStopTimerTaskUrl() + taskId;
 
         if (errorEnum != null) {
-            url = url + TimerTaskStopReasonEnum.BASE.getReasonMsg() + errorEnum.getErrorMsg();
+            url = url + TimerTaskStopReasonEnum.BASE.getReasonMsg() + URLEncoder.encode(errorEnum.getErrorMsg());
         }
         HttpUtils.sendGet(url);
     }
