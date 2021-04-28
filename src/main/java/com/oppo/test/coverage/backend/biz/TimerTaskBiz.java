@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
-import java.util.concurrent.ScheduledFuture;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +33,7 @@ public class TimerTaskBiz {
     @Resource
     ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
-    private Map<Long, ReportGenerateTask> timerTaskMap = new HashMap<>(100);
+    private Map<Long, RunnableScheduledFuture<?>> timerTaskMap = new HashMap<>(100);
 
     private Set<String> appCodeSet = new HashSet<>();
 
@@ -38,8 +41,8 @@ public class TimerTaskBiz {
      * 添加轮询任务
      */
     public void addTimerTask(ReportGenerateTask task, int timeInterval) {
-        ScheduledFuture<?> future = scheduledThreadPoolExecutor.scheduleWithFixedDelay(task, 1000, timeInterval, TimeUnit.MILLISECONDS);
-        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(), task);
+        RunnableScheduledFuture<?> future = (RunnableScheduledFuture<?>) scheduledThreadPoolExecutor.scheduleWithFixedDelay(task, 1000, timeInterval, TimeUnit.MILLISECONDS);
+        timerTaskMap.put(task.getTaskEntity().getAppInfo().getId(), future);
         appCodeSet.add(task.getTaskEntity().getAppInfo().getApplicationID());
     }
 
@@ -47,8 +50,9 @@ public class TimerTaskBiz {
     public void stopTimerTask(Long taskId, ErrorEnum errorEnum, String appCode) {
 
         //remove
-        ReportGenerateTask task = timerTaskMap.get(taskId);
+        RunnableScheduledFuture<?> task = timerTaskMap.get(taskId);
         if (task != null) {
+            logger.info("stop timer task : {} , {} ,{}", taskId, appCode, errorEnum);
             scheduledThreadPoolExecutor.remove(task);
             timerTaskMap.remove(taskId);
             appCodeSet.remove(appCode);
@@ -70,7 +74,7 @@ public class TimerTaskBiz {
         return appCodeSet.contains(appCode);
     }
 
-    public Set<Long> getTimerTaskIdList(){
+    public Set<Long> getTimerTaskIdList() {
         Set<Long> result = Sets.newHashSet();
         timerTaskMap.forEach((key, value) -> {
             if (value != null) {

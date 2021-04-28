@@ -134,13 +134,7 @@ public class TaskBiz {
             return;
         }
 
-        //轮询中止,异常停止
-        if (timerTaskBiz.isTimerTask(taskId) && errorEnum != null) {
-            logger.error("timer task error and stop : {} , {}", taskId, errorEnum.getErrorMsg());
-            timerTaskBiz.stopTimerTask(taskId, errorEnum, appCode);
-        }
-
-        //非轮询,正常停止
+        //非轮询,正常停止(在轮询前处理,否则停止轮询后又成为了非轮询任务)
         if (!timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
             logger.info("finished task : {}", taskId);
         }
@@ -151,6 +145,12 @@ public class TaskBiz {
             httpUtils.sendErrorMsg(taskId, errorEnum.getErrorMsg());
         }
 
+        //轮询中止,异常停止
+        if (timerTaskBiz.isTimerTask(taskId) && errorEnum != null) {
+            logger.error("timer task error and stop : {} , {}", taskId, errorEnum.getErrorMsg());
+            timerTaskBiz.stopTimerTask(taskId, errorEnum, appCode);
+        }
+
         //上传分支覆盖率的报告
         if (isBranchTask == 1) {
             folderFileScanner.branchReportUpload(projectName, taskId);
@@ -158,7 +158,7 @@ public class TaskBiz {
 
         //轮询任务结束,并且没有该应用的轮询任务存在了
         if (!timerTaskBiz.stillTimerTask(appCode) && removeAppCodeAndCheckAppFinish(appCode)) {
-            logger.info("task finished and file upload : {} , {}", taskId, appCode);
+            logger.info("app task finished and file upload : {} , {}", taskId, appCode);
             folderFileScanner.fileUpload(projectName, taskId);
         }
     }
