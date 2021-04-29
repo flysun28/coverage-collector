@@ -105,7 +105,7 @@ public class ReportGenerateTask implements Runnable {
     }
 
 
-    private void createFileDirectory(){
+    private void createFileDirectory() {
 
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskId(taskEntity.getAppInfo().getId().toString());
@@ -490,23 +490,24 @@ public class ReportGenerateTask implements Runnable {
         ErrorEnum errorEnum = null;
 
         //第一次执行从哥伦布下载版本包,获取class文件
-        if (isFirstRun){
+        if (isFirstRun) {
             try {
+                Thread.currentThread().setName(Thread.currentThread().getName() + "-" + taskEntity.getAppInfo().getId());
                 classFileInit();
             } catch (Exception e) {
-                logger.error("class init failed : {} , {} ,{}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getId(),e.getMessage());
+                logger.error("class init failed : {} , {} ,{}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getId(), e.getMessage());
                 e.printStackTrace();
                 errorEnum = ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED;
-                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
+                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
                 return;
-            }finally {
+            } finally {
                 isFirstRun = false;
             }
         }
 
         //重新下载代码,因为过滤条件会删除源码,导致未过滤数据丢失
         //先删除原目录
-        if(taskEntity.getGitLocalPath().exists()){
+        if (taskEntity.getGitLocalPath().exists()) {
             //删除源代码
             FileOperateUtil.delAllFile(taskEntity.getGitLocalPath().getPath());
             taskEntity.getGitLocalPath().delete();
@@ -520,8 +521,8 @@ public class ReportGenerateTask implements Runnable {
         } catch (DefinitionException e) {
             errorEnum = e.getErrorEnum();
             e.printStackTrace();
-            logger.error("下载源码失败 : {} , {} , {}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getGitPath());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),errorEnum,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
+            logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
             return;
         }
 
@@ -550,8 +551,8 @@ public class ReportGenerateTask implements Runnable {
 
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
-            logger.error("获取覆盖率数据失败 : {}, {}, {}",taskEntity.getAppInfo().getId(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getIpList());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),ErrorEnum.JACOCO_EXEC_FAILED,taskEntity.getProjectName(),taskEntity.getAppInfo().getApplicationID(),taskEntity.getAppInfo().getIsBranchTask());
+            logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
             return;
         }
 
