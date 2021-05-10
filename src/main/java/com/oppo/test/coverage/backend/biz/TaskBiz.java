@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -122,7 +123,7 @@ public class TaskBiz {
     /**
      * 结束覆盖率任务执行
      */
-    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask) {
+    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask , File downloadZipFile) {
 
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
@@ -161,6 +162,8 @@ public class TaskBiz {
             logger.info("app task finished and file upload : {} , {}", taskId, appCode);
             folderFileScanner.fileUpload(projectName, taskId);
         }
+
+        downloadZipFile.delete();
     }
 
     public Data stopTimerTask(Long taskId, String appCode) {

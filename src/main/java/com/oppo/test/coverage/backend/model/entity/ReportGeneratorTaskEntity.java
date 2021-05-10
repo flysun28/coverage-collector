@@ -129,6 +129,8 @@ public class ReportGeneratorTaskEntity {
      */
     private File allExecutionDataFile;
 
+    private File downloadZipFile;
+
     //-------------------------------------------- file end----------------------------------------------------
 
 
@@ -357,5 +359,13 @@ public class ReportGeneratorTaskEntity {
 
     public void setAllExecutionDataFile(File allExecutionDataFile) {
         this.allExecutionDataFile = allExecutionDataFile;
+    }
+
+    public File getDownloadZipFile() {
+        return downloadZipFile;
+    }
+
+    public void setDownloadZipFile(File downloadZipFile) {
+        this.downloadZipFile = downloadZipFile;
     }
 }

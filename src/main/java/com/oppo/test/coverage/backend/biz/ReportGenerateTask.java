@@ -139,20 +139,10 @@ public class ReportGenerateTask implements Runnable {
         if (CollectionUtils.isEmpty(taskEntity.getIpList())) {
             taskEntity.setIpList(Arrays.asList(applicationIpList.split(",")));
         }
-        String classPath = null;
         //获取下载buildVersion.zip包
-        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
-        try {
-            //解压zip包获取class文件
-            classPath = ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, new File(taskEntity.getCoverageReportPath(), "classes").toString(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
-            //提前过滤类,兼容某些类classId不一致问题
-            //过滤配置的ignore class,package文件
-            ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
-        } catch (Exception e) {
-            logger.error("classPath 解析流程存在异常: {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), e.getMessage());
-            e.printStackTrace();
-        }
-        taskEntity.setClassPath(classPath);
+        String downloadZipFile = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
+        taskEntity.setDownloadZipFile(new File(downloadZipFile));
+        taskEntity.setClassPath(taskEntity.getCoverageReportPath() + "classes");
     }
 
     /**
@@ -382,7 +372,7 @@ public class ReportGenerateTask implements Runnable {
         String[] ignorePackageList = taskEntity.getIgnorePackageList();
         String[] containPackagesList = taskEntity.getContainPackageList();
 
-        //过滤配置的ignore class,package文件
+        //过滤配置的ignore class,package文件,删除的是class文件
         ColumbusUtils.filterIgnorePackage(ignorePackageList, new File(classPath));
 
         //只统计指定包
@@ -489,43 +479,60 @@ public class ReportGenerateTask implements Runnable {
         //每次轮询起始,注意:异常处理,结果聚合避免重复回调
         ErrorEnum errorEnum = null;
 
-        //第一次执行从哥伦布下载版本包,获取class文件
+        //第一次执行从哥伦布下载版本包
         if (isFirstRun) {
             try {
-                //String currentThreadName = Thread.currentThread().getName();
-                //String[] threadNameArray = currentThreadName.split("-taskId-");
-                //Thread.currentThread().setName(threadNameArray[0] + "-taskId-" +  taskEntity.getAppInfo().getId());
+                String currentThreadName = Thread.currentThread().getName();
+                String[] threadNameArray = currentThreadName.split("-taskId-");
+                Thread.currentThread().setName(threadNameArray[0] + "-taskId-" +  taskEntity.getAppInfo().getId());
                 classFileInit();
             } catch (Exception e) {
                 logger.error("class init failed : {} , {} ,{}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getId(), e.getMessage());
                 e.printStackTrace();
                 errorEnum = ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED;
-                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),
+                        errorEnum,
+                        taskEntity.getProjectName(),
+                        taskEntity.getAppInfo().getApplicationID(),
+                        taskEntity.getAppInfo().getIsBranchTask(),
+                        taskEntity.getDownloadZipFile());
                 return;
             } finally {
                 isFirstRun = false;
             }
+            //代码下载
+            //先删除原目录
+            if (taskEntity.getGitLocalPath().exists()) {
+                //删除源代码
+                FileOperateUtil.delAllFile(taskEntity.getGitLocalPath().getPath());
+                taskEntity.getGitLocalPath().delete();
+            }
+            try {
+                String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
+                        taskEntity.getAppInfo().getTestedBranch(),
+                        taskEntity.getAppInfo().getBasicBranch(),
+                        taskEntity.getAppInfo().getTestedCommitId());
+                taskEntity.getAppInfo().setTestedBranch(newBranch);
+            } catch (DefinitionException e) {
+                errorEnum = e.getErrorEnum();
+                e.printStackTrace();
+                logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
+                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getDownloadZipFile());
+                return;
+            }
         }
 
-        //重新下载代码,因为过滤条件会删除源码,导致未过滤数据丢失
-        //先删除原目录
-        if (taskEntity.getGitLocalPath().exists()) {
-            //删除源代码
-            FileOperateUtil.delAllFile(taskEntity.getGitLocalPath().getPath());
-            taskEntity.getGitLocalPath().delete();
-        }
+        //解压获取class文件,每次执行重新覆盖
         try {
-            String newBranch = cloneCodeSource(taskEntity.getAppInfo().getGitPath(),
-                    taskEntity.getAppInfo().getTestedBranch(),
-                    taskEntity.getAppInfo().getBasicBranch(),
-                    taskEntity.getAppInfo().getTestedCommitId());
-            taskEntity.getAppInfo().setTestedBranch(newBranch);
-        } catch (DefinitionException e) {
-            errorEnum = e.getErrorEnum();
+            String classPath = taskEntity.getCoverageReportPath() + "/classes";
+            //解压zip包获取class文件
+            ColumbusUtils.extractColumbusBuildVersionClasses(taskEntity.getDownloadZipFile().toString(), classPath, taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
+            //提前过滤类,兼容某些类classId不一致问题
+            //过滤配置的ignore class,package文件
+            ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
+        } catch (Exception e) {
+            logger.error("classPath 解析流程存在异常: {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), e.getMessage());
             e.printStackTrace();
-            logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
-            return;
         }
 
 
@@ -554,7 +561,7 @@ public class ReportGenerateTask implements Runnable {
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
             logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getDownloadZipFile());
             return;
         }
 
@@ -587,7 +594,7 @@ public class ReportGenerateTask implements Runnable {
             startVersionCoverageTask();
         }
 
-        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getDownloadZipFile());
     }
 
     /**
