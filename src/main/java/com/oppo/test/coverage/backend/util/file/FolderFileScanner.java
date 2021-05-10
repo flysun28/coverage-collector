@@ -29,6 +29,7 @@ public class FolderFileScanner {
 
     private static final List<String> REPORT_EXTENSION_NAME = Lists.newArrayList("html", "css", "js", "gif");
     private static final List<String> FILE_UPLOAD_EXTENSION_NAME = Lists.newArrayList("html", "css", "js", "gif", "exec", "zip");
+    private static final List<String> FILE_DOWNLOAD_EXTENSION_NAME = Lists.newArrayList("zip","class","exec");
 
     /**
      * 执行前下载对应文件
@@ -51,11 +52,22 @@ public class FolderFileScanner {
         String taskPath = systemConfig.getReportBasePath() + "/taskID/" + taskId;
         String branchPath = systemConfig.getReportBasePath() + "/projectCovPath/" + projectName;
 
-        List<String> result = new ArrayList<>(OcsUtil.query(taskPath));
-        result.addAll(OcsUtil.query(branchPath));
+        List<String> result = new ArrayList<>();
+        checkFileNeedDownload(result, OcsUtil.query(taskPath));
+        checkFileNeedDownload(result, OcsUtil.query(branchPath));
         return result;
     }
 
+    private void checkFileNeedDownload(List<String> result , List<String> fileList){
+        for (String fileName : fileList){
+            //筛选指定的需要上传的文件
+            List<String> splitList = Splitter.on(".").trimResults().splitToList(fileName);
+            String extensionName = splitList.get(splitList.size() - 1);
+            if (FILE_DOWNLOAD_EXTENSION_NAME.contains(extensionName)){
+                result.add(fileName);
+            }
+        }
+    }
 
     /**
      * 轮询过程上传报告文件
