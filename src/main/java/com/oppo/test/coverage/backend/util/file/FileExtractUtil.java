@@ -71,7 +71,7 @@ public class FileExtractUtil {
                     String buildversionprex = fileName.substring(applicationID.length());
                     for (Object o : applicationsrclist) {
                         String dependentjar = o.toString() + buildversionprex;
-                        fileOperateUtil.copyFile(baseclassFile + File.separator + "lib" + File.separator + dependentjar, classFile + File.separator + dependentjar);
+                        FileOperateUtil.copyFile(baseclassFile + File.separator + "lib" + File.separator + dependentjar, classFile + File.separator + dependentjar);
                     }
                     FileOperateUtil.delAllFile(baseclassFile + File.separator + "lib");
                 }

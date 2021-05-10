@@ -142,7 +142,7 @@ public class ReportGenerateTask implements Runnable {
         //获取下载buildVersion.zip包
         String downloadZipFile = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
         taskEntity.setDownloadZipFile(new File(downloadZipFile));
-        taskEntity.setClassPath(taskEntity.getCoverageReportPath() + "classes");
+        taskEntity.setClassPath(taskEntity.getCoverageReportPath() + "/classes");
     }
 
     /**
