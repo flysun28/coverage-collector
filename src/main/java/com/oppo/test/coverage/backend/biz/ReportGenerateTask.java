@@ -492,7 +492,9 @@ public class ReportGenerateTask implements Runnable {
         //第一次执行从哥伦布下载版本包,获取class文件
         if (isFirstRun) {
             try {
-                Thread.currentThread().setName(Thread.currentThread().getName() + "-" + taskEntity.getAppInfo().getId());
+                String currentThreadName = Thread.currentThread().getName();
+                String[] threadNameArray = currentThreadName.split("-taskId-");
+                Thread.currentThread().setName("-taskId-" + threadNameArray[0] + taskEntity.getAppInfo().getId());
                 classFileInit();
             } catch (Exception e) {
                 logger.error("class init failed : {} , {} ,{}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getId(), e.getMessage());
