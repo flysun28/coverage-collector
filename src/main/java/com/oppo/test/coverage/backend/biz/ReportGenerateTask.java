@@ -494,7 +494,7 @@ public class ReportGenerateTask implements Runnable {
             try {
                 String currentThreadName = Thread.currentThread().getName();
                 String[] threadNameArray = currentThreadName.split("-taskId-");
-                Thread.currentThread().setName("-taskId-" + threadNameArray[0] + taskEntity.getAppInfo().getId());
+                Thread.currentThread().setName(threadNameArray[0] + "-taskId-" +  taskEntity.getAppInfo().getId());
                 classFileInit();
             } catch (Exception e) {
                 logger.error("class init failed : {} , {} ,{}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getId(), e.getMessage());
