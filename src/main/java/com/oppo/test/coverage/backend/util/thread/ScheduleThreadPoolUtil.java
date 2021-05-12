@@ -31,7 +31,7 @@ public class ScheduleThreadPoolUtil {
     @Bean(name = "scheduledThreadPoolExecutor")
     public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor(){
         return new ScheduledThreadPoolExecutor(20,
-                new ThreadFactoryBuilder().setNameFormat("Timer-task-thread").build(),
+                new ThreadFactoryBuilder().setNameFormat("Timer-task-thread-%d").build(),
                 new MyIgnorePolicy());
     }
 

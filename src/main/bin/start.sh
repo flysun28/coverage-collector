@@ -42,10 +42,12 @@ fi
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
+  mkdir -p logs/server-backup
 fi
 if [ ! -d "tmp" ]; then
     mkdir tmp
 fi
+mv logs/server.log logs/server-backup/server-`date +%s`.log
 
 
 ## set java path
@@ -54,9 +56,9 @@ if [ -z "$JAVA" ] ; then
 fi
 str=`file -L $JAVA | grep 64-bit`
 if [ -n "$str" ]; then
-	JAVA_OPTS="-server -Xms256M -Xmx1024M -XX:NewSize=64M -XX:MaxNewSize=256M -XX:MetaspaceSize=64M -XX:MaxMetaspaceSize=512M -XX:PermSize=56M -XX:MaxPermSize=56M -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc.log"
+	JAVA_OPTS="-server -Xms2048M -Xmx8192M -XX:NewSize=512M -XX:MaxNewSize=2048M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=4096M -XX:PermSize=448M -XX:MaxPermSize=448M -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc.log"
 else
-	JAVA_OPTS="-server -Xms1024m -Xmx1024m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:MaxPermSize=128m "
+	JAVA_OPTS="-server -Xms8192m -Xmx8192m -XX:NewSize=2048m -XX:MaxNewSize=2048m -XX:MaxPermSize=1024m "
 fi
 
 JAVA_OPTS=" -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 $JAVA_OPTS"

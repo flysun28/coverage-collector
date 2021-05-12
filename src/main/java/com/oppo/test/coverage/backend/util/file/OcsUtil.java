@@ -22,6 +22,19 @@ import java.util.List;
 /**
  * @author 80264236
  * @date 2021/2/18 15:08
+ * <p>
+ * 上传到OCS的文件目录
+ * <p>
+ * 任务id目录
+ * /home/service/app/coverageBackend/${unique}/taskID/${taskId}/ xxxreport or classes or downloadzip
+ * 其中classes与downloadZip内是class文件,需压缩上传、下载解压(打包减少请求次数)
+ * 各report目录直接上传
+ * <p>
+ * 项目路径目录
+ * /home/service/app/coverageBackend/${unique}/projectCovPath/${projectName}/ versionId or branch
+ * 其中versionId仅两个exec文件,其余为report报告
+ * <p>
+ * 处理/task/下的classes 和 downloadzip 目录文件
  */
 public class OcsUtil {
 
@@ -35,52 +48,56 @@ public class OcsUtil {
 
     /**
      * 上传文件
-     * @param key : /path/fileName
+     *
+     * @param key  : /path/fileName
      * @param file : 文件
-     * */
-    public static void upload(AmazonS3 s3,String key, File file,String contentType) {
-        getS3Result(s3,1,key,null,file,null,contentType);
+     */
+    public static boolean upload(AmazonS3 s3, String key, File file, String contentType) {
+        return getS3Result(s3, 1, key, null, file, null, contentType) != null;
     }
 
     /**
      * 删除文件
+     *
      * @param key : /path/fileName
-     * */
+     */
     public static void delete(String key) {
         AmazonS3 s3 = getAmazonS3();
         //Delete objects from a bucket
-        getS3Result(s3,2,key,null,null,null,null);
+        getS3Result(s3, 2, key, null, null, null, null);
     }
 
     /**
      * 下载文件
-     * @param key : /path/fileName
+     *
+     * @param key      : /path/fileName
      * @param filePath : /path/fileName
-     * */
-    public static void download(AmazonS3 s3,String key, String filePath){
+     */
+    public static void download(AmazonS3 s3, String key, String filePath) {
         //get object from a bucket
-        getS3Result(s3,3,key,filePath,null,null,null);
+        getS3Result(s3, 3, key, filePath, null, null, null);
     }
 
     /**
      * 查看文件
+     *
      * @param prefix : 指定目录
      * @return : 文件列表
-     * */
-    public static List<String> query(String prefix){
+     */
+    public static List<String> query(String prefix) {
         AmazonS3 s3 = getAmazonS3();
 
         ListObjectsV2Request req = new ListObjectsV2Request()
                 .withBucketName(bucketName)
                 .withPrefix(prefix)
                 .withMaxKeys(1000);
-        ListObjectsV2Result res = null;
+        ListObjectsV2Result res;
         List<String> result = new LinkedList<>();
 
         do {
-            res = (ListObjectsV2Result) getS3Result(s3,4,null,null,null,req,null);
+            res = (ListObjectsV2Result) getS3Result(s3, 4, null, null, null, req, null);
 
-            if (res==null){
+            if (res == null) {
                 logger.error("query res is null !");
                 return result;
             }
@@ -98,52 +115,50 @@ public class OcsUtil {
     }
 
 
-    private static Object getS3Result(AmazonS3 s3,int type,
+    private static Object getS3Result(AmazonS3 s3, int type,
                                       String key, String filePath,
                                       File file,
                                       ListObjectsV2Request req,
-                                      String contentType){
-        Object result = null;
+                                      String contentType) {
         try {
-            switch (type){
+            switch (type) {
                 case 1:
-                    PutObjectRequest request = new PutObjectRequest(bucketName, key,file);
-                    if (!StringUtils.isEmpty(contentType)){
+                    PutObjectRequest request = new PutObjectRequest(bucketName, key, file);
+                    if (!StringUtils.isEmpty(contentType)) {
                         ObjectMetadata metadata = new ObjectMetadata();
                         metadata.setContentType("text/html");
                         request.setMetadata(metadata);
                     }
-                    result = s3.putObject(new PutObjectRequest(bucketName, key,file));
-                    break;
+                    return s3.putObject(new PutObjectRequest(bucketName, key, file));
                 case 2:
-                    s3.deleteObject(bucketName,key);
-                    break;
+                    //特殊:delete 没有返回值
+                    s3.deleteObject(bucketName, key);
+                    return null;
                 case 3:
-                    result = s3.getObject(new GetObjectRequest(bucketName, key),new File(filePath));
-                    break;
+                    return s3.getObject(new GetObjectRequest(bucketName, key), new File(filePath));
                 case 4:
-                    result = s3.listObjectsV2(req);
-                    break;
+                    return s3.listObjectsV2(req);
                 default:
+                    return null;
             }
-        }catch (AmazonS3Exception exception){
+        } catch (AmazonS3Exception exception) {
             int statusCode = (exception.getStatusCode());
-            if (statusCode/100 == 4){
-                logger.error("type : {} , an error occurred in client : {}",type,exception.getErrorResponseXml());
-            }else if (statusCode/100 == 5){
-                logger.error("type : {} , an error occurred in ocs : {}",type,exception.getErrorResponseXml());
+            if (statusCode / 100 == 4) {
+                logger.error("type : {} , an error occurred in client : {}", type, exception.getErrorResponseXml());
+            } else if (statusCode / 100 == 5) {
+                logger.error("type : {} , an error occurred in ocs : {}", type, exception.getErrorResponseXml());
             }
-        }catch (SdkClientException exception) {
+        } catch (SdkClientException exception) {
             logger.error("Caught an AmazonClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with S3, "
                     + "such as not being able to access the network.");
-            logger.error("Type is {} , Error Message: {}",type,exception.getMessage());
+            logger.error("Type is {} , Error Message: {}", type, exception.getMessage());
         }
-        return result;
+        return null;
     }
 
 
-    public static AmazonS3 getAmazonS3(){
+    public static AmazonS3 getAmazonS3() {
         AWSCredentials awsCredentials = new BasicAWSCredentials(accessKeyId, accessKeySecret);
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         ClientConfiguration clientConfiguration = new ClientConfiguration()
@@ -162,16 +177,15 @@ public class OcsUtil {
         System.out.println(fileList);
         AmazonS3 s3 = getAmazonS3();
 
-        for (String fileKey : fileList){
+        for (String fileKey : fileList) {
 
             String[] tempString = fileKey.split("/");
-            String fileName = tempString[tempString.length-1];
+            String fileName = tempString[tempString.length - 1];
 
-            download(s3,fileKey,"F:\\业务场景\\play27\\"+fileName);
+            download(s3, fileKey, "F:\\业务场景\\play27\\" + fileName);
 //            delete(fileKey);
         }
     }
-
 
 
 }

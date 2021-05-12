@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 
 /**
@@ -25,8 +26,7 @@ public class CoverageBackendController {
     @PostMapping("/startcoveragetask")
     public Data startCoverageTask(@RequestBody ApplicationCodeInfo applicationCodeInfo) {
         logger.info("receive task : {}", JSON.toJSONString(applicationCodeInfo));
-        coverageBackendService.startCoverageTask(applicationCodeInfo);
-        return new Data();
+        return coverageBackendService.startCoverageTask(applicationCodeInfo);
     }
 
     @GetMapping("/stopcoveragetask")
@@ -34,6 +34,16 @@ public class CoverageBackendController {
                               @RequestParam(name = "appCode") String appCode) {
         logger.info("user stop timer task : {} , {}", taskId, appCode);
         return coverageBackendService.stopTimerTask(taskId, appCode);
+    }
+
+    @GetMapping("/app-info-queue")
+    public String appInfoQueue() {
+        return JSON.toJSONString(coverageBackendService.appInfoQueue().toArray());
+    }
+
+    @GetMapping("/timer-task-set")
+    public Set<Long> getTimerTaskIdList(){
+        return coverageBackendService.getTimerTaskIdList();
     }
 
 

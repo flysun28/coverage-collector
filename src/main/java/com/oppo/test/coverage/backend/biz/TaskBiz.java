@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -41,6 +43,9 @@ public class TaskBiz {
 
     private static final int MAX_CASE_SIZE = 100;
 
+    /**
+     * 任务缓冲队列,逐个任务启动
+     */
     private BlockingQueue<ApplicationCodeInfo> taskQueue = new LinkedBlockingQueue<>(MAX_CASE_SIZE);
 
     private ThreadPoolExecutor pool = new ThreadPoolExecutor(1,
@@ -50,6 +55,7 @@ public class TaskBiz {
             new LinkedBlockingQueue<Runnable>(512),
             new ThreadFactoryBuilder().setNameFormat("task-biz-%d").build());
 
+    private Map<String, Integer> appCodeCount = new ConcurrentHashMap<>(256);
 
     public Data addTaskToQueue(ApplicationCodeInfo applicationCodeInfo) {
 
@@ -71,8 +77,8 @@ public class TaskBiz {
 
     private void startTakeQueue() {
         logger.info("start take");
+        ApplicationCodeInfo applicationCodeInfo;
         while (true) {
-            ApplicationCodeInfo applicationCodeInfo;
             try {
                 applicationCodeInfo = taskQueue.take();
                 startCoverageTask(applicationCodeInfo);
@@ -101,6 +107,8 @@ public class TaskBiz {
 
         ReportGenerateTask task = new ReportGenerateTask(applicationCodeInfo);
 
+        addAppCodeCountMap(applicationCodeInfo.getApplicationID());
+
         if (applicationCodeInfo.getIsTimerTask() == 1) {
             timerTaskBiz.addTimerTask(task, applicationCodeInfo.getTimerInterval());
             logger.info("add timer task : {}", applicationCodeInfo.getId());
@@ -115,22 +123,19 @@ public class TaskBiz {
     /**
      * 结束覆盖率任务执行
      */
-    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName) {
+    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask , File downloadZipFile) {
 
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
             folderFileScanner.reportUpload(projectName, taskId);
+            if (isBranchTask == 1) {
+                folderFileScanner.branchReportUpload(projectName, taskId);
+            }
             logger.info("timer task continue : {}", taskId);
             return;
         }
 
-        //轮询中止,异常停止
-        if (timerTaskBiz.isTimerTask(taskId) && errorEnum != null) {
-            logger.error("timer task error and stop : {} , {}", taskId, errorEnum.getErrorMsg());
-            timerTaskBiz.stopTimerTask(taskId, errorEnum);
-        }
-
-        //非轮询,正常停止
+        //非轮询,正常停止(在轮询前处理,否则停止轮询后又成为了非轮询任务)
         if (!timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
             logger.info("finished task : {}", taskId);
         }
@@ -141,14 +146,53 @@ public class TaskBiz {
             httpUtils.sendErrorMsg(taskId, errorEnum.getErrorMsg());
         }
 
-        folderFileScanner.fileUpload(projectName, taskId);
+        //轮询中止,异常停止
+        if (timerTaskBiz.isTimerTask(taskId) && errorEnum != null) {
+            logger.error("timer task error and stop : {} , {}", taskId, errorEnum.getErrorMsg());
+            timerTaskBiz.stopTimerTask(taskId, errorEnum, appCode);
+        }
+
+        //上传分支覆盖率的报告
+        if (isBranchTask == 1) {
+            folderFileScanner.branchReportUpload(projectName, taskId);
+        }
+
+        //轮询任务结束,并且没有该应用的轮询任务存在了
+        if (!timerTaskBiz.stillTimerTask(appCode) && removeAppCodeAndCheckAppFinish(appCode)) {
+            logger.info("app task finished and file upload : {} , {}", taskId, appCode);
+            folderFileScanner.fileUpload(projectName, taskId);
+        }
+
+        downloadZipFile.delete();
     }
 
     public Data stopTimerTask(Long taskId, String appCode) {
-        timerTaskBiz.stopTimerTask(taskId, null);
+        timerTaskBiz.stopTimerTask(taskId, null, appCode);
         folderFileScanner.fileUpload(appCode, taskId);
         return new Data(200, "success");
     }
 
 
+    private void addAppCodeCountMap(String appCode) {
+        if (appCodeCount.get(appCode) == null) {
+            appCodeCount.put(appCode, 1);
+            return;
+        }
+        appCodeCount.put(appCode, appCodeCount.get(appCode) + 1);
+    }
+
+    private synchronized boolean removeAppCodeAndCheckAppFinish(String appCode) {
+
+        if (appCodeCount.get(appCode) <= 1) {
+            appCodeCount.remove(appCode);
+            return true;
+        }
+
+        appCodeCount.put(appCode, appCodeCount.get(appCode) - 1);
+        return false;
+    }
+
+    public BlockingQueue<ApplicationCodeInfo> getTaskQueue() {
+        return taskQueue;
+    }
 }

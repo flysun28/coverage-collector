@@ -1,5 +1,6 @@
 package com.oppo.test.coverage.backend.util;
 
+import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -24,8 +25,8 @@ public class GitUtil {
             Git.cloneRepository().setURI(url).setDirectory(localPath).setBranch(newBranchName).call();
             logger.info("代码下载完成 : {}",url);
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("自动clone代码失败 : {}",url);
+            throw new DefinitionException(ErrorEnum.CLONE_FAILED);
         }
     }
 

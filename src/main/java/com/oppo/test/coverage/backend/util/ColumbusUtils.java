@@ -10,17 +10,29 @@ import com.oppo.test.coverage.backend.model.response.AppVersionResponse;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import com.oppo.test.coverage.backend.util.file.FileExtractUtil;
 import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
+import com.oppo.test.coverage.backend.util.http.HttpRequestUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 
 public class ColumbusUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(ColumbusUtils.class);
+
     private static String url = "http://columbus.oppoer.me";
     private static String download_version_url = "http://ocs-cn-south.oppoer.me";
     private static String API_VERSION_INFO = "/openapi/version_info";
@@ -63,8 +75,10 @@ public class ColumbusUtils {
      * @param params
      * @return
      */
-    public static String sortParams(Map<String, String> params) {
-        if (params == null || params.isEmpty()) throw new RuntimeException("params can't be empty");
+    private static String sortParams(Map<String, String> params) {
+        if (params == null || params.isEmpty()) {
+            throw new RuntimeException("params can't be empty");
+        }
         List<String> keyList = new ArrayList<>(params.keySet());
         Collections.sort(keyList);
         StringBuilder sb = new StringBuilder();
@@ -75,7 +89,7 @@ public class ColumbusUtils {
         return sb.toString().substring(0, sb.length() - 1);
     }
 
-    public static String HMAC_MD5_encode(String appsecret, String message) throws Exception {
+    private static String HMAC_MD5_encode(String appsecret, String message) throws Exception {
         SecretKeySpec keySpec = new SecretKeySpec(
                 appsecret.getBytes(),
                 "HmacMD5"
@@ -87,11 +101,11 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    public static StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
+    private static StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer iplist = new StringBuffer();
         try {
-            String ret = null;
+            String ret;
             Gson gson = new Gson();
             if (testedEnv == 2) {
                 ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
@@ -110,14 +124,14 @@ public class ColumbusUtils {
                 iplist.append(",");
 
             }
-            if (iplist.toString().equals("")) {
+            if ("".equals(iplist.toString())) {
                 System.out.println("test environment ip is null");
-                throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(), ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.GET_ENVIRONMENT_IP);
             }
             return iplist;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DefinitionException(ErrorEnum.GET_EVIRONMENTIP.getErrorCode(), ErrorEnum.GET_EVIRONMENTIP.getErrorMsg());
+            throw new DefinitionException(ErrorEnum.GET_ENVIRONMENT_IP);
         }
     }
 
@@ -129,10 +143,6 @@ public class ColumbusUtils {
         String repositoryUrl;
         ArrayList<AppVersionResponse> appVersionList = ColumbusUtils.getBuildVersionList(appId, buildVersionName);
         if (appVersionList.size() > 0) {
-            for (AppVersionResponse appVersionResponse : appVersionList) {
-                System.out.println(appVersionResponse.getSourceBranch());
-                System.out.println(appVersionResponse.getCommitId());
-            }
             commitID = appVersionList.get(0).getCommitId();
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
@@ -143,7 +153,7 @@ public class ColumbusUtils {
             hashMap.put("buildBranch", buildBranch);
             hashMap.put("repositoryUrl", repositoryUrl);
         } else {
-            throw new DefinitionException(ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorCode(), ErrorEnum.GETDOWNLOADPACKAGE_RAILED.getErrorMsg());
+            throw new DefinitionException(ErrorEnum.GET_DOWNLOAD_PACKAGE_FAILED);
         }
 
         return hashMap;
@@ -182,6 +192,11 @@ public class ColumbusUtils {
     }
 
     public static void filterIgnorePackage(String[] packageArrayList, File basePath) {
+
+        if (packageArrayList == null || packageArrayList.length < 1) {
+            return;
+        }
+
         for (String packageName : packageArrayList) {
             if (packageName.contains(".")) {
                 String packageNameLastStr = packageName.substring(packageName.lastIndexOf(".") + 1);
@@ -290,19 +305,19 @@ public class ColumbusUtils {
 
 
     public static String downloadColumbusBuildVersion(String repositoryUrl, String downloadPath) throws Exception {
-        String fileName = "";
+        String fileName;
         File downloadFilePath = null;
-        Map<String, String> headers = new HashMap<>();
-        String nonce = String.valueOf(new Random().nextInt(10000));
-        String curTime = String.valueOf((new Date()).getTime() / 1000L);
+        //Map<String, String> headers = new HashMap<>();
+        //String nonce = String.valueOf(new Random().nextInt(10000));
+        //String curTime = String.valueOf((new Date()).getTime() / 1000L);
         // 设置请求的header
-        headers.put("Nonce", nonce);
-        headers.put("CurTime", curTime);
-        headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        //headers.put("Nonce", nonce);
+        //headers.put("CurTime", curTime);
+        //headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
         fileName = repositoryUrl.substring(repositoryUrl.lastIndexOf("/") + 1);
         String downloadUrl = download_version_url + "/" + repositoryUrl;
-        System.out.println(downloadUrl);
+        logger.info("columbus build version download : {}", downloadUrl);
         try {
             downloadFilePath = new File(downloadPath, "downloadzip");
             if (!downloadFilePath.exists()) {
@@ -310,30 +325,47 @@ public class ColumbusUtils {
             }
             downloadFilePath = new File(downloadFilePath, fileName);
             if (!downloadFilePath.exists()) {
-//                HttpClientUtils.getInstance().download(
-//                        downloadUrl, downloadFilePath.toString(),
-//                        new HttpClientUtils.HttpClientDownLoadProgress() {
-//
-//                            @Override
-//                            public void onProgress(int progress) {
-////                            System.out.println("download progress = " + progress);
-//                            }
-//
-//                        }, headers);
-                HttpUtils.httpDownloadFile(downloadUrl, downloadFilePath.toString(), headers);
+                download(downloadUrl, downloadFilePath.toString());
             }
 
         } catch (Exception e) {
+            logger.error(" downloadColumbusBuildVersion fail , retrying: {} , {}", downloadUrl, e.getMessage());
             e.printStackTrace();
-            Thread.sleep(10000);
             try {
-                HttpUtils.httpDownloadFile(downloadUrl, downloadFilePath.toString(), headers);
+                Thread.sleep(10000);
+                download(downloadUrl, downloadFilePath.toString());
             } catch (Exception en) {
+                logger.error("download retry fail : {} , {}", downloadUrl, e.getMessage());
                 en.printStackTrace();
-                throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorCode(), ErrorEnum.DOWNLOAD_BUILDVERSION_FAILED.getErrorMsg());
+                throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED);
             }
         }
         return downloadFilePath.toString();
+    }
+
+    public static void download(String url, String filePath) throws InterruptedException, ExecutionException, TimeoutException {
+        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> HttpRequestUtil.downloadBuildVersionFile(url, filePath));
+        if (!future.get(180, TimeUnit.SECONDS)) {
+            throw new DefinitionException(ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED);
+        }
+    }
+
+
+    public static boolean fileDownload(String url, String filePath) {
+        try {
+            URL httpUrl = new URL(url);
+            ReadableByteChannel rbc = Channels.newChannel(httpUrl.openStream());
+            FileOutputStream fos = new FileOutputStream(filePath);
+
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            fos.close();
+            rbc.close();
+        } catch (IOException e) {
+            logger.error("download file error : {} , {}, {}", url, filePath, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public static String getdeployJarPrefix(String doanloadZipFile) {
@@ -443,7 +475,7 @@ public class ColumbusUtils {
         for (File packagePath : packageList) {
             fileOperateUtil.copyFolder(packagePath.toString(), targetPath);
         }
-        zipFile.delete();
+        //zipFile.delete();
         FileOperateUtil.delAllFile(resultPath);
 
         return targetPath;
@@ -684,6 +716,6 @@ public class ColumbusUtils {
 
 //        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
 //        System.out.println(getSpecialApplicationIDPrex("cdo-store-api"));
-        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo","ci-demo-20210326163909-181",1));
+        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo", "ci-demo-20210326163909-181", 1));
     }
 }
