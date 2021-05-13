@@ -1,67 +1,75 @@
-#!/bin/bash
+#!/bin/sh
 
-# 加载平台下发的环境变量
-source $(dirname $0)/../../env.sh
+env_path=$(dirname $0)/../../env.sh
+if [ -f $env_path ]; then
+    source $env_path
+fi
+
 source $(dirname $0)/agent.sh
-SKYWALKING_AGENT=-javaagent:/home/service/tools/apache-skywalking-apm-bin/agent/skywalking-agent.jar
+
 case "`uname`" in
     Linux)
-                bin_abs_path=$(readlink -f $(dirname $0))
-                ;;
-        *)
-                bin_abs_path=`cd $(dirname $0); pwd`
-                ;;
+        bin_abs_path=$(readlink -f $(dirname $0))
+        ;;
+    *)
+        bin_abs_path=`cd $(dirname $0); pwd`
+        ;;
 esac
-
-# 服务的工作目录
 base=${bin_abs_path}/..
-# appName 是实例id，由平台注入 主要是用于判断实例是否已经在运行中
+
+#这里的实例id会在env.sh中注入
 appName=${instance_id}
 
 get_pid() {
-	STR=$1
-	JAVA_PID=`ps -C java -f --width 1000|grep "$STR"|grep -v grep|awk '{print $2}'`
+        STR=$1
+        PID=$2
+        if [ ! -z "$PID" ]; then
+                JAVA_PID=`ps -C java -f --width 1000|grep "$STR"|grep "$PID"|grep -v grep|awk '{print $2}'`
+            else
+                JAVA_PID=`ps -C java -f --width 1000|grep "$STR"|grep -v grep|awk '{print $2}'`
+        fi
     echo $JAVA_PID;
 }
-# 判断应用是否已经启动，是的话退出脚本不再执行启动
-pid=`get_pid "appName=${appName}"`
 
+pid=`get_pid "appName=${appName}"`
 if [ ! "$pid" = "" ]; then
-        echo "${appName} is already running. exit"
-        exit -1;
+    echo "${appName} is already running. exit"
+    exit -1;
 fi
 
-# java.net.preferIPv4Stack  如果系统中开启了IPV6协议，网络编程经常会获取到IPv6的地址，有了这个配置优先拿IPv4的地址
-# -DappName=${appName} 不要漏了  主要是用于判断实例是否已经在运行中
-# JAVA_OPTS="${JAVA_OPTS} -server -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8"
-
-# jvm 相关参数
-MEM_OPTS="-Xms${Xms:-8g} -Xmx${Xmx:-8g} -Xss512k -XX:NewRatio=2"
-
-# 发生内存溢出的时候把内存快照dump下来
-OOM_OPTS="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$base/../${appName}.hprof "
-
-# -Xloggc 建议加上，把gc日志落盘可以分析  具体使用哪些gc收集器暂时不做推荐，业务方可按自身需求来
-GC_OPTS="-XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:./logs/gc.log"
-
-# 启动程序 把标准输出和标准错误都输出到 logs/server.log 文件
-# -classpath 'conf:lib/*:.'  这里将conf和lib及. 都加入了classpath  如果使用了配置中心，一般是将配置拉到 $base下的conf文件夹
-# TODO  -classpath 参数啥时候需要的说明    和java 打包相关
+if [ "$1" = "debug" ]; then
+    JAVA_DEBUG_OPT="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=n"
+fi
 
 cd $base
-
-if [ ! -d "tmp" ]; then
-  mkdir tmp
-fi
-
 if [ ! -d "logs" ]; then
   mkdir logs
+  mkdir -p logs/server-backup
+fi
+if [ ! -d "tmp" ]; then
+    mkdir tmp
+fi
+mv logs/server.log logs/server-backup/server-`date +%s`.log
+
+
+## set java path
+if [ -z "$JAVA" ] ; then
+  JAVA=$(which java)
+fi
+str=`file -L $JAVA | grep 64-bit`
+if [ -n "$str" ]; then
+	JAVA_OPTS="-server -Xms2048M -Xmx8192M -XX:NewSize=512M -XX:MaxNewSize=2048M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=4096M -XX:PermSize=448M -XX:MaxPermSize=448M -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc.log"
+else
+	JAVA_OPTS="-server -Xms8192m -Xmx8192m -XX:NewSize=2048m -XX:MaxNewSize=2048m -XX:MaxPermSize=1024m "
 fi
 
-java $traceAgent $JACOCO_OPTS $JAVA_OPTS $MEM_OPTS $OOM_OPTS $GC_OPTS -classpath 'conf:lib/*:.' -jar lib/jacococoverage-0.0.1-SNAPSHOT.jar 1>>logs/server.log 2>&1 &
+JAVA_OPTS=" -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 $JAVA_OPTS"
+if [ -n "$HEY_JVM_OPTIONS" ]; then
+    java $REMOTE_JAVA_DEBUG_OPTS -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 $HEY_JVM_OPTIONS $JAVA_DEBUG_OPT -classpath 'conf:lib/*:.'  com.oppo.test.coverage.backend.CoverageBackendApplication 1>>logs/server.log 2>&1 &
+    else java $traceAgent $JAVA_OPTS $JAVA_DEBUG_OPT -classpath 'conf:lib/*:.'  com.oppo.test.coverage.backend.CoverageBackendApplication 1>>logs/server.log 2>&1 &
+fi
 
-# 把进程号写入 server.pid文件里面  此文件主要是云平台在使用
-echo $! > $base/bin/server.pid
+echo $! > $base/server.pid
 
-# 回显启动的进程号
-echo OK!`cat $base/bin/server.pid`
+echo OK!`cat $base/server.pid`
+
