@@ -4,7 +4,7 @@
 source $(dirname $0)/../../env.sh
 source $(dirname $0)/agent.sh
 SKYWALKING_AGENT=-javaagent:/home/service/tools/apache-skywalking-apm-bin/agent/skywalking-agent.jar
-TRACEAGENT1=/home/service/tools/traceagent.jar=/home/service/tools/trace-agent.properties
+TRACEAGENT1=-javaagent:/home/service/tools/traceagent.jar=/home/service/tools/trace-agent.properties
 case "`uname`" in
     Linux)
                 bin_abs_path=$(readlink -f $(dirname $0))
