@@ -369,7 +369,7 @@ public class ColumbusUtils {
 
     public static String getDeployJarPrefix(String doanloadZipFile) {
         String applicationpre = "";
-        if (doanloadZipFile.contains("bin")) {
+        if (doanloadZipFile.contains("bin") && !doanloadZipFile.contains("bingo")) {
             applicationpre = doanloadZipFile.substring(0, doanloadZipFile.indexOf("bin") - 1);
             return applicationpre;
         }
