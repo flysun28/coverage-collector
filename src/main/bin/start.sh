@@ -2,7 +2,7 @@
 
 # 加载平台下发的环境变量
 source $(dirname $0)/../../env.sh
-source $(dirname $0)/agent.sh
+#source $(dirname $0)/agent.sh
 SKYWALKING_AGENT=-javaagent:/home/service/tools/apache-skywalking-apm-bin/agent/skywalking-agent.jar
 TRACEAGENT1=-javaagent:/home/service/tools/framework-trace-agent-6.2.0-SNAPSHOT.jar=/home/service/tools/trace-agent.properties
 case "`uname`" in
