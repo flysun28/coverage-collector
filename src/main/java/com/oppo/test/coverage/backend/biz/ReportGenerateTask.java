@@ -310,7 +310,6 @@ public class ReportGenerateTask implements Runnable {
             default:
                 throw new IllegalStateException("Unexpected value: " + resultType);
         }
-
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
@@ -526,10 +525,11 @@ public class ReportGenerateTask implements Runnable {
         try {
             String classPath = taskEntity.getCoverageReportPath() + "/classes";
             //解压zip包获取class文件
-            ColumbusUtils.extractColumbusBuildVersionClasses(taskEntity.getDownloadZipFile().toString(), classPath, taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
+            classPath = ColumbusUtils.extractColumbusBuildVersionClasses(taskEntity.getDownloadZipFile().toString(), classPath, taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
             //提前过滤类,兼容某些类classId不一致问题
             //过滤配置的ignore class,package文件
             ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), new File(classPath));
+            taskEntity.setClassPath(classPath);
         } catch (Exception e) {
             logger.error("classPath 解析流程存在异常: {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), e.getMessage());
             e.printStackTrace();

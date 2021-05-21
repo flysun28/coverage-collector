@@ -367,19 +367,19 @@ public class ColumbusUtils {
         return true;
     }
 
-    public static String getDeployJarPrefix(String doanloadZipFile) {
+    public static String getDeployJarPrefix(String downloadZipFile) {
         String applicationpre = "";
-        if (doanloadZipFile.contains("bin") && !doanloadZipFile.contains("bingo")) {
-            applicationpre = doanloadZipFile.substring(0, doanloadZipFile.indexOf("bin") - 1);
+        if (downloadZipFile.contains("bin") && !downloadZipFile.contains("bingo")) {
+            applicationpre = downloadZipFile.substring(0, downloadZipFile.indexOf("bin") - 1);
             return applicationpre;
         }
-        int numBeginIndex = getNumIndexFormStr(doanloadZipFile);
+        int numBeginIndex = getNumIndexFormStr(downloadZipFile);
         if (numBeginIndex == -1) {
-            applicationpre = doanloadZipFile;
+            applicationpre = downloadZipFile;
         } else {
-            applicationpre = doanloadZipFile.substring(0, numBeginIndex);
+            applicationpre = downloadZipFile.substring(0, numBeginIndex);
             if ("-".equals(applicationpre.substring(numBeginIndex - 1, numBeginIndex)) || "_".equals(applicationpre.substring(numBeginIndex - 1, numBeginIndex))) {
-                applicationpre = doanloadZipFile.substring(0, numBeginIndex - 1);
+                applicationpre = downloadZipFile.substring(0, numBeginIndex - 1);
             }
         }
 
