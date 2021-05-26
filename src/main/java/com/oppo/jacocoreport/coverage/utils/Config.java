@@ -7,6 +7,10 @@ public class Config {
     public final static String BaseUrl = "http://atms-test.itest.wanyol.com/";
     public final static String ReportBasePath = "/home/service/app/coveragebackend/2qpiyetftazy";
     public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/2qpiyetftazy/";
+//    //线上环境
+//    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
+//    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";
+//    public final static String BaseUrl = "http://atms.itest.wanyol.com/";
     //线上环境
 //    public final static String ReportBasePath = "/home/service/app/coveragebackend/fawoknqovs7v";
 //    public final static String ReportBaseUrl = "http://s3v2.ocs-cn-south.wanyol.com/code-coverage//home/service/app/coveragebackend/fawoknqovs7v/";

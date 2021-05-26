@@ -7,12 +7,16 @@ import com.oppo.jacocoreport.coverage.entity.Data;
 import com.oppo.jacocoreport.coverage.utils.Config;
 import com.oppo.jacocoreport.coverage.utils.FolderFileScanner;
 import com.oppo.jacocoreport.coverage.utils.HttpUtils;
+import com.oppo.trace.threadpool.TraceExecutorService;
+import com.oppo.trace.threadpool.TraceThreadPoolExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @RestController
 public class CoverageController {
@@ -24,6 +28,7 @@ public class CoverageController {
         super();
     }
     //@GetMapping("/startcoveragetask")
+
     @PostMapping("/startcoveragetask")
     public Data startcoveragetask(@RequestBody ApplicationCodeInfo applicationCodeInfo){
         return dealWith(applicationCodeInfo);
@@ -66,6 +71,8 @@ public class CoverageController {
         if(StringUtils.isEmpty(applicationCodeInfo.getBasicBranch())){
             return new Data().setCode(-6).setData("basicBranch can not be blank");
         }
+//        ThreadPoolExecutor threadPool=new TraceThreadPoolExecutor(asyncTask);
+//        ExecutorService threadPool=new TraceExecutorService(asyncTask);
         //异步执行覆盖率任务
         asyncTask.startCoverageTask(applicationCodeInfo);
          return new Data().setCode(200).setData("success");
