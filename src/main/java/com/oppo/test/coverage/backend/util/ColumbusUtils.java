@@ -508,7 +508,7 @@ public class ColumbusUtils {
         //针对特殊应用名处理
         String specialApplicationIDPrex = getSpecialApplicationIDPrefix(applicationID);
         if (!StringUtils.isEmptyOrNull(specialApplicationIDPrex)) {
-            jarPackageSet2 = new HashSet<File>();
+            jarPackageSet2 = new HashSet<>();
             jarPackageSet2 = getApplicationJarList(new File(localpath), specialApplicationIDPrex, jarPackageSet2);
         }
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
@@ -591,6 +591,8 @@ public class ColumbusUtils {
         } else if (applicationID.startsWith("cdo-")) {
             String[] appCodeArray = applicationID.split("-");
             return appCodeArray[0] + "-" + appCodeArray[1];
+        } else if ("browser-feeds-channel-service-global".equals(applicationID)){
+            return "browser-multi-region-plugin";
         }
         return "";
     }
