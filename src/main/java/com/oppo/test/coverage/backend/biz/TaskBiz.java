@@ -123,7 +123,7 @@ public class TaskBiz {
     /**
      * 结束覆盖率任务执行
      */
-    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask , File downloadZipFile) {
+    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask) {
 
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
@@ -163,7 +163,6 @@ public class TaskBiz {
             folderFileScanner.fileUpload(projectName, taskId);
         }
 
-        downloadZipFile.delete();
     }
 
     public Data stopTimerTask(Long taskId, String appCode) {
