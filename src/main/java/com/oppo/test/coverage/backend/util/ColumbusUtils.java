@@ -16,6 +16,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -467,6 +468,9 @@ public class ColumbusUtils {
         }
         if (deployJarPrefix.contains("tomcat")) {
             packageList = getComPackagePath(new File(resultPath), packageList);
+        }
+        if (CollectionUtils.isEmpty(packageList)){
+            logger.error(" packageList is null ! It may cause non classes :{} , {} , {}",downloadZipFile,targetPath,applicationID);
         }
 
         for (File packagePath : packageList) {
