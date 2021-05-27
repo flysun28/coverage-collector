@@ -593,6 +593,8 @@ public class ColumbusUtils {
             return appCodeArray[0] + "-" + appCodeArray[1];
         } else if ("browser-feeds-channel-service-global".equals(applicationID)){
             return "browser-multi-region-plugin";
+        } else if ("browser-ucenter-service-global".equals(applicationID)){
+            return "browser-multi-region-plugin";
         }
         return "";
     }
