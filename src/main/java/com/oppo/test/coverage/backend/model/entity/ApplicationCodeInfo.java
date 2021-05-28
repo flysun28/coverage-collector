@@ -237,5 +237,10 @@ public class ApplicationCodeInfo {
         return !this.testedCommitId.equals(this.basicCommitId);
     }
 
+    public void trimString(){
+        this.testedCommitId = testedCommitId.trim();
+        this.basicCommitId = basicCommitId.trim();
+    }
+
 
 }

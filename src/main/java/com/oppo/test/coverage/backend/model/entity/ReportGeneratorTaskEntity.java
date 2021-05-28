@@ -137,7 +137,7 @@ public class ReportGeneratorTaskEntity {
     public ReportGeneratorTaskEntity(ApplicationCodeInfo codeInfo) {
 
         SystemConfig systemConfig = (SystemConfig) SpringContextUtil.getBean("systemConfig");
-
+        codeInfo.trimString();
         this.appInfo = codeInfo;
 
         this.projectName = GitUtil.getLastUrlString(appInfo.getGitPath());
