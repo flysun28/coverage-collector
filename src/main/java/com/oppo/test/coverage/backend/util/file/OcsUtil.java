@@ -16,6 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -169,6 +174,28 @@ public class OcsUtil {
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region))
                 .build();
     }
+
+    /**
+     * 预签名上传文件
+     * */
+    public static boolean preSignObjectPut(String url , File file) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("PUT");
+        OutputStream out = connection.getOutputStream();
+        FileInputStream in = new FileInputStream(file.toString());
+        byte[] temp = new byte[1024];
+        int length;
+        while ((length = in.read(temp)) != -1){
+            out.write(temp,0,length);
+        }
+        in.close();
+        out.close();
+        connection.getResponseCode();
+        connection.disconnect();
+        return true;
+    }
+
 
     public static void main(String[] args) {
 

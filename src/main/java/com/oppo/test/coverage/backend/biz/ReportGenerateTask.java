@@ -8,6 +8,8 @@ import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
 import com.oppo.test.coverage.backend.model.entity.CoverageData;
 import com.oppo.test.coverage.backend.model.entity.Data;
 import com.oppo.test.coverage.backend.model.entity.ReportGeneratorTaskEntity;
+import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
+import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import com.oppo.test.coverage.backend.util.ColumbusUtils;
 import com.oppo.test.coverage.backend.util.GitUtil;
@@ -54,6 +56,8 @@ public class ReportGenerateTask implements Runnable {
 
     private ReportGeneratorTaskEntity taskEntity;
 
+    private CortBiz cortBiz;
+
     private boolean isFirstRun = true;
 
     ReportGeneratorTaskEntity getTaskEntity() {
@@ -74,6 +78,7 @@ public class ReportGenerateTask implements Runnable {
         this.executionDataClient = (ExecutionDataClient) SpringContextUtil.getBean("executionDataClient");
         this.taskBiz = (TaskBiz) SpringContextUtil.getBean("taskBiz");
         this.httpUtils = (HttpUtils) SpringContextUtil.getBean("httpUtils");
+        this.cortBiz = (CortBiz) SpringContextUtil.getBean("cortBiz");
     }
 
 
@@ -531,6 +536,14 @@ public class ReportGenerateTask implements Runnable {
             return;
         }
 
+        // TODO: 2021/5/25 把classes文件打包上传到cort
+        String cortClassZip = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId() + "/classes/cort-"+taskEntity.getAppInfo().getId()+".zip";
+        String cortClassDirectory = systemConfig.getReportBasePath() + "/taskID/classes";
+        if (cortBiz.uploadCompilesFile(FileOperateUtil.compressFiles(cortClassZip,cortClassDirectory))){
+            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
+            compilesFileRequest.setFileUrl(systemConfig.getCortOcsDownloadUrl()+systemConfig.getCortOcsCompiledFileBucket()+"/cort-"+taskEntity.getAppInfo().getId()+".zip");
+            cortBiz.postCompilesFile(compilesFileRequest);
+        }
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
         int failCount = 0;
@@ -564,6 +577,15 @@ public class ReportGenerateTask implements Runnable {
         //合并目录下的各机器数据
         if (!mergeExecData()) {
             logger.error("合并覆盖率数据失败: {},{}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId());
+        }
+
+        // TODO: 2021/5/25 将jacocoAll 上传到cort的OCS
+        File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(),"jacocoAll-"+taskEntity.getAppInfo().getId()+".ec");
+        FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(),cortEcFile.toString());
+        if (cortBiz.uploadEcFile(cortEcFile)){
+            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo());
+            ecUploadRequest.setFileKey(cortEcFile.getName());
+            cortBiz.postEcFile(ecUploadRequest);
         }
 
         //生成各目录下的数据报告,分别上传回调
@@ -711,5 +733,11 @@ public class ReportGenerateTask implements Runnable {
 
     }
 
+    private class 这是个类{
+        private int 这是个变量;
+        public void 这是个方法(int 这是个参数){
+            这是个变量 = 这是个参数 * 10;
+        }
+    }
 
 }

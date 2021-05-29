@@ -60,6 +60,12 @@ public class SystemConfig {
     @Value("${atms.transfer.url}")
     public String transferUrl;
 
+    @Value("${cort.ocs.downloadUrl}")
+    private String cortOcsDownloadUrl;
+
+    @Value("${cort.ocs.compiledFileBucket}")
+    private String cortOcsCompiledFileBucket;
+
     public String getPort() {
         return port;
     }
@@ -122,5 +128,13 @@ public class SystemConfig {
 
     public String getTransferUrl() {
         return transferUrl;
+    }
+
+    public String getCortOcsDownloadUrl() {
+        return cortOcsDownloadUrl;
+    }
+
+    public String getCortOcsCompiledFileBucket() {
+        return cortOcsCompiledFileBucket;
     }
 }

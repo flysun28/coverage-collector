@@ -34,6 +34,11 @@ public class ApplicationCodeInfo {
      * */
     private Integer testedEnv;
 
+    /**
+     * cort场景id
+     * */
+    private Long sceneId;
+
     public int getTimerInterval() {
         return timerInterval;
     }
@@ -185,6 +190,10 @@ public class ApplicationCodeInfo {
         this.testedEnv = testedEnv;
     }
 
+    public Long getSceneId() {
+        return sceneId;
+    }
+
     @Override
     public String toString() {
         return "ApplicationCodeInfo{" +
@@ -199,6 +208,7 @@ public class ApplicationCodeInfo {
                 ", ignoreClass='" + ignoreClass + '\'' +
                 ", ignorePackage='" + ignorePackage + '\'' +
                 ", isTimerTask=" + isTimerTask +
+                ", timerInterval=" + timerInterval +
                 ", jacocoPort='" + jacocoPort + '\'' +
                 ", isBranchTask=" + isBranchTask +
                 ", branchTaskID=" + branchTaskID +
@@ -207,6 +217,7 @@ public class ApplicationCodeInfo {
                 ", ip='" + ip + '\'' +
                 ", versionId=" + versionId +
                 ", testedEnv=" + testedEnv +
+                ", sceneId=" + sceneId +
                 '}';
     }
 

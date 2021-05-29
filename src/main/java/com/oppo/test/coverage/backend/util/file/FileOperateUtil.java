@@ -24,12 +24,12 @@ public class FileOperateUtil {
      * @param zipFilePath 压缩的文件完整名称(目录+文件名)
      * @param srcPathName 需要被压缩的文件或文件夹
      */
-    static void compressFiles(String zipFilePath, String srcPathName) {
+    public static File compressFiles(String zipFilePath, String srcPathName) {
         File zipFile = new File(zipFilePath);
         File srcDir = new File(srcPathName);
         if (!srcDir.exists()) {
             logger.warn("需压缩目录不存在 : {}", srcPathName);
-            return;
+            return srcDir;
         }
         Project prj = new Project();
         FileSet fileSet = new FileSet();
@@ -51,6 +51,7 @@ public class FileOperateUtil {
         zip.setEncoding("gbk");
         zip.addFileset(fileSet);
         zip.execute();
+        return srcDir;
     }
 
     /**
