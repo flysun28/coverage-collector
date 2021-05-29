@@ -66,7 +66,7 @@ public class CortBiz {
         }
         String url = baseUrl + getSceneIdPath + "/" + sceneType + "?" + urlCombine(getSceneIdPath, timeStamp);
         CortResponse response = HttpRequestUtil.getForObject(url, CortResponse.class, 1);
-        if (response == null || response.getErrno()==null || response.getErrno() != 0) {
+        if (response == null || response.getErrno() == null || response.getErrno() != 0) {
             logger.error("获取cort场景id失败 : {}", response == null ? sceneType : response);
             return null;
         }
@@ -94,7 +94,7 @@ public class CortBiz {
                 + "&contentType=" + contentType.getMimeType();
         CortResponse response = HttpRequestUtil.getForObject(url, CortResponse.class, 1);
         if (response == null || response.getErrno() != 0) {
-            logger.error("获取预签名链接失败 : {}", response == null ? url : response.getErrormsg());
+            logger.error("获取预签名链接失败 : {}", response);
             return null;
         }
         return (String) response.getData();
@@ -123,16 +123,16 @@ public class CortBiz {
 
     /**
      * 上传jacocoAll文件到cort的ocs
-     * */
-    public boolean uploadEcFile(File jacocoAllFile){
-        boolean result = uploadFileToOcs(jacocoAllFile,"ec");
-        logger.info("上传jacoco到ocs : {}",result);
+     */
+    public boolean uploadEcFile(File jacocoAllFile) {
+        boolean result = uploadFileToOcs(jacocoAllFile, "ec");
+        logger.info("上传jacoco到ocs : {}", result);
         return result;
     }
 
-    public boolean uploadCompilesFile(File compilesFile){
-        boolean result = uploadFileToOcs(compilesFile,"compiled");
-        logger.info("上传compiles到ocs : {}",result);
+    public boolean uploadCompilesFile(File compilesFile) {
+        boolean result = uploadFileToOcs(compilesFile, "compiled");
+        logger.info("上传compiles到ocs : {}", result);
         return result;
     }
 
@@ -145,7 +145,7 @@ public class CortBiz {
     public Long getServerTimestamp() {
         CortResponse response = HttpRequestUtil.getForObject(baseUrl + getServerTimePath, CortResponse.class, 1);
         if (response == null || response.getErrno() != 0) {
-            logger.error("获取服务端时间戳失败 : {}", response == null ? "null" : response.getErrormsg());
+            logger.error("获取服务端时间戳失败 : {}", response);
             return null;
         }
         return (Long) response.getData();
@@ -167,7 +167,7 @@ public class CortBiz {
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
         if (response == null || response.getErrno() != 0) {
-            logger.error("上传编译产物失败 : {}", response == null ? "null" : response.getErrormsg());
+            logger.error("上传编译产物失败 : {}", response);
             return false;
         }
         return true;
@@ -189,9 +189,10 @@ public class CortBiz {
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
         if (response == null || response.getErrno() != 0) {
-            logger.error("上传Ec文件失败 : {}", response == null ? "null" : response.getErrormsg());
+            logger.error("上传Ec文件失败 : {}", response);
             return false;
         }
+        logger.info("上传ec完成 : {} , {}",request.getAppCode(),request.getSceneId());
         return true;
     }
 
