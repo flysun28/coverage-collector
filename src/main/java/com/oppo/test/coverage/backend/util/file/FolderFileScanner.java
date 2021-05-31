@@ -233,8 +233,8 @@ public class FolderFileScanner {
      * 上传之前,将/taskID/${taskId}目录下的 classes和downloadZip文件做压缩
      */
     private static void zipBeforeUpload(String taskPath) {
-        FileOperateUtil.compressFiles(taskPath + "/classes/upload.zip", taskPath + "/classes");
-        FileOperateUtil.compressFiles(taskPath + "/downloadzip/upload.zip", taskPath + "/downloadzip");
+        FileOperateUtil.compressToZip(taskPath + "/classes",taskPath + "/classes","upload.zip");
+        FileOperateUtil.compressToZip(taskPath+"/downloadzip",taskPath+"/downloadzip","unpload.zip");
     }
 
     /**

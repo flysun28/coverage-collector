@@ -537,9 +537,11 @@ public class ReportGenerateTask implements Runnable {
         }
 
         // TODO: 2021/5/25 把classes文件打包上传到cort
-        String cortClassZip = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId() + "/cort-"+taskEntity.getAppInfo().getId()+".zip";
+        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
         String cortClassDirectory = systemConfig.getReportBasePath() + "/taskID/"+taskEntity.getAppInfo().getId()+"/classes";
-        if (cortBiz.uploadCompilesFile(FileOperateUtil.compressFiles(cortClassZip,cortClassDirectory))){
+        String zipFile = "cort-"+taskEntity.getAppInfo().getId()+".zip";
+        FileOperateUtil.compressToZip(cortClassDirectory,zipFilePath,zipFile);
+        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))){
             CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
             compilesFileRequest.setFileUrl(systemConfig.getCortOcsDownloadUrl()+systemConfig.getCortOcsCompiledFileBucket()+"/cort-"+taskEntity.getAppInfo().getId()+".zip");
             cortBiz.postCompilesFile(compilesFileRequest);

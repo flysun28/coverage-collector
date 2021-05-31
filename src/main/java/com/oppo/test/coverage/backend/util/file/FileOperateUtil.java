@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class FileOperateUtil {
 
@@ -38,7 +39,7 @@ public class FileOperateUtil {
             //是目录
             fileSet.setDir(srcDir);
             //包括哪些文件或文件夹 eg:zip.setIncludes("*.java");
-            fileSet.setIncludes("*.class");
+            fileSet.setIncludes("*.*");
             //排除哪些文件或文件夹
             fileSet.setExcludes("*.zip");
         } else {
@@ -328,10 +329,73 @@ public class FileOperateUtil {
         }
     }
 
+    /**
+     * 压缩文件
+     *
+     * @param sourceFilePath 源文件路径
+     * @param zipFilePath    压缩后文件存储路径
+     * @param zipFilename    压缩文件名
+     */
+    public static void compressToZip(String sourceFilePath, String zipFilePath, String zipFilename) {
+        File sourceFile = new File(sourceFilePath);
+        File zipPath = new File(zipFilePath);
+        if (!zipPath.exists()) {
+            zipPath.mkdirs();
+        }
+        File zipFile = new File(zipPath + File.separator + zipFilename);
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            writeZip(sourceFile, "", zos,zipFilename);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+    /**
+     * 遍历所有文件，压缩
+     *
+     * @param file       源文件目录
+     * @param parentPath 压缩文件目录
+     * @param zos        文件流
+     * @param zipFilename 压缩文件名,避免重复压缩死循环
+     */
+    public static void writeZip(File file, String parentPath, ZipOutputStream zos, String zipFilename) {
+        if (file.isDirectory()) {
+            //目录
+            parentPath += file.getName() + File.separator;
+            File[] files = file.listFiles();
+            for (File f : files) {
+                writeZip(f, parentPath, zos, zipFilename);
+            }
+            return;
+        }
+        if (file.getName().equals(zipFilename) || !file.getName().endsWith(".class")){
+            return;
+        }
+
+        //文件
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+            //指定zip文件夹
+            ZipEntry zipEntry = new ZipEntry(parentPath + file.getName());
+            zos.putNextEntry(zipEntry);
+            int len;
+            byte[] buffer = new byte[1024 * 10];
+            while ((len = bis.read(buffer, 0, buffer.length)) != -1) {
+                zos.write(buffer, 0, len);
+                zos.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+    }
+
+
     public static void main(String[] args) throws Exception {
 //        unTarGz(new File("D:\\coverreport\\browser-feeds-media-service-1.1.0-20200806-20200806-8075471.tar.gz"),"D:\\coverreport");
         //copyFile("F:\\业务场景\\play31\\log_1618383328444.txt","F:\\业务场景\\test.txt");
         //compressFiles("F:\\业务场景\\play\\script\\test.zip","F:\\业务场景\\play\\script");
-        unZipFiles("F:\\业务场景\\play\\script\\test.zip", "F:\\业务场景\\play\\script", true);
+        //unZipFiles("F:\\业务场景\\play\\script\\test.zip", "F:\\业务场景\\play\\script", true);
+        compressToZip("F:\\业务场景\\play\\script","F:\\业务场景\\play\\script","test.zip");
     }
 }
