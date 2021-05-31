@@ -29,7 +29,7 @@ public class FileOperateUtil {
         File srcDir = new File(srcPathName);
         if (!srcDir.exists()) {
             logger.warn("需压缩目录不存在 : {}", srcPathName);
-            return srcDir;
+            return zipFile;
         }
         Project prj = new Project();
         FileSet fileSet = new FileSet();
@@ -51,7 +51,7 @@ public class FileOperateUtil {
         zip.setEncoding("gbk");
         zip.addFileset(fileSet);
         zip.execute();
-        return srcDir;
+        return zipFile;
     }
 
     /**

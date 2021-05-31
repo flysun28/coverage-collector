@@ -63,7 +63,8 @@ public class CortBizTest {
         request.setBranchName("master");
         request.setCaseId(159);
         request.setDeviceId("random-num-device-156");
-        request.setSceneId(15976);
-        request.setFileKey("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202104/ci-demo-20210408-14350741.tar.gz");
+        request.setSceneId(13586);
+        request.setFileKey("ci-demo-20210408-14350741.tar.gz");
+        cortBiz.postEcFile(request);
     }
 }
