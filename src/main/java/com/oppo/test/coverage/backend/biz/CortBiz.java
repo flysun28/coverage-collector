@@ -1,6 +1,17 @@
 package com.oppo.test.coverage.backend.biz;
 
 import com.alibaba.fastjson.JSON;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import com.oppo.test.coverage.backend.model.response.CortResponse;
@@ -51,6 +62,23 @@ public class CortBiz {
     @Value("${cort.secret}")
     private String secret;
 
+    @Value("${ocs.credential.access-key-id}")
+    private String accessKeyId;
+
+    @Value("${ocs.credential.secret-key-id}")
+    private String accessKeySecret;
+
+    @Value("${ocs.client.end-point}")
+    private String endPoint;
+
+    @Value("${ocs.client.region}")
+    private String region;
+
+    @Value("${ocs.config.binary-ec-bucket-name}")
+    private String ecBucketName;
+
+    @Value("${ocs.config.compiled-file-bucket-name}")
+    private String compiledBucketName;
 
     /**
      * 获取场景id
@@ -125,13 +153,13 @@ public class CortBiz {
      * 上传jacocoAll文件到cort的ocs
      */
     public boolean uploadEcFile(File jacocoAllFile) {
-        boolean result = uploadFileToOcs(jacocoAllFile, "ec");
+        boolean result = putObjectToOcs(compiledBucketName,jacocoAllFile);
         logger.info("上传jacoco到ocs : {}, {}", jacocoAllFile.toString(), result);
         return result;
     }
 
     public boolean uploadCompilesFile(File compilesFile) {
-        boolean result = uploadFileToOcs(compilesFile, "compiled");
+        boolean result = putObjectToOcs(ecBucketName,compilesFile);
         logger.info("上传compiles到ocs : {},  {}", compilesFile.toString(), result);
         return result;
     }
@@ -239,6 +267,26 @@ public class CortBiz {
         paramStrBuilder.delete(paramStrBuilder.lastIndexOf(combineSign), paramStrBuilder.length());
         return paramStrBuilder.toString();
     }
+
+
+    //---------------------------------------OCS --------------------------------------
+
+
+    public boolean putObjectToOcs(String bucketName, File file) {
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKeyId, accessKeySecret);
+        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+                .withProtocol(Protocol.HTTP);
+        AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard().withCredentials(awsCredentialsProvider)
+                .withPathStyleAccessEnabled(true)
+                .withClientConfiguration(clientConfiguration)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region))
+                .build();
+
+        PutObjectRequest request = new PutObjectRequest(bucketName, file.getAbsolutePath(), file);
+        return amazonS3.putObject(request) != null;
+    }
+
 
     public static void main(String[] args) {
         File file = new File("F:\\业务场景\\play34\\app.log");

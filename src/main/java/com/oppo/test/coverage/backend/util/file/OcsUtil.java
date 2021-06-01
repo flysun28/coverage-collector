@@ -134,7 +134,7 @@ public class OcsUtil {
                         metadata.setContentType("text/html");
                         request.setMetadata(metadata);
                     }
-                    return s3.putObject(new PutObjectRequest(bucketName, key, file));
+                    return s3.putObject(request);
                 case 2:
                     //特殊:delete 没有返回值
                     s3.deleteObject(bucketName, key);
