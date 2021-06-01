@@ -153,13 +153,13 @@ public class CortBiz {
      * 上传jacocoAll文件到cort的ocs
      */
     public boolean uploadEcFile(File jacocoAllFile) {
-        boolean result = putObjectToOcs(compiledBucketName,jacocoAllFile);
+        boolean result = putObjectToOcs(compiledBucketName, jacocoAllFile);
         logger.info("上传jacoco到ocs : {}, {}", jacocoAllFile.toString(), result);
         return result;
     }
 
     public boolean uploadCompilesFile(File compilesFile) {
-        boolean result = putObjectToOcs(ecBucketName,compilesFile);
+        boolean result = putObjectToOcs(ecBucketName, compilesFile);
         logger.info("上传compiles到ocs : {},  {}", compilesFile.toString(), result);
         return result;
     }
@@ -187,7 +187,7 @@ public class CortBiz {
     public boolean postCompilesFile(CompilesFileRequest request) {
         Long timeStamp = getServerTimestamp();
         if (timeStamp == null) {
-            logger.error("上传编译产物获取时间戳失败");
+            logger.error("上报编译产物获取时间戳失败");
             return false;
         }
         String url = baseUrl + postCompilesFilePath + "?" + urlCombine(postCompilesFilePath, timeStamp);
@@ -195,7 +195,7 @@ public class CortBiz {
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
         if (response == null || response.getErrno() == null || response.getErrno() != 0) {
-            logger.error("上传编译产物失败 : {}", response);
+            logger.error("上报编译产物失败 : {} , {}", request, response);
             return false;
         }
         return true;
@@ -209,7 +209,7 @@ public class CortBiz {
     public boolean postEcFile(EcUploadRequest request) {
         Long timeStamp = getServerTimestamp();
         if (timeStamp == null) {
-            logger.error("上传Ec获取时间戳失败");
+            logger.error("上报Ec获取时间戳失败");
             return false;
         }
         String url = baseUrl + postEcFileUpload + "?" + urlCombine(postEcFileUpload, timeStamp);
@@ -217,10 +217,10 @@ public class CortBiz {
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
         if (response == null || response.getErrno() == null || response.getErrno() != 0) {
-            logger.error("上传Ec文件失败 : {}", response);
+            logger.error("上报Ec信息失败 : {} , {}", request, response);
             return false;
         }
-        logger.info("上传ec完成 : {} , {}", request.getAppCode(), request.getSceneId());
+        logger.info("上报ec完成 : {} , {}", request.getAppCode(), request.getSceneId());
         return true;
     }
 
@@ -283,7 +283,7 @@ public class CortBiz {
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region))
                 .build();
 
-        PutObjectRequest request = new PutObjectRequest(bucketName, file.getAbsolutePath(), file);
+        PutObjectRequest request = new PutObjectRequest(bucketName, file.getName(), file);
         return amazonS3.putObject(request) != null;
     }
 
