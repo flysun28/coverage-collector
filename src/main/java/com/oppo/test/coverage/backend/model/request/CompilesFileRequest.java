@@ -14,7 +14,7 @@ public class CompilesFileRequest {
 
     public CompilesFileRequest(ApplicationCodeInfo codeInfo){
         this.appCode = codeInfo.getApplicationID();
-        this.packageName = codeInfo.getVersionName();
+        this.packageName = codeInfo.getApplicationID();
         this.commitId = codeInfo.getTestedCommitId();
     }
 

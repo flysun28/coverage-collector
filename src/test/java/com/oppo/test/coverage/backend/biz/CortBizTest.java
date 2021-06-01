@@ -49,7 +49,7 @@ public class CortBizTest {
     public void postCompilesFile() {
         CompilesFileRequest request = new CompilesFileRequest();
         request.setAppCode("ci-demo");
-        request.setPackageName("182");
+        request.setPackageName("ci-demo");
         request.setCommitId("31a88cb4507a66c63203279d3074f07a22ae7002");
         request.setFileUrl("http://ocs-cn-south.oppoer.me/columbus-file-repo/columbus-repo-202104/ci-demo-20210408-14350741.tar.gz");
     }
@@ -59,7 +59,7 @@ public class CortBizTest {
         EcUploadRequest request = new EcUploadRequest();
         request.setAppCode("ci-demo");
         request.setCommitId("31a88cb4507a66c63203279d3074f07a22ae7002");
-        request.setPackageName("181");
+        request.setPackageName("ci-demo");
         request.setBranchName("master");
         request.setCaseId(159);
         request.setDeviceId("random-num-device-156");

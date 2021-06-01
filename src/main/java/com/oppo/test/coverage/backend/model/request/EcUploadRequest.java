@@ -18,7 +18,7 @@ public class EcUploadRequest {
         this.commitId = codeInfo.getTestedCommitId();
         this.branchName = codeInfo.getTestedBranch();
         this.sceneId = Math.toIntExact(codeInfo.getSceneId());
-        this.packageName = codeInfo.getVersionName();
+        this.packageName = codeInfo.getApplicationID();
     }
 
     /**
