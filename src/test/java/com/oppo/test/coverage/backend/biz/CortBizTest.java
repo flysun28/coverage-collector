@@ -61,7 +61,7 @@ public class CortBizTest {
         request.setCommitId("31a88cb4507a66c63203279d3074f07a22ae7002");
         request.setPackageName("ci-demo");
         request.setBranchName("master");
-        request.setCaseId(159);
+        request.setCaseId("159");
         request.setDeviceId("random-num-device-156");
         request.setSceneId(13586);
         request.setFileKey("ci-demo-20210408-14350741.tar.gz");

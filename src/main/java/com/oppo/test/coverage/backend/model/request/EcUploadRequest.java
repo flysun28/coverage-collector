@@ -13,12 +13,15 @@ public class EcUploadRequest {
 
     }
 
-    public EcUploadRequest(ApplicationCodeInfo codeInfo){
+    public EcUploadRequest(ApplicationCodeInfo codeInfo,String fileKey){
         this.appCode = codeInfo.getApplicationID();
         this.commitId = codeInfo.getTestedCommitId();
         this.branchName = codeInfo.getTestedBranch();
         this.sceneId = Math.toIntExact(codeInfo.getSceneId());
         this.packageName = codeInfo.getApplicationID();
+        this.deviceId = codeInfo.getIp();
+        this.caseId =codeInfo.getId().toString();
+        this.fileKey = fileKey;
     }
 
     /**
@@ -49,7 +52,7 @@ public class EcUploadRequest {
     /**
      * 精准预留的,暂时写死一个数字
      * */
-    private Integer caseId;
+    private String caseId;
 
     /**
      * 场景id,之前通过接口获取
@@ -116,11 +119,11 @@ public class EcUploadRequest {
         this.deviceId = deviceId;
     }
 
-    public Integer getCaseId() {
+    public String getCaseId() {
         return caseId;
     }
 
-    public void setCaseId(Integer caseId) {
+    public void setCaseId(String caseId) {
         this.caseId = caseId;
     }
 

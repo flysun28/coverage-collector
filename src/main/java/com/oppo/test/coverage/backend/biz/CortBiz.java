@@ -11,7 +11,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import com.oppo.test.coverage.backend.model.response.CortResponse;
@@ -153,13 +152,13 @@ public class CortBiz {
      * 上传jacocoAll文件到cort的ocs
      */
     public boolean uploadEcFile(File jacocoAllFile) {
-        boolean result = putObjectToOcs(compiledBucketName, jacocoAllFile);
+        boolean result = putObjectToOcs(ecBucketName, jacocoAllFile);
         logger.info("上传jacoco到ocs : {}, {}", jacocoAllFile.toString(), result);
         return result;
     }
 
     public boolean uploadCompilesFile(File compilesFile) {
-        boolean result = putObjectToOcs(ecBucketName, compilesFile);
+        boolean result = putObjectToOcs(compiledBucketName, compilesFile);
         logger.info("上传compiles到ocs : {},  {}", compilesFile.toString(), result);
         return result;
     }
