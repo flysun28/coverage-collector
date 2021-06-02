@@ -143,6 +143,14 @@ public class EcUploadRequest {
         return imei;
     }
 
+    public String getSn() {
+        return sn;
+    }
+
+    public String getFileKey() {
+        return fileKey;
+    }
+
     public void setFileKey(String fileKey) {
         this.fileKey = fileKey;
     }
