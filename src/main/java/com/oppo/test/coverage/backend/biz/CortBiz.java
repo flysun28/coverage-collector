@@ -2,6 +2,7 @@ package com.oppo.test.coverage.backend.biz;
 
 import com.alibaba.fastjson.JSON;
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -10,6 +11,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -284,6 +287,30 @@ public class CortBiz {
 
         PutObjectRequest request = new PutObjectRequest(bucketName, file.getName(), file);
         return amazonS3.putObject(request) != null;
+    }
+
+    public String getPreSignObjectUrl(String fileKey){
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKeyId, accessKeySecret);
+        AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+        ClientConfiguration clientConfiguration = new ClientConfiguration()
+                .withProtocol(Protocol.HTTP);
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withCredentials(awsCredentialsProvider)
+                .withPathStyleAccessEnabled(true)
+                .withClientConfiguration(clientConfiguration)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region))
+                .build();
+
+        Date expiration = new Date();
+        long expTimeMills = expiration.getTime();
+        expTimeMills += 1000*60*60;
+        expiration.setTime(expTimeMills);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(compiledBucketName,fileKey)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+        URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+        logger.info("The pre-signed URL is： "+url.toString());
+        return url.toString();
     }
 
 

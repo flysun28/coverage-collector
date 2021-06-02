@@ -543,7 +543,7 @@ public class ReportGenerateTask implements Runnable {
         FileOperateUtil.compressToZip(cortClassDirectory,zipFilePath,zipFile);
         if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))){
             CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
-            compilesFileRequest.setFileUrl(systemConfig.getCortOcsDownloadUrl()+systemConfig.getCortOcsCompiledFileBucket()+"/cort-"+taskEntity.getAppInfo().getId()+".zip");
+            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
             cortBiz.postCompilesFile(compilesFileRequest);
         }
 
