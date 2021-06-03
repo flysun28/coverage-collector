@@ -1,5 +1,6 @@
 package com.oppo.test.coverage.backend.util;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -556,6 +557,7 @@ public class ColumbusUtils {
     }
 
     private static String getSpecialApplicationIDPrefix(String applicationID) {
+        List<String> browserMultiRegionPlugin = Lists.newArrayList("browser-feeds-channel-service-global","browser-ucenter-service-global","browser-feeds-list-service-global","browser-feeds-resource-service-global","browser-operation-position-global","browser-strategy-global","browser-grids-service-global","browser-static-files-service-global","browser-common-setting-service-global");
         if ("finz-pay-core".equals(applicationID)) {
             return "dubhe-pay";
         } else if ("usercenter-business-dubbo-provider".equals(applicationID)) {
@@ -591,9 +593,7 @@ public class ColumbusUtils {
         } else if (applicationID.startsWith("cdo-")) {
             String[] appCodeArray = applicationID.split("-");
             return appCodeArray[0] + "-" + appCodeArray[1];
-        } else if ("browser-feeds-channel-service-global".equals(applicationID)){
-            return "browser-multi-region-plugin";
-        } else if ("browser-ucenter-service-global".equals(applicationID)){
+        } else if (browserMultiRegionPlugin.contains(applicationID)){
             return "browser-multi-region-plugin";
         }
         return "";

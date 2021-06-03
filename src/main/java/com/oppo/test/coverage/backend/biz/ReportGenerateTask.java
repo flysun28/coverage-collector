@@ -37,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author 80264236
@@ -60,6 +61,8 @@ public class ReportGenerateTask implements Runnable {
 
     private boolean isFirstRun = true;
 
+    private ExecutorService cacheThreadPool;
+
     ReportGeneratorTaskEntity getTaskEntity() {
         return taskEntity;
     }
@@ -79,6 +82,7 @@ public class ReportGenerateTask implements Runnable {
         this.taskBiz = (TaskBiz) SpringContextUtil.getBean("taskBiz");
         this.httpUtils = (HttpUtils) SpringContextUtil.getBean("httpUtils");
         this.cortBiz = (CortBiz) SpringContextUtil.getBean("cortBiz");
+        this.cacheThreadPool = (ExecutorService) SpringContextUtil.getBean("cacheThreadPool");
     }
 
 
@@ -537,15 +541,7 @@ public class ReportGenerateTask implements Runnable {
         }
 
         // TODO: 2021/5/25 把classes文件打包上传到cort
-        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
-        String cortClassDirectory = systemConfig.getReportBasePath() + "/taskID/"+taskEntity.getAppInfo().getId()+"/classes";
-        String zipFile = "cort-"+taskEntity.getAppInfo().getId()+".zip";
-        FileOperateUtil.compressToZip(cortClassDirectory,zipFilePath,zipFile);
-        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))){
-            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
-            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
-            cortBiz.postCompilesFile(compilesFileRequest);
-        }
+
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
         int failCount = 0;
@@ -582,13 +578,6 @@ public class ReportGenerateTask implements Runnable {
         }
 
         // TODO: 2021/5/25 将jacocoAll 上传到cort的OCS
-        File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(),"jacocoAll-"+taskEntity.getAppInfo().getId()+".ec");
-        FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(),cortEcFile.toString());
-        if (cortBiz.uploadEcFile(cortEcFile)){
-            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(),cortEcFile.getName());
-            logger.info("upload ec file : {}",cortEcFile.getName());
-            cortBiz.postEcFile(ecUploadRequest);
-        }
 
         //生成各目录下的数据报告,分别上传回调
 
@@ -734,6 +723,36 @@ public class ReportGenerateTask implements Runnable {
         sendCoverageDataResult(taskEntity.getFilterReportAllCovDirectory(), taskEntity.getFilterReportDiffDirectory(), 1, 1);
 
     }
+
+    /**
+     * 将编译产物上传到OCS,并且上报cort
+     * */
+    private void cortCompiledFileUpload(){
+        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
+        String cortClassDirectory = systemConfig.getReportBasePath() + "/taskID/"+taskEntity.getAppInfo().getId()+"/classes";
+        String zipFile = "cort-"+taskEntity.getAppInfo().getId()+".zip";
+        FileOperateUtil.compressToZip(cortClassDirectory,zipFilePath,zipFile);
+        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))){
+            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
+            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
+            cortBiz.postCompilesFile(compilesFileRequest);
+        }
+    }
+
+    /**
+     * 将覆盖率数据ec上传到OCS,并且上报cort
+     * */
+    private void cortEcFileUpload(){
+        File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(),"jacocoAll-"+taskEntity.getAppInfo().getId()+".ec");
+        FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(),cortEcFile.toString());
+        if (cortBiz.uploadEcFile(cortEcFile)){
+            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(),cortEcFile.getName());
+            logger.info("upload ec file : {}",cortEcFile.getName());
+            cortBiz.postEcFile(ecUploadRequest);
+        }
+    }
+
+
 
     private class 这是个类{
         private int 这是个变量;
