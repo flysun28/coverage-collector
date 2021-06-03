@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +35,9 @@ public class Jsouphtml {
     }
 
 
-    public CoverageData getCoverageData(Long taskId, String appCode, String testedBranch, String basicBranch, Long versionId, String projectName) {
-        Long reportId = taskId;
-        if (versionId != null && versionId != 0) {
+    public CoverageData getCoverageData(Long taskId, String appCode, String testedBranch, String basicBranch, String versionId, String projectName) {
+        String reportId = taskId.toString();
+        if (!StringUtils.isEmpty(versionId)) {
             reportId = versionId;
         }
         coverageData.setId(taskId);
@@ -62,7 +63,7 @@ public class Jsouphtml {
     }
 
 
-    private void totalHtmlReportAnalyze(Long versionId, String projectName, Long reportId) throws IOException {
+    private void totalHtmlReportAnalyze(String versionId, String projectName, String reportId) throws IOException {
         Document document = Jsoup.parse(this.totalHtmlReport, "UTF-8");
         if (!document.select("tfoot").isEmpty()) {
             Elements elements = document.select("tfoot").select("td");
@@ -87,15 +88,15 @@ public class Jsouphtml {
             coverageData.setMissedClasses(elements.get(11).text().replace(",", ""));
             coverageData.setTotalClasses(elements.get(12).text().replace(",", ""));
 
-            if (versionId != null && versionId != 0) {
-                coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
+            if (!StringUtils.isEmpty(versionId)) {
+                coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId)).replace("\\", "/"));
             } else {
-                coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
+                coverageData.setTotalCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + totalHtmlReport.toString().substring(totalHtmlReport.toString().indexOf(reportId)).replace("\\", "/"));
             }
         }
     }
 
-    private void diffHtmlReportAnalyze(Long versionId, String projectName, Long reportId) throws IOException {
+    private void diffHtmlReportAnalyze(String versionId, String projectName, String reportId) throws IOException {
         Document diffDocument = Jsoup.parse(this.diffHtmlReport, "UTF-8");
         if (!diffDocument.select("tfoot").isEmpty()) {
 
@@ -122,10 +123,10 @@ public class Jsouphtml {
             coverageData.setDiffMissedClasses(diffElements.get(11).text().replace(",", ""));
             coverageData.setDiffTotalClasses(diffElements.get(12).text().replace(",", ""));
 
-            if (versionId != null && versionId != 0) {
-                coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
+            if (!StringUtils.isEmpty(versionId)) {
+                coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "projectCovPath/" + projectName + "/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId)).replace("\\", "/"));
             } else {
-                coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId + "")).replace("\\", "/"));
+                coverageData.setDiffCoverageReportPath(systemConfig.reportBaseUrl + "taskID/" + diffHtmlReport.toString().substring(diffHtmlReport.toString().indexOf(reportId)).replace("\\", "/"));
             }
 
         }

@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,7 +130,7 @@ public class ReportGenerateTask implements Runnable {
         //创建被测分支目录
         taskEntity.setTestedBranchCoverageDirectory(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_")));
         //创建项目id目录
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
+        if (!StringUtils.isEmpty(taskEntity.getAppInfo().getVersionId())) {
             taskEntity.setVersionIdDataPath(createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getVersionId().toString()));
         }
         //创建测试taskID目录
@@ -599,7 +600,7 @@ public class ReportGenerateTask implements Runnable {
         }
 
         //生成版本数据
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
+        if (!StringUtils.isEmpty(taskEntity.getAppInfo().getVersionId())) {
             startVersionCoverageTask();
         }
 
@@ -653,7 +654,7 @@ public class ReportGenerateTask implements Runnable {
         File branchFile = new File(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
 
         FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
-        if (taskEntity.getAppInfo().getVersionId() != null && taskEntity.getAppInfo().getVersionId() != 0) {
+        if (!StringUtils.isEmpty(taskEntity.getAppInfo().getVersionId())) {
             File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
             FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());
         }

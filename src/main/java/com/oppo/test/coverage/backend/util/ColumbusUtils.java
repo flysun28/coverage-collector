@@ -557,7 +557,12 @@ public class ColumbusUtils {
     }
 
     private static String getSpecialApplicationIDPrefix(String applicationID) {
-        List<String> browserMultiRegionPlugin = Lists.newArrayList("browser-feeds-channel-service-global","browser-ucenter-service-global","browser-feeds-list-service-global","browser-feeds-resource-service-global","browser-operation-position-global","browser-strategy-global","browser-grids-service-global","browser-static-files-service-global","browser-common-setting-service-global");
+        List<String> browserMultiRegionPlugin = Lists.newArrayList("browser-feeds-channel-service-global",
+                "browser-ucenter-service-global","browser-feeds-list-service-global",
+                "browser-feeds-resource-service-global","browser-operation-position-global",
+                "browser-strategy-global","browser-grids-service-global",
+                "browser-static-files-service-global","browser-common-setting-service-global",
+                "browser-skin-service-global","browser-red-dot-service-global");
         if ("finz-pay-core".equals(applicationID)) {
             return "dubhe-pay";
         } else if ("usercenter-business-dubbo-provider".equals(applicationID)) {

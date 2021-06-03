@@ -64,15 +64,15 @@ public class CoverageData {
      * */
     private String diffCoverageReportPath;
 
-    public Long getVersionId() {
+    public String getVersionId() {
         return versionId;
     }
 
-    public void setVersionId(Long versionId) {
+    public void setVersionId(String versionId) {
         this.versionId = versionId;
     }
 
-    private Long versionId;
+    private String versionId;
 
     public String getAppCode() {
         return appCode;

@@ -27,7 +27,7 @@ public class ApplicationCodeInfo {
     private String containPackages = "";
     private String applicationID = "";
     private String ip = "";
-    private Long versionId;
+    private String versionId;
 
     /**
      * 被测环境字段:1-测试;2-生产
@@ -174,11 +174,11 @@ public class ApplicationCodeInfo {
     public void setIp(String ip) {
         this.ip = ip;
     }
-    public Long getVersionId() {
+    public String getVersionId() {
         return versionId;
     }
 
-    public void setVersionId(Long versionId) {
+    public void setVersionId(String versionId) {
         this.versionId = versionId;
     }
 
