@@ -512,7 +512,7 @@ public class ReportGenerateTask implements Runnable {
                 taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),
                         errorEnum, taskEntity.getProjectName(),
                         taskEntity.getAppInfo().getApplicationID(),
-                        taskEntity.getAppInfo().getIsBranchTask()
+                        taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID()
                 );
                 return;
             } finally {
@@ -537,7 +537,9 @@ public class ReportGenerateTask implements Runnable {
             errorEnum = e.getErrorEnum();
             e.printStackTrace();
             logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
+                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
+                    taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
             return;
         }
 
@@ -569,7 +571,9 @@ public class ReportGenerateTask implements Runnable {
         if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
             //没有获取到覆盖率数据,报错结束
             logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,
+                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
+                    taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
             return;
         }
 
@@ -604,7 +608,9 @@ public class ReportGenerateTask implements Runnable {
             startVersionCoverageTask();
         }
 
-        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum, taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getIsBranchTask());
+        taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
+                taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
+                taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
     }
 
     /**

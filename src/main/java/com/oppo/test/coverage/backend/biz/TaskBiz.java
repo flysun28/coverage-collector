@@ -123,13 +123,14 @@ public class TaskBiz {
     /**
      * 结束覆盖率任务执行
      */
-    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName, String appCode, int isBranchTask) {
+    public void endCoverageTask(Long taskId, ErrorEnum errorEnum, String projectName,
+                                String appCode, int isBranchTask, Long branchTaskId) {
 
         //轮询执行完成,不停止
         if (timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
             folderFileScanner.reportUpload(projectName, taskId);
             if (isBranchTask == 1) {
-                folderFileScanner.branchReportUpload(projectName, taskId);
+                folderFileScanner.branchReportUpload(projectName, branchTaskId);
             }
             logger.info("timer task continue : {}", taskId);
             return;
@@ -154,7 +155,7 @@ public class TaskBiz {
 
         //上传分支覆盖率的报告
         if (isBranchTask == 1) {
-            folderFileScanner.branchReportUpload(projectName, taskId);
+            folderFileScanner.branchReportUpload(projectName, branchTaskId);
         }
 
         //轮询任务结束,并且没有该应用的轮询任务存在了
