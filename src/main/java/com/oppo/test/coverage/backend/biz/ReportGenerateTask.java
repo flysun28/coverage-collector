@@ -543,9 +543,6 @@ public class ReportGenerateTask implements Runnable {
             return;
         }
 
-        // TODO: 2021/5/25 把classes文件打包上传到cort
-        cortCompiledFileUpload();
-
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
         int failCount = 0;
 
@@ -582,8 +579,6 @@ public class ReportGenerateTask implements Runnable {
             logger.error("合并覆盖率数据失败: {},{}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId());
         }
 
-        // TODO: 2021/5/25 将jacocoAll 上传到cort的OCS
-        cortEcFileUpload();
         //生成各目录下的数据报告,分别上传回调
 
         //目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
@@ -596,6 +591,13 @@ public class ReportGenerateTask implements Runnable {
             e.printStackTrace();
             errorEnum = ErrorEnum.PRODUCT_REPORT;
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), "报告生成失败 :" + e.getMessage());
+        }
+
+        if (taskEntity.getAppInfo().getSceneId()!=null && taskEntity.getAppInfo().getSceneId()!=0){
+            // 把classes文件打包上传到cort
+            cortCompiledFileUpload();
+            // 将jacocoAll上传到cort的OCS
+            cortEcFileUpload();
         }
 
         //生成分支数据
