@@ -161,10 +161,15 @@ public class ColumbusUtils {
         return hashMap;
     }
 
+    // TODO: 2021/6/11 这个方法指定有点大病
     public static void filterIgnoreClass(String[] classArrayList, File basePath) {
 
         if (classArrayList == null || classArrayList.length < 1) {
             return;
+        }
+
+        if ("org.org*".equals(classArrayList[0])){
+            FileOperateUtil.delAllFile(basePath + "org");
         }
 
         for (String classname : classArrayList) {
@@ -726,6 +731,8 @@ public class ColumbusUtils {
 
 //        System.out.println(ColumbusUtils.getBuildVersionList("cdo-card-theme-api", "cdo-card-theme-api_20210317151733"));
 //        System.out.println(getSpecialApplicationIDPrefix("cdo-store-api"));
-        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo", "ci-demo-20210326163909-181", 1));
+//        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo", "ci-demo-20210326163909-181", 1));
+        String[] test = {"org.objectweb.asm.ClassReader"};
+        filterIgnoreClass(test,new File("F:\\业务场景\\play35\\send-0.0.1-SNAPSHOT"));
     }
 }
