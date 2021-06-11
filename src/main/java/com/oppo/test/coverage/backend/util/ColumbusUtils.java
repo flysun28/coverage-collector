@@ -168,9 +168,9 @@ public class ColumbusUtils {
             return;
         }
 
-        for (String ignoreClass : classArrayList){
-            if (ignoreClass.startsWith("***")){
-                FileOperateUtil.delAllFile(basePath + ignoreClass.replace("***",""));
+        for (String ignoreClass : classArrayList) {
+            if (ignoreClass.startsWith("***")) {
+                FileOperateUtil.delAllFile(basePath + File.separator + ignoreClass.replace("***", ""));
             }
         }
 
@@ -477,8 +477,8 @@ public class ColumbusUtils {
         if (deployJarPrefix.contains("tomcat")) {
             packageList = getComPackagePath(new File(resultPath), packageList);
         }
-        if (CollectionUtils.isEmpty(packageList)){
-            logger.error(" packageList is null ! It may cause non classes :{} , {} , {}",downloadZipFile,targetPath,applicationID);
+        if (CollectionUtils.isEmpty(packageList)) {
+            logger.error(" packageList is null ! It may cause non classes :{} , {} , {}", downloadZipFile, targetPath, applicationID);
         }
 
         for (File packagePath : packageList) {
@@ -565,11 +565,11 @@ public class ColumbusUtils {
 
     private static String getSpecialApplicationIDPrefix(String applicationID) {
         List<String> browserMultiRegionPlugin = Lists.newArrayList("browser-feeds-channel-service-global",
-                "browser-ucenter-service-global","browser-feeds-list-service-global",
-                "browser-feeds-resource-service-global","browser-operation-position-global",
-                "browser-strategy-global","browser-grids-service-global",
-                "browser-static-files-service-global","browser-common-setting-service-global",
-                "browser-skin-service-global","browser-red-dot-service-global");
+                "browser-ucenter-service-global", "browser-feeds-list-service-global",
+                "browser-feeds-resource-service-global", "browser-operation-position-global",
+                "browser-strategy-global", "browser-grids-service-global",
+                "browser-static-files-service-global", "browser-common-setting-service-global",
+                "browser-skin-service-global", "browser-red-dot-service-global");
         if ("finz-pay-core".equals(applicationID)) {
             return "dubhe-pay";
         } else if ("usercenter-business-dubbo-provider".equals(applicationID)) {
@@ -605,7 +605,7 @@ public class ColumbusUtils {
         } else if (applicationID.startsWith("cdo-")) {
             String[] appCodeArray = applicationID.split("-");
             return appCodeArray[0] + "-" + appCodeArray[1];
-        } else if (browserMultiRegionPlugin.contains(applicationID)){
+        } else if (browserMultiRegionPlugin.contains(applicationID)) {
             return "browser-multi-region-plugin";
         }
         return "";
@@ -735,6 +735,6 @@ public class ColumbusUtils {
 //        System.out.println(getSpecialApplicationIDPrefix("cdo-store-api"));
 //        System.out.println(getAppDeployInfoFromBuildVersionList("ci-demo", "ci-demo-20210326163909-181", 1));
         String[] test = {"org.objectweb.asm.ClassReader"};
-        filterIgnoreClass(test,new File("F:\\业务场景\\play35\\send-0.0.1-SNAPSHOT"));
+        filterIgnoreClass(test, new File("F:\\业务场景\\play35\\send-0.0.1-SNAPSHOT"));
     }
 }
