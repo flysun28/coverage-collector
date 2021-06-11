@@ -763,11 +763,6 @@ public class ReportGenerateTask implements Runnable {
 
 
 
-    private class 这是个类{
-        private int 这是个变量;
-        public void 这是个方法(int 这是个参数){
-            这是个变量 = 这是个参数 * 10;
-        }
-    }
+
 
 }

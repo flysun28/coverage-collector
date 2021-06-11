@@ -60,6 +60,12 @@ public class SystemConfig {
     @Value("${atms.transfer.url}")
     public String transferUrl;
 
+    @Value("${atms.transfer.devIp}")
+    public String transferDevIp;
+
+    @Value("${atms.transfer.devUrl}")
+    public  String transferDevUrl;
+
     @Value("${cort.ocs.downloadUrl}")
     private String cortOcsDownloadUrl;
 
@@ -128,6 +134,14 @@ public class SystemConfig {
 
     public String getTransferUrl() {
         return transferUrl;
+    }
+
+    public String getTransferDevIp(){
+        return transferDevIp;
+    }
+
+    public String getTransferDevUrl(){
+        return transferDevUrl;
     }
 
     public String getCortOcsDownloadUrl() {

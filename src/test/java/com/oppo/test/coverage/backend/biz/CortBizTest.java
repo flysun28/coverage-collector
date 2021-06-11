@@ -1,15 +1,19 @@
 package com.oppo.test.coverage.backend.biz;
 
+import com.oppo.test.coverage.backend.biz.jacoco.ExecutionDataClient;
 import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 
@@ -24,6 +28,8 @@ public class CortBizTest {
     @Resource
     CortBiz cortBiz;
 
+    @Autowired
+    ExecutionDataClient executionDataClient;
     @Test
     public void getServerTimestampTest() {
         Long timeStamp = cortBiz.getServerTimestamp();
@@ -66,5 +72,13 @@ public class CortBizTest {
         request.setSceneId(13595);
         request.setFileKey("jacocoAll-847.ec");
         cortBiz.postEcFile(request);
+    }
+
+    @Test
+    public  void testGetExecutionData() throws Exception {
+        boolean executionData = executionDataClient.getExecutionData("10.176.133.217", 8098, new File("cdojacoco.exec"), 3);
+//        boolean executionData = executionDataClient.getExecutionData("10.177.245.87", 8098, new File("cdojacoco.exec"), 1);
+
+        System.out.println(executionData);
     }
 }

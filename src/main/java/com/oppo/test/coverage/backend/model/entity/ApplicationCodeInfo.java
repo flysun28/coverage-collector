@@ -30,7 +30,7 @@ public class ApplicationCodeInfo {
     private String versionId;
 
     /**
-     * 被测环境字段:1-测试;2-生产
+     * 被测环境字段:1-测试;2-生产;3-开发
      * */
     private Integer testedEnv;
 

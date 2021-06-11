@@ -32,14 +32,31 @@ public class ExecutionDataClient {
 
         //连接Jacoco服务
         try {
-            if (testedEnv == 2) {
-                //生产环境
-                port = getPort(address, port);
-                if (port == -1) {
-                    throw new Exception("生产环境获取转发端口失败");
-                }
-                address = systemConfig.getTransferBaseIp();
+//            if (testedEnv == 2) {
+//                //生产环境
+//                port = getPort(address, port);
+//                if (port == -1) {
+//                    throw new Exception("生产环境获取转发端口失败");
+//                }
+//                address = systemConfig.getTransferBaseIp();
+//            }
+            switch (testedEnv){
+                case 2:
+                   port = getPort(address, port);
+                   //生产环境
+                   if(port == -1){
+                       throw new Exception("生产环境获取转发端口失败");
+                   }
+                   address=systemConfig.getTransferBaseIp();
+                case 3:
+                    port = getDevPort(address,port);
+                    if(port == -1){
+                        throw new Exception("开发环境获取转发端口失败");
+                    }
+                    address=systemConfig.getTransferDevIp();
+
             }
+
 
             final Socket socket = new Socket(InetAddress.getByName(address), port);
 
@@ -59,7 +76,7 @@ public class ExecutionDataClient {
             gotExecData = true;
 
         } catch (Exception e) {
-            logger.error("getExecutionData connect failed : {} , {} , {}", address, port, testedEnv == 2 ? "生产环境" : "测试环境");
+//            logger.error("getExecutionData connect failed : {} , {} , {}", address, port, testedEnv == 2 ? "生产环境" : "测试环境");
             localFile.close();
             destFile.delete();
         } finally {
@@ -70,6 +87,11 @@ public class ExecutionDataClient {
 
     private int getPort(String address, int port) {
         String tempUrl = systemConfig.getTransferUrl() + "?address=" + address + "&port=" + port;
+        return Integer.parseInt(HttpRequestUtil.getForObject(tempUrl, String.class, 3));
+    }
+
+    private int getDevPort(String address,int port){
+        String tempUrl = systemConfig.getTransferDevUrl()+ "?address=" + address + "&port=" + port;
         return Integer.parseInt(HttpRequestUtil.getForObject(tempUrl, String.class, 3));
     }
 
