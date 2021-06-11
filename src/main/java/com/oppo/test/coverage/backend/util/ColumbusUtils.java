@@ -168,8 +168,10 @@ public class ColumbusUtils {
             return;
         }
 
-        if ("org.org*".equals(classArrayList[0])){
-            FileOperateUtil.delAllFile(basePath + "org");
+        for (String ignoreClass : classArrayList){
+            if (ignoreClass.startsWith("***")){
+                FileOperateUtil.delAllFile(basePath + ignoreClass.replace("***",""));
+            }
         }
 
         for (String classname : classArrayList) {
