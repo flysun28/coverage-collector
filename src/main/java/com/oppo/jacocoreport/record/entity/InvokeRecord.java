@@ -22,6 +22,8 @@ public class InvokeRecord implements Serializable {
 
     private Date updateTime;
 
+    private String caseId;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -96,6 +98,14 @@ public class InvokeRecord implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -116,7 +126,8 @@ public class InvokeRecord implements Serializable {
             && (this.getNodeIp() == null ? other.getNodeIp() == null : this.getNodeIp().equals(other.getNodeIp()))
             && (this.getRemoteAddr() == null ? other.getRemoteAddr() == null : this.getRemoteAddr().equals(other.getRemoteAddr()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
+            && (this.getCaseId() == null ? other.getCaseId() == null : this.getCaseId().equals(other.getCaseId()));
     }
 
     @Override
@@ -132,6 +143,7 @@ public class InvokeRecord implements Serializable {
         result = prime * result + ((getRemoteAddr() == null) ? 0 : getRemoteAddr().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
+        result = prime * result + ((getCaseId() == null) ? 0 : getCaseId().hashCode());
         return result;
     }
 
@@ -150,6 +162,7 @@ public class InvokeRecord implements Serializable {
         sb.append(", remoteAddr=").append(remoteAddr);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", caseId=").append(caseId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

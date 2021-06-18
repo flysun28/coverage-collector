@@ -20,6 +20,9 @@ package com.oppo.jacocoreport.record.service;
 
 import com.oppo.jacocoreport.record.entity.InvokeRecord;
 
+import java.util.List;
+
 public interface InvokeRecordService {
     int saveInvokeRecord(InvokeRecord invokeRecord);
+    List<String> selectCaseId(String appId,String method);
 }

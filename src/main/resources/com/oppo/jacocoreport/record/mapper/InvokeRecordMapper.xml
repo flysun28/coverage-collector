@@ -11,6 +11,580 @@
     <result column="remote_addr" jdbcType="VARCHAR" property="remoteAddr" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="case_id" jdbcType="VARCHAR" property="caseId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, flow_no, app_id, trace_Id, method, node_ip, remote_addr, create_time, update_time, 
+    case_id
+  </sql>
+  <select id="selectByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample">
+    delete from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    insert into invoke_record (id, flow_no, app_id, 
+      trace_Id, method, node_ip, 
+      remote_addr, create_time, update_time, 
+      case_id)
+    values (#{id,jdbcType=INTEGER}, #{flowNo,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, 
+      #{traceId,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, #{nodeIp,jdbcType=VARCHAR}, 
+      #{remoteAddr,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{caseId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    insert into invoke_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="flowNo != null">
+        flow_no,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="traceId != null">
+        trace_Id,
+      </if>
+      <if test="method != null">
+        method,
+      </if>
+      <if test="nodeIp != null">
+        node_ip,
+      </if>
+      <if test="remoteAddr != null">
+        remote_addr,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="caseId != null">
+        case_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="flowNo != null">
+        #{flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeIp != null">
+        #{nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddr != null">
+        #{remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="caseId != null">
+        #{caseId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample" resultType="java.lang.Long">
+    select count(*) from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update invoke_record
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.flowNo != null">
+        flow_no = #{record.flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appId != null">
+        app_id = #{record.appId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.traceId != null">
+        trace_Id = #{record.traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.method != null">
+        method = #{record.method,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nodeIp != null">
+        node_ip = #{record.nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remoteAddr != null">
+        remote_addr = #{record.remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.caseId != null">
+        case_id = #{record.caseId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update invoke_record
+    set id = #{record.id,jdbcType=INTEGER},
+      flow_no = #{record.flowNo,jdbcType=VARCHAR},
+      app_id = #{record.appId,jdbcType=VARCHAR},
+      trace_Id = #{record.traceId,jdbcType=VARCHAR},
+      method = #{record.method,jdbcType=VARCHAR},
+      node_ip = #{record.nodeIp,jdbcType=VARCHAR},
+      remote_addr = #{record.remoteAddr,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      case_id = #{record.caseId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    update invoke_record
+    <set>
+      <if test="flowNo != null">
+        flow_no = #{flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="traceId != null">
+        trace_Id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        method = #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeIp != null">
+        node_ip = #{nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddr != null">
+        remote_addr = #{remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="caseId != null">
+        case_id = #{caseId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    update invoke_record
+    set flow_no = #{flowNo,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      trace_Id = #{traceId,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      node_ip = #{nodeIp,jdbcType=VARCHAR},
+      remote_addr = #{remoteAddr,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      case_id = #{caseId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="trace_Id" jdbcType="VARCHAR" property="traceId" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="node_ip" jdbcType="VARCHAR" property="nodeIp" />
+    <result column="remote_addr" jdbcType="VARCHAR" property="remoteAddr" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="case_id" jdbcType="VARCHAR" property="caseId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, flow_no, app_id, trace_Id, method, node_ip, remote_addr, create_time, update_time, 
+    case_id
+  </sql>
+  <select id="selectByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample">
+    delete from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    insert into invoke_record (id, flow_no, app_id, 
+      trace_Id, method, node_ip, 
+      remote_addr, create_time, update_time, 
+      case_id)
+    values (#{id,jdbcType=INTEGER}, #{flowNo,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, 
+      #{traceId,jdbcType=VARCHAR}, #{method,jdbcType=VARCHAR}, #{nodeIp,jdbcType=VARCHAR}, 
+      #{remoteAddr,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{caseId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    insert into invoke_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="flowNo != null">
+        flow_no,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="traceId != null">
+        trace_Id,
+      </if>
+      <if test="method != null">
+        method,
+      </if>
+      <if test="nodeIp != null">
+        node_ip,
+      </if>
+      <if test="remoteAddr != null">
+        remote_addr,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="caseId != null">
+        case_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="flowNo != null">
+        #{flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeIp != null">
+        #{nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddr != null">
+        #{remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="caseId != null">
+        #{caseId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecordExample" resultType="java.lang.Long">
+    select count(*) from invoke_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update invoke_record
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.flowNo != null">
+        flow_no = #{record.flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appId != null">
+        app_id = #{record.appId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.traceId != null">
+        trace_Id = #{record.traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.method != null">
+        method = #{record.method,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nodeIp != null">
+        node_ip = #{record.nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remoteAddr != null">
+        remote_addr = #{record.remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.caseId != null">
+        case_id = #{record.caseId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update invoke_record
+    set id = #{record.id,jdbcType=INTEGER},
+      flow_no = #{record.flowNo,jdbcType=VARCHAR},
+      app_id = #{record.appId,jdbcType=VARCHAR},
+      trace_Id = #{record.traceId,jdbcType=VARCHAR},
+      method = #{record.method,jdbcType=VARCHAR},
+      node_ip = #{record.nodeIp,jdbcType=VARCHAR},
+      remote_addr = #{record.remoteAddr,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      case_id = #{record.caseId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    update invoke_record
+    <set>
+      <if test="flowNo != null">
+        flow_no = #{flowNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="traceId != null">
+        trace_Id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="method != null">
+        method = #{method,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeIp != null">
+        node_ip = #{nodeIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remoteAddr != null">
+        remote_addr = #{remoteAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="caseId != null">
+        case_id = #{caseId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    update invoke_record
+    set flow_no = #{flowNo,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      trace_Id = #{traceId,jdbcType=VARCHAR},
+      method = #{method,jdbcType=VARCHAR},
+      node_ip = #{nodeIp,jdbcType=VARCHAR},
+      remote_addr = #{remoteAddr,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      case_id = #{caseId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.oppo.jacocoreport.record.entity.InvokeRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="trace_Id" jdbcType="VARCHAR" property="traceId" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="node_ip" jdbcType="VARCHAR" property="nodeIp" />
+    <result column="remote_addr" jdbcType="VARCHAR" property="remoteAddr" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>

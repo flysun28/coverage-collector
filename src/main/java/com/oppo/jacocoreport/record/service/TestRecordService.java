@@ -19,6 +19,7 @@
 package com.oppo.jacocoreport.record.service;
 
 
+import com.oppo.jacocoreport.record.request.req.GetCaseIdListReq;
 import com.oppo.jacocoreport.record.request.req.StartRecordReq;
 import com.oppo.jacocoreport.record.entity.TestRecord;
 import com.oppo.jacocoreport.record.request.req.StopRecordReq;
@@ -30,5 +31,5 @@ public interface TestRecordService {
 
     Response stopTest(StopRecordReq stopRecordReq);
 
-
+    Response getCaseIdListTest(GetCaseIdListReq getCaseIdListReq);
 }

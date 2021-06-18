@@ -19,14 +19,16 @@
 package com.oppo.jacocoreport.record.service.impl;
 
 import com.oppo.jacocoreport.record.entity.InvokeRecord;
+import com.oppo.jacocoreport.record.entity.InvokeRecordExample;
 import com.oppo.jacocoreport.record.mapper.InvokeRecordMapper;
 import com.oppo.jacocoreport.record.service.InvokeRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -46,5 +48,24 @@ public class InvokeRecordServiceImpl implements InvokeRecordService {
             return 0;
         }
 
+    }
+
+    @Override
+    public List<String> selectCaseId(String appId, String method) {
+        InvokeRecordExample invokeRecordExample=new InvokeRecordExample();
+        InvokeRecordExample.Criteria criteria=invokeRecordExample.createCriteria();
+        criteria.andAppIdEqualTo(appId);
+        criteria.andMethodEqualTo(method);
+        List<InvokeRecord> invokeRecordList=invokeRecordMapper.selectByExample(invokeRecordExample);
+        if(invokeRecordList.size()>0)
+        {
+            List<String> caseId=new ArrayList<>();
+            for(InvokeRecord invokeRecord:invokeRecordList)
+            {
+                caseId.add(invokeRecord.getCaseId());
+            }
+            return caseId;
+        }
+        return null;
     }
 }

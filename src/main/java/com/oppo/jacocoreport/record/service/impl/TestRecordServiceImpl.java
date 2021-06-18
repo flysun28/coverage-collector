@@ -23,7 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.oppo.jacocoreport.record.config.CommonConfig;
 import com.oppo.jacocoreport.record.entity.InvokeRecord;
 import com.oppo.jacocoreport.record.entity.TestRecordExample;
+import com.oppo.jacocoreport.record.request.req.GetCaseIdListReq;
 import com.oppo.jacocoreport.record.request.req.StartRecordReq;
+import com.oppo.jacocoreport.record.request.res.GetCaseIdListRes;
 import com.oppo.jacocoreport.record.request.res.PaasRequestDetailRes;
 import com.oppo.jacocoreport.record.service.InvokeRecordService;
 import com.oppo.jacocoreport.record.utils.OkHttpClientUtil;
@@ -88,7 +90,7 @@ public class TestRecordServiceImpl implements TestRecordService {
             testRecordMapper.updateByPrimaryKey(beginRecord);
             List<PaasRequestDetailRes> paasRequestDetailResList = requestIntfDetail(beginRecord);
             paasRequestDetailResList.forEach(paasRequestDetailRes -> {
-                List<InvokeRecord> invokeRecordList = requestInvokeDetail(paasRequestDetailRes.getTraceId(),beginRecord.getBeginTime().getTime());
+                List<InvokeRecord> invokeRecordList = requestInvokeDetail(paasRequestDetailRes.getTraceId(),beginRecord.getBeginTime().getTime(),beginRecord.getCaseId());
                 if (invokeRecordList.size() > 0){
                     invokeRecordList.forEach(invokeRecord -> {
                         invokeRecord.setFlowNo(beginRecord.getFlowNo());
@@ -98,6 +100,20 @@ public class TestRecordServiceImpl implements TestRecordService {
             });
         });
         return ResponseBuilder.buildDefaultSuccessRes();
+    }
+
+    @Override
+    public Response getCaseIdListTest(GetCaseIdListReq getCaseIdListReq) {
+        try
+        {
+            GetCaseIdListRes getCaseIdListRes=new GetCaseIdListRes();
+            getCaseIdListRes.setCaseId(invokeRecordService.selectCaseId(getCaseIdListReq.getAppId(),getCaseIdListReq.getMethod()));
+            return ResponseBuilder.buildSuccessRes(getCaseIdListRes);
+        }
+        catch (Exception e)
+        {
+            return ResponseBuilder.buildFailRes(ResponseCode.BUSSINESS_ERR,e);
+        }
     }
 
 
@@ -155,7 +171,7 @@ public class TestRecordServiceImpl implements TestRecordService {
         return testRecordList.size() > 0 ?testRecordList.get(0):null;
     }
 
-    public List<InvokeRecord> requestInvokeDetail(String traceId,long startTime){
+    public List<InvokeRecord> requestInvokeDetail(String traceId,long startTime,String caseId){
         Map<String,Object> body = new HashMap<>();
         body.put("traceId",traceId);
         body.put("startTime",startTime);
@@ -182,6 +198,7 @@ public class TestRecordServiceImpl implements TestRecordService {
                     invokeRecord.setNodeIp(nodeIp);
                     invokeRecord.setRemoteAddr(remoteAddr);
                     invokeRecord.setTraceId(traceId);
+                    invokeRecord.setCaseId(caseId);
                     invokeRecordList.add(invokeRecord);
                 });
             }
@@ -207,6 +224,7 @@ public class TestRecordServiceImpl implements TestRecordService {
         try {
             String traceResult = OkHttpClientUtil.post(commonConfig.getRequestUrl(), JSONObject.toJSONString(body),null);
             JSONObject traceObj = JSONObject.parseObject(traceResult);
+            System.out.print(traceObj);
             if (Objects.nonNull(traceObj) &&
                     traceObj.getIntValue("status") == 200 &&
                     Objects.nonNull(traceObj.getJSONObject("data")) &&
@@ -218,10 +236,10 @@ public class TestRecordServiceImpl implements TestRecordService {
                         body.put("page",i + 2);
                         traceResult = OkHttpClientUtil.post(commonConfig.getRequestUrl(), JSONObject.toJSONString(body),null);
                         JSONObject moreTraceObj = JSONObject.parseObject(traceResult);
-                        if (Objects.nonNull(traceObj) &&
-                                traceObj.getIntValue("status") == 200 &&
-                                Objects.nonNull(traceObj.getJSONObject("data")) &&
-                                traceObj.getJSONObject("data").getIntValue("total") > 0){
+                        if (Objects.nonNull(moreTraceObj) &&
+                                moreTraceObj.getIntValue("status") == 200 &&
+                                Objects.nonNull(moreTraceObj.getJSONObject("data")) &&
+                                moreTraceObj.getJSONObject("data").getIntValue("total") > 0){
                             jsonArray.addAll(moreTraceObj.getJSONObject("data").getJSONArray("list"));
                         }
                     }

@@ -19,6 +19,7 @@
 package com.oppo.jacocoreport.record.controller;
 
 
+import com.oppo.jacocoreport.record.request.req.GetCaseIdListReq;
 import com.oppo.jacocoreport.record.request.req.StartRecordReq;
 import com.oppo.jacocoreport.record.request.req.StopRecordReq;
 import com.oppo.jacocoreport.record.service.TestRecordService;
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,9 +39,8 @@ public class TestRecordController {
     @Autowired
     private TestRecordService testRecordService;
 
-    @RequestMapping("/recording/start")
+    @RequestMapping(value="/recording/start")
     public Response startTest(@RequestBody StartRecordReq startRecordReq){
-
         if (StringUtils.isBlank(startRecordReq.getAppId())){
             ResponseBuilder.buildFailRes(ResponseCode.PARAMS_ILlEGLE,"appId is not blank");
         }
@@ -55,6 +56,7 @@ public class TestRecordController {
         return testRecordService.startTest(startRecordReq);
     }
 
+
     @RequestMapping("/recording/stop")
     public Response stopTest(@RequestBody StopRecordReq stopRecordReq){
 
@@ -62,6 +64,18 @@ public class TestRecordController {
             ResponseBuilder.buildFailRes(ResponseCode.PARAMS_ILlEGLE,"flowNo is not blank");
         }
         return testRecordService.stopTest(stopRecordReq);
+    }
+
+    @RequestMapping("/recording/getCaseIdList")
+    public Response getCaseIdListTest(@RequestBody GetCaseIdListReq getCaseIdListReq){
+
+        if (StringUtils.isBlank(getCaseIdListReq.getAppId())){
+            ResponseBuilder.buildFailRes(ResponseCode.PARAMS_ILlEGLE,"appId is not blank");
+        }
+        if (StringUtils.isBlank(getCaseIdListReq.getMethod())){
+            ResponseBuilder.buildFailRes(ResponseCode.PARAMS_ILlEGLE,"method is not blank");
+        }
+        return testRecordService.getCaseIdListTest(getCaseIdListReq);
     }
 
 }
