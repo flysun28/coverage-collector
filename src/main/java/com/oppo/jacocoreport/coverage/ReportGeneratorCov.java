@@ -157,18 +157,19 @@ public class ReportGeneratorCov {
         if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
             Collection<IPackageCoverage> iPackageCoverages = bundleCoverageDiff.getPackages();
-            for(IPackageCoverage iPackageCoverage : iPackageCoverages){
-                Collection<IClassCoverage> iClassCoverages = iPackageCoverage.getClasses();
-                for(IClassCoverage iClassCoverage: iClassCoverages){
-                    for(IMethodCoverage iMethodCoverage : iClassCoverage.getMethods()){
-                        int count = iMethodCoverage.getLineCounter().getTotalCount() - iMethodCoverage.getLineCounter().getMissedCount();
-                        if(count >= 1){
-                            System.out.println(iMethodCoverage.getClass()+iMethodCoverage.getName());
-                            iMethodCoverage.getLine(1).getStatus();
-                        }
-                    }
-                }
-            }
+//            for(IPackageCoverage iPackageCoverage : iPackageCoverages){
+//                Collection<IClassCoverage> iClassCoverages = iPackageCoverage.getClasses();
+//                for(IClassCoverage iClassCoverage: iClassCoverages){
+//                    for(IMethodCoverage iMethodCoverage : iClassCoverage.getMethods()){
+//                        int count = iMethodCoverage.getLineCounter().getTotalCount() - iMethodCoverage.getLineCounter().getMissedCount();
+//                        if(count >= 1){
+//                            System.out.println(iMethodCoverage.getClass()+iMethodCoverage.getName());
+//                            iMethodCoverage.getLine(1).getStatus();
+//
+//                        }
+//                    }
+//                }
+//            }
 
             createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
         }
