@@ -12,9 +12,7 @@ import com.oppo.jacocoreport.response.DefinitionException;
 import com.oppo.jacocoreport.response.ErrorEnum;
 import com.oppo.jacocoreport.response.TimerTaskStopReasonEnum;
 import org.eclipse.jgit.util.StringUtils;
-import org.jacoco.core.analysis.Analyzer;
-import org.jacoco.core.analysis.CoverageBuilder;
-import org.jacoco.core.analysis.IBundleCoverage;
+import org.jacoco.core.analysis.*;
 import org.jacoco.core.internal.diff.ClassInfo;
 import org.jacoco.core.internal.diff.CodeDiff;
 import org.jacoco.core.internal.diff.GitAdapter;
@@ -158,6 +156,21 @@ public class ReportGeneratorCov {
         }
         if(classInfos != null && classInfos.size() > 0) {
             final IBundleCoverage bundleCoverageDiff = analyzeStructureDiff(classesDirectoryList, title);
+            Collection<IPackageCoverage> iPackageCoverages = bundleCoverageDiff.getPackages();
+//            for(IPackageCoverage iPackageCoverage : iPackageCoverages){
+//                Collection<IClassCoverage> iClassCoverages = iPackageCoverage.getClasses();
+//                for(IClassCoverage iClassCoverage: iClassCoverages){
+//                    for(IMethodCoverage iMethodCoverage : iClassCoverage.getMethods()){
+//                        int count = iMethodCoverage.getLineCounter().getTotalCount() - iMethodCoverage.getLineCounter().getMissedCount();
+//                        if(count >= 1){
+//                            System.out.println(iMethodCoverage.getClass()+iMethodCoverage.getName());
+//                            iMethodCoverage.getLine(1).getStatus();
+//
+//                        }
+//                    }
+//                }
+//            }
+
             createReport(bundleCoverageDiff, reportDiffDirectory, sourceDirectoryList);
         }
     }
