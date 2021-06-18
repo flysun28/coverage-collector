@@ -312,11 +312,11 @@
             <artifactId>commons</artifactId>
             <version>0.1.0</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>com.oppo</groupId>-->
-        <!--<artifactId>framework-trace-agent</artifactId>-->
-        <!--<version>6.1.7.GA</version>-->
-        <!--</dependency>-->
+        <dependency>
+        <groupId>com.oppo</groupId>
+        <artifactId>framework-trace-agent</artifactId>
+        <version>6.2.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.oppo</groupId>
             <artifactId>framework-trace-servlet</artifactId>
