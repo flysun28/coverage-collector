@@ -31,13 +31,12 @@ public class ScheduleThreadPoolUtil {
     }
 
     @Bean(name = "scheduledThreadPoolExecutor")
-    public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor(){
+    public TraceScheduledExecutorService scheduledThreadPoolExecutor(){
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =  new ScheduledThreadPoolExecutor(20,
                 new ThreadFactoryBuilder().setNameFormat("Timer-task-thread-%d").build(),
                 new MyIgnorePolicy());
-//        ScheduledExecutorService scheduled= new TraceScheduledExecutorService(scheduledThreadPoolExecutor);
-
-        return scheduledThreadPoolExecutor;
+        TraceScheduledExecutorService scheduled= new TraceScheduledExecutorService(scheduledThreadPoolExecutor);
+        return scheduled;
     }
 
 }

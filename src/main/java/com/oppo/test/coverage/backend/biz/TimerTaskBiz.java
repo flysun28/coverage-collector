@@ -5,6 +5,7 @@ import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
 import com.oppo.test.coverage.backend.model.constant.TimerTaskStopReasonEnum;
 import com.oppo.test.coverage.backend.util.SystemConfig;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
+import com.oppo.trace.threadpool.TraceScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +34,7 @@ public class TimerTaskBiz {
     SystemConfig systemConfig;
 
     @Resource
-    ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+    TraceScheduledExecutorService scheduledThreadPoolExecutor;
 
     private Map<Long, RunnableScheduledFuture<?>> timerTaskMap = new HashMap<>(100);
 
@@ -55,7 +57,8 @@ public class TimerTaskBiz {
         if (task != null) {
             logger.info("stop timer task : {} , {} ,{}", taskId, appCode, errorEnum);
             task.cancel(false);
-            scheduledThreadPoolExecutor.remove(task);
+            ScheduledThreadPoolExecutor executorService = (ScheduledThreadPoolExecutor)scheduledThreadPoolExecutor.getRealExecutorService();
+            executorService.remove(task);
             timerTaskMap.remove(taskId);
             appCodeSet.remove(appCode);
         }
