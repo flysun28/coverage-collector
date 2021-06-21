@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.oppo.jacocoreport.record.mapper.TestRecordMapper">
-  <resultMap id="BaseResultMap" type="com.oppo.jacocoreport.record.entity.TestRecord">
+<mapper namespace="com.oppo.test.coverage.backend.record.mapper.TestRecordMapper">
+  <resultMap id="BaseResultMap" type="com.oppo.test.coverage.backend.record.entity.TestRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
     <result column="paas_zone_code" jdbcType="VARCHAR" property="paasZoneCode" />
@@ -75,7 +75,7 @@
     id, flow_no, paas_zone_code, app_id, case_id, remote_addr, begin_time, end_time, 
     create_time, update_time
   </sql>
-  <select id="selectByExample" parameterType="com.oppo.jacocoreport.record.entity.TestRecordExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecordExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -99,13 +99,13 @@
     delete from test_record
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.oppo.jacocoreport.record.entity.TestRecordExample">
+  <delete id="deleteByExample" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecordExample">
     delete from test_record
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.oppo.jacocoreport.record.entity.TestRecord">
+  <insert id="insert" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecord">
     insert into test_record (id, flow_no, paas_zone_code, 
       app_id, case_id, remote_addr, 
       begin_time, end_time, create_time, 
@@ -115,7 +115,7 @@
       #{beginTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.oppo.jacocoreport.record.entity.TestRecord">
+  <insert id="insertSelective" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecord">
     insert into test_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -182,7 +182,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.oppo.jacocoreport.record.entity.TestRecordExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecordExample" resultType="java.lang.Long">
     select count(*) from test_record
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -242,7 +242,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.oppo.jacocoreport.record.entity.TestRecord">
+  <update id="updateByPrimaryKeySelective" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecord">
     update test_record
     <set>
       <if test="flowNo != null">
@@ -275,7 +275,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.oppo.jacocoreport.record.entity.TestRecord">
+  <update id="updateByPrimaryKey" parameterType="com.oppo.test.coverage.backend.record.entity.TestRecord">
     update test_record
     set flow_no = #{flowNo,jdbcType=VARCHAR},
       paas_zone_code = #{paasZoneCode,jdbcType=VARCHAR},
