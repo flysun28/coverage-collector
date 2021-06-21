@@ -2,9 +2,8 @@ package com.oppo.test.coverage.backend.record.mapper;
 
 import com.oppo.test.coverage.backend.record.entity.TestRecord;
 import com.oppo.test.coverage.backend.record.entity.TestRecordExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface TestRecordMapper {
     long countByExample(TestRecordExample example);

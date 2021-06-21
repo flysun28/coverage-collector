@@ -2,9 +2,8 @@ package com.oppo.test.coverage.backend.record.mapper;
 
 import com.oppo.test.coverage.backend.record.entity.InvokeRecord;
 import com.oppo.test.coverage.backend.record.entity.InvokeRecordExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface InvokeRecordMapper {
     long countByExample(InvokeRecordExample example);
