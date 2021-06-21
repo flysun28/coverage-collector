@@ -160,42 +160,6 @@
             <version>1.23</version>
         </dependency>
         <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>agent</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/jacocoagent.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>jgit</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/org.eclipse.jgit.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco.agent-0.8.4</groupId>
-            <artifactId>agent</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/org.jacoco.agent-0.8.4.201910110746.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco.ant-1.0</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco.report-1.0</groupId>
-            <artifactId>report</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco.core-1.0</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-invoker</artifactId>
             <version>3.0.1</version>
@@ -315,17 +279,17 @@
         <dependency>
         <groupId>com.oppo</groupId>
         <artifactId>framework-trace-agent</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.1.10.GA</version>
         </dependency>
         <dependency>
             <groupId>com.oppo</groupId>
             <artifactId>framework-trace-servlet</artifactId>
-            <version>6.2.0-SNAPSHOT</version>
+            <version>6.1.10.GA</version>
         </dependency>
         <dependency>
             <groupId>com.oppo</groupId>
             <artifactId>framework-trace-threadpool</artifactId>
-            <version>6.2.0-SNAPSHOT</version>
+            <version>6.1.10.GA</version>
         </dependency>
 	</dependencies>
 
