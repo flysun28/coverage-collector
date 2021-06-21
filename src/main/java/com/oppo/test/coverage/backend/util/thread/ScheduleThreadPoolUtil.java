@@ -1,10 +1,12 @@
 package com.oppo.test.coverage.backend.util.thread;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.oppo.trace.threadpool.TraceScheduledExecutorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -30,9 +32,11 @@ public class ScheduleThreadPoolUtil {
 
     @Bean(name = "scheduledThreadPoolExecutor")
     public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor(){
-        return new ScheduledThreadPoolExecutor(20,
+        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =  new ScheduledThreadPoolExecutor(20,
                 new ThreadFactoryBuilder().setNameFormat("Timer-task-thread-%d").build(),
                 new MyIgnorePolicy());
+        ScheduledExecutorService scheduled= new TraceScheduledExecutorService(scheduledThreadPoolExecutor);
+        return (ScheduledThreadPoolExecutor)scheduled;
     }
 
 }

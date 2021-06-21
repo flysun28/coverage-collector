@@ -1,6 +1,7 @@
 package com.oppo.test.coverage.backend.util.thread;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.oppo.trace.threadpool.TraceExecutorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,8 +25,8 @@ public class CacheThreadPoolUtil {
                 new SynchronousQueue<Runnable>(),
                 new ThreadFactoryBuilder().setNameFormat("cache-threadPool-%d").build(),
                 new MyIgnorePolicy());
-
-        return executorService;
+        ExecutorService threadPool=new TraceExecutorService(executorService);
+        return threadPool;
     }
 
     public static class MyIgnorePolicy implements RejectedExecutionHandler {
