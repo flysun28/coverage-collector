@@ -35,8 +35,9 @@ public class ScheduleThreadPoolUtil {
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =  new ScheduledThreadPoolExecutor(20,
                 new ThreadFactoryBuilder().setNameFormat("Timer-task-thread-%d").build(),
                 new MyIgnorePolicy());
-        ScheduledExecutorService scheduled= new TraceScheduledExecutorService(scheduledThreadPoolExecutor);
-        return (ScheduledThreadPoolExecutor)scheduled;
+//        ScheduledExecutorService scheduled= new TraceScheduledExecutorService(scheduledThreadPoolExecutor);
+
+        return scheduledThreadPoolExecutor;
     }
 
 }
