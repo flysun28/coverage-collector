@@ -49,6 +49,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -61,6 +63,8 @@ public class TestRecordServiceImpl implements TestRecordService {
 
     @Autowired
     private InvokeRecordService invokeRecordService;
+
+    private ExecutorService pool = Executors.newFixedThreadPool(2);
 
     private static final Logger logger = LoggerFactory.getLogger(TestRecordServiceImpl.class);
     @Override
@@ -84,6 +88,7 @@ public class TestRecordServiceImpl implements TestRecordService {
     @Override
     public Response stopTest(StopRecordReq stopRecordReq) {
         logger.info("stopRecordReq : {}", JSON.toJSONString(stopRecordReq));
+
         CompletableFuture.runAsync(()-> {
             TestRecord endRecord = new TestRecord();
             BeanUtils.copyProperties(stopRecordReq,endRecord);
@@ -104,7 +109,7 @@ public class TestRecordServiceImpl implements TestRecordService {
                     });
                 }
             });
-        });
+        },pool);
         return ResponseBuilder.buildDefaultSuccessRes();
     }
 
