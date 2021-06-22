@@ -86,51 +86,27 @@ public class TestRecordServiceImpl implements TestRecordService {
     @Override
     public Response stopTest(StopRecordReq stopRecordReq) {
         logger.info("stopRecordReq : {}", JSON.toJSONString(stopRecordReq));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TestRecord endRecord = new TestRecord();
-                BeanUtils.copyProperties(stopRecordReq,endRecord);
-                TestRecord beginRecord = selectBySelective(endRecord);
-                if (Objects.isNull(beginRecord)){
-                    log.error("未查到开始测试记录");
-                }
-                beginRecord.setEndTime(new Date());
-                logger.info("beginRecord : {}", JSON.toJSONString(beginRecord));
-                testRecordMapper.updateByPrimaryKey(beginRecord);
-                List<PaasRequestDetailRes> paasRequestDetailResList = requestIntfDetail(beginRecord);
-                paasRequestDetailResList.forEach(paasRequestDetailRes -> {
-                    List<InvokeRecord> invokeRecordList = requestInvokeDetail(paasRequestDetailRes.getTraceId(),beginRecord.getBeginTime().getTime(),beginRecord.getCaseId());
-                    if (invokeRecordList.size() > 0){
-                        invokeRecordList.forEach(invokeRecord -> {
-                            invokeRecord.setFlowNo(beginRecord.getFlowNo());
-                            invokeRecordService.saveInvokeRecord(invokeRecord);
-                        });
-                    }
-                });
+        CompletableFuture.runAsync(()-> {
+            TestRecord endRecord = new TestRecord();
+            BeanUtils.copyProperties(stopRecordReq,endRecord);
+            TestRecord beginRecord = selectBySelective(endRecord);
+            if (Objects.isNull(beginRecord)){
+                log.error("未查到开始测试记录");
             }
-        }).start();
-//        CompletableFuture.runAsync(()-> {
-//            TestRecord endRecord = new TestRecord();
-//            BeanUtils.copyProperties(stopRecordReq,endRecord);
-//            TestRecord beginRecord = selectBySelective(endRecord);
-//            if (Objects.isNull(beginRecord)){
-//                log.error("未查到开始测试记录");
-//            }
-//            beginRecord.setEndTime(new Date());
-//            logger.info("beginRecord : {}", JSON.toJSONString(beginRecord));
-//            testRecordMapper.updateByPrimaryKey(beginRecord);
-//            List<PaasRequestDetailRes> paasRequestDetailResList = requestIntfDetail(beginRecord);
-//            paasRequestDetailResList.forEach(paasRequestDetailRes -> {
-//                List<InvokeRecord> invokeRecordList = requestInvokeDetail(paasRequestDetailRes.getTraceId(),beginRecord.getBeginTime().getTime(),beginRecord.getCaseId());
-//                if (invokeRecordList.size() > 0){
-//                    invokeRecordList.forEach(invokeRecord -> {
-//                        invokeRecord.setFlowNo(beginRecord.getFlowNo());
-//                        invokeRecordService.saveInvokeRecord(invokeRecord);
-//                    });
-//                }
-//            });
-//        });
+            beginRecord.setEndTime(new Date());
+            logger.info("beginRecord : {}", JSON.toJSONString(beginRecord));
+            testRecordMapper.updateByPrimaryKey(beginRecord);
+            List<PaasRequestDetailRes> paasRequestDetailResList = requestIntfDetail(beginRecord);
+            paasRequestDetailResList.forEach(paasRequestDetailRes -> {
+                List<InvokeRecord> invokeRecordList = requestInvokeDetail(paasRequestDetailRes.getTraceId(),beginRecord.getBeginTime().getTime(),beginRecord.getCaseId());
+                if (invokeRecordList.size() > 0){
+                    invokeRecordList.forEach(invokeRecord -> {
+                        invokeRecord.setFlowNo(beginRecord.getFlowNo());
+                        invokeRecordService.saveInvokeRecord(invokeRecord);
+                    });
+                }
+            });
+        });
         return ResponseBuilder.buildDefaultSuccessRes();
     }
 

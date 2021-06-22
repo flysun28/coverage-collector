@@ -16,8 +16,6 @@ import java.util.Optional;
  * @author :
  */
 @SpringBootApplication
-@EnableAsync
-@EnableScheduling
 @MapperScan(basePackages = "com.oppo.test.coverage.backend.record.mapper")
 public class CoverageBackendApplication {
 
