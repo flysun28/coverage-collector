@@ -83,6 +83,7 @@ public class TestRecordServiceImpl implements TestRecordService {
 
     @Override
     public Response stopTest(StopRecordReq stopRecordReq) {
+        logger.info("stopRecordReq : {}", JSON.toJSONString(stopRecordReq));
         CompletableFuture.runAsync(()-> {
             TestRecord endRecord = new TestRecord();
             BeanUtils.copyProperties(stopRecordReq,endRecord);
