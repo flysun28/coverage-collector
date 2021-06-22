@@ -18,6 +18,7 @@
 
 package com.oppo.test.coverage.backend.record.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.oppo.test.coverage.backend.record.common.Response;
@@ -40,6 +41,8 @@ import com.oppo.test.coverage.backend.record.utils.OkHttpClientUtil;
 import com.oppo.test.coverage.backend.record.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +62,7 @@ public class TestRecordServiceImpl implements TestRecordService {
     @Autowired
     private InvokeRecordService invokeRecordService;
 
+    private static final Logger logger = LoggerFactory.getLogger(TestRecordServiceImpl.class);
     @Override
     public Response startTest(StartRecordReq startRecordReq) {
 
@@ -87,6 +91,7 @@ public class TestRecordServiceImpl implements TestRecordService {
                 log.error("未查到开始测试记录");
             }
             beginRecord.setEndTime(new Date());
+            logger.info("beginRecord : {}", JSON.toJSONString(beginRecord));
             testRecordMapper.updateByPrimaryKey(beginRecord);
             List<PaasRequestDetailRes> paasRequestDetailResList = requestIntfDetail(beginRecord);
             paasRequestDetailResList.forEach(paasRequestDetailRes -> {
