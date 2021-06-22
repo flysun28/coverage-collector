@@ -160,28 +160,29 @@ public class TestRecordServiceImpl implements TestRecordService {
 
     public TestRecord selectBySelective(TestRecord testRecord){
         TestRecordExample example = new TestRecordExample();
-        try {
-            example.setOrderByClause("create_time desc");
-            TestRecordExample.Criteria criteria = example.createCriteria();
-            if (StringUtils.isNotBlank(testRecord.getFlowNo())) {
-                criteria.andFlowNoEqualTo(testRecord.getFlowNo());
-            }
-            if (StringUtils.isNotBlank(testRecord.getAppId())) {
-                criteria.andAppIdEqualTo(testRecord.getAppId());
-            }
-            if (StringUtils.isNotBlank(testRecord.getCaseId())) {
-                criteria.andCaseIdEqualTo(testRecord.getCaseId());
-            }
-            if (StringUtils.isNotBlank(testRecord.getPaasZoneCode())) {
-                criteria.andPaasZoneCodeEqualTo(testRecord.getPaasZoneCode());
-            }
-            if (StringUtils.isNotBlank(testRecord.getRemoteAddr())) {
-                criteria.andRemoteAddrEqualTo(testRecord.getRemoteAddr());
-            }
-
-        }catch (Exception e){
-             e.printStackTrace();
-        }
+        example.setOrderByClause("create_time desc");
+//        try {
+//
+//            TestRecordExample.Criteria criteria = example.createCriteria();
+//            if (StringUtils.isNotBlank(testRecord.getFlowNo())) {
+//                criteria.andFlowNoEqualTo(testRecord.getFlowNo());
+//            }
+//            if (StringUtils.isNotBlank(testRecord.getAppId())) {
+//                criteria.andAppIdEqualTo(testRecord.getAppId());
+//            }
+//            if (StringUtils.isNotBlank(testRecord.getCaseId())) {
+//                criteria.andCaseIdEqualTo(testRecord.getCaseId());
+//            }
+//            if (StringUtils.isNotBlank(testRecord.getPaasZoneCode())) {
+//                criteria.andPaasZoneCodeEqualTo(testRecord.getPaasZoneCode());
+//            }
+//            if (StringUtils.isNotBlank(testRecord.getRemoteAddr())) {
+//                criteria.andRemoteAddrEqualTo(testRecord.getRemoteAddr());
+//            }
+//
+//        }catch (Exception e){
+//             e.printStackTrace();
+//        }
         List<TestRecord> testRecordList = testRecordMapper.selectByExample(example);
         return testRecordList.size() > 0 ?testRecordList.get(0):null;
     }
