@@ -41,6 +41,7 @@ import com.oppo.test.coverage.backend.record.utils.OkHttpClientUtil;
 import com.oppo.test.coverage.backend.record.utils.SnowFlakeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -159,24 +160,29 @@ public class TestRecordServiceImpl implements TestRecordService {
 
     public TestRecord selectBySelective(TestRecord testRecord){
         TestRecordExample example = new TestRecordExample();
-        example.setOrderByClause("create_time desc");
-        TestRecordExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(testRecord.getFlowNo())){
-            criteria.andFlowNoEqualTo(testRecord.getFlowNo());
+        try {
+            example.setOrderByClause("create_time desc");
+            TestRecordExample.Criteria criteria = example.createCriteria();
+            if (StringUtils.isNotBlank(testRecord.getFlowNo())) {
+                criteria.andFlowNoEqualTo(testRecord.getFlowNo());
+            }
+            if (StringUtils.isNotBlank(testRecord.getAppId())) {
+                criteria.andAppIdEqualTo(testRecord.getAppId());
+            }
+            if (StringUtils.isNotBlank(testRecord.getCaseId())) {
+                criteria.andCaseIdEqualTo(testRecord.getCaseId());
+            }
+            if (StringUtils.isNotBlank(testRecord.getPaasZoneCode())) {
+                criteria.andPaasZoneCodeEqualTo(testRecord.getPaasZoneCode());
+            }
+            if (StringUtils.isNotBlank(testRecord.getRemoteAddr())) {
+                criteria.andRemoteAddrEqualTo(testRecord.getRemoteAddr());
+            }
+
+        }catch (Exception e){
+             e.printStackTrace();
         }
-        if (StringUtils.isNotBlank(testRecord.getAppId())){
-            criteria.andAppIdEqualTo(testRecord.getAppId());
-        }
-        if (StringUtils.isNotBlank(testRecord.getCaseId())){
-            criteria.andCaseIdEqualTo(testRecord.getCaseId());
-        }
-        if (StringUtils.isNotBlank(testRecord.getPaasZoneCode())){
-            criteria.andPaasZoneCodeEqualTo(testRecord.getPaasZoneCode());
-        }
-        if (StringUtils.isNotBlank(testRecord.getRemoteAddr())){
-            criteria.andRemoteAddrEqualTo(testRecord.getRemoteAddr());
-        }
-        List<TestRecord> testRecordList =  testRecordMapper.selectByExample(example);
+        List<TestRecord> testRecordList = testRecordMapper.selectByExample(example);
         return testRecordList.size() > 0 ?testRecordList.get(0):null;
     }
 
