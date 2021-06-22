@@ -89,6 +89,7 @@ public class TestRecordServiceImpl implements TestRecordService {
         CompletableFuture.runAsync(()-> {
             TestRecord endRecord = new TestRecord();
             BeanUtils.copyProperties(stopRecordReq,endRecord);
+            logger.info("endRecord : {}", JSON.toJSONString(endRecord));
             TestRecord beginRecord = selectBySelective(endRecord);
             if (Objects.isNull(beginRecord)){
                 log.error("未查到开始测试记录");
