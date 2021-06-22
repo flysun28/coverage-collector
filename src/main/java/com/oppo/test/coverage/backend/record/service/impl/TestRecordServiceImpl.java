@@ -86,7 +86,7 @@ public class TestRecordServiceImpl implements TestRecordService {
     @Override
     public Response stopTest(StopRecordReq stopRecordReq) {
         logger.info("stopRecordReq : {}", JSON.toJSONString(stopRecordReq));
-        new Thread(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 TestRecord endRecord = new TestRecord();
@@ -109,7 +109,7 @@ public class TestRecordServiceImpl implements TestRecordService {
                     }
                 });
             }
-        }.start();
+        }).start();
 //        CompletableFuture.runAsync(()-> {
 //            TestRecord endRecord = new TestRecord();
 //            BeanUtils.copyProperties(stopRecordReq,endRecord);
