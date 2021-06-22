@@ -66,7 +66,7 @@ fi
 JAVA_OPTS=" -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 $JAVA_OPTS"
 if [ -n "$HEY_JVM_OPTIONS" ]; then
     java $REMOTE_JAVA_DEBUG_OPTS -Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 $HEY_JVM_OPTIONS $JAVA_DEBUG_OPT -classpath 'conf:lib/*:.'  com.oppo.test.coverage.backend.CoverageBackendApplication 1>>logs/server.log 2>&1 &
-    else java $JAVA_OPTS $JAVA_DEBUG_OPT -classpath 'conf:lib/*:.'  com.oppo.test.coverage.backend.CoverageBackendApplication 1>>logs/server.log 2>&1 &
+    else java $traceAgent $JAVA_OPTS $JAVA_DEBUG_OPT -classpath 'conf:lib/*:.'  com.oppo.test.coverage.backend.CoverageBackendApplication 1>>logs/server.log 2>&1 &
 fi
 
 echo $! > $base/server.pid
