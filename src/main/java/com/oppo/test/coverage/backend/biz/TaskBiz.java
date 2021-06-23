@@ -1,18 +1,24 @@
 package com.oppo.test.coverage.backend.biz;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
 import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
+import com.oppo.test.coverage.backend.model.entity.CoverageData;
 import com.oppo.test.coverage.backend.model.entity.Data;
 import com.oppo.test.coverage.backend.util.GitUtil;
+import com.oppo.test.coverage.backend.util.SystemConfig;
 import com.oppo.test.coverage.backend.util.file.FolderFileScanner;
+import com.oppo.test.coverage.backend.util.http.HttpRequestUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -39,7 +45,13 @@ public class TaskBiz {
     HttpUtils httpUtils;
 
     @Resource
+    SystemConfig systemConfig;
+
+    @Resource
     private ExecutorService cacheThreadPool;
+
+    @Value("${flag.result.mock}")
+    private boolean resultMockFlag;
 
     private static final int MAX_CASE_SIZE = 100;
 
@@ -93,6 +105,11 @@ public class TaskBiz {
      * 启动覆盖率任务
      */
     private void startCoverageTask(ApplicationCodeInfo applicationCodeInfo) {
+
+        if (resultMockFlag){
+            mockResult(applicationCodeInfo);
+            return;
+        }
 
         logger.info("任务开始 : {}, {}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
 
@@ -195,4 +212,24 @@ public class TaskBiz {
     public BlockingQueue<ApplicationCodeInfo> getTaskQueue() {
         return taskQueue;
     }
+
+
+    private void mockResult(ApplicationCodeInfo applicationCodeInfo){
+        String url = systemConfig.getSendCoverageResultUrl();
+        Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
+        headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
+        CoverageData coverageData = new CoverageData();
+        coverageData.setId(applicationCodeInfo.getId());
+        coverageData.setAppCode(applicationCodeInfo.getApplicationID());
+        coverageData.setFilterTask(1);
+        coverageData.setVersionId(applicationCodeInfo.getVersionId());
+        coverageData.setMissedInstructions("5");
+        coverageData.setTotalInstructions("10");
+        coverageData.setMissedLines("2");
+        coverageData.setTotalLines("6");
+        logger.info("mock result : {}",JSON.toJSON(coverageData));
+        HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(coverageData), Data.class, 1);
+    }
+
+
 }
