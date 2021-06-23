@@ -32,4 +32,9 @@ public class ColumbusUtilsTest {
         System.out.println(columbusUtils.downloadColumbusBuildVersion(repositoryUrl,downloadPath));
     }
 
+    @Test
+    public void getBuildVersionList(){
+        System.out.println(columbusUtils.getBuildVersionList("cmdb-api","cmdb-api-20210622161611-82",3));
+    }
+
 }

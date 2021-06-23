@@ -55,12 +55,22 @@ public class ColumbusUtils {
     private String CLOUD_URL_PROD;
 
 
-    private ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName) {
+    public ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName,Integer testedEnv) {
         Map<String, String> params = new HashMap<>();
         params.put("ts", String.valueOf(System.currentTimeMillis()));
         params.put("app_code", appId);
         //取测试环境版本
-        params.put("env", "test");
+        switch (testedEnv) {
+            case 2:
+                params.put("env", "prod");
+                break;
+            case 3:
+                params.put("env", "dev");
+                break;
+            default:
+                params.put("env", "test");
+        }
+
 
         String sortedParams = sortParams(params);
         List<AppVersionResponse> appVersionResponses;
@@ -152,18 +162,18 @@ public class ColumbusUtils {
     public HashMap<String, Object> getAppDeployInfoFromBuildVersionList(String appId, String buildVersionName, Integer testedEnv) throws DefinitionException {
         StringBuffer applicationIp;
         HashMap<String, Object> hashMap = new HashMap<>();
-        String commitID;
+        String commitId;
         String buildBranch;
         String repositoryUrl;
-        ArrayList<AppVersionResponse> appVersionList = getBuildVersionList(appId, buildVersionName);
+        ArrayList<AppVersionResponse> appVersionList = getBuildVersionList(appId, buildVersionName , testedEnv);
         if (appVersionList.size() > 0) {
-            commitID = appVersionList.get(0).getCommitId();
+            commitId = appVersionList.get(0).getCommitId();
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
 
             applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
             hashMap.put("applicationIP", applicationIp.toString());
-            hashMap.put("commitID", commitID);
+            hashMap.put("commitID", commitId);
             hashMap.put("buildBranch", buildBranch);
             hashMap.put("repositoryUrl", repositoryUrl);
         } else {
