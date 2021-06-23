@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.eclipse.jgit.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
 import javax.crypto.Mac;
@@ -35,15 +36,24 @@ public class ColumbusUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumbusUtils.class);
 
-    private static String url = "http://columbus.oppoer.me";
-    private static String download_version_url = "http://ocs-cn-south.oppoer.me";
-    private static String API_VERSION_INFO = "/openapi/version_info";
-    private static String app_code = "";
-    private static String CLOUD_URL = "http://test-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
-    private static String CLOUD_URL_PROD = "http://prod-console.cloud.oppoer.me/baymax-go/api/v1/deploy_history?version=";
+
+    @Value("${columbus.url}")
+    private String url;
+
+    @Value("${columbus.downloadVersionUrl}")
+    private String download_version_url;
+
+    @Value("${columbus.apiVersionInfo}")
+    private String API_VERSION_INFO;
+
+    @Value("${columbus.cloudUrlTest}")
+    private String CLOUD_URL;
+
+    @Value("${columbus.cloudUrlProd}")
+    private String CLOUD_URL_PROD;
 
 
-    public static ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName) {
+    private ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName) {
         Map<String, String> params = new HashMap<>();
         params.put("ts", String.valueOf(System.currentTimeMillis()));
         params.put("app_code", appId);
@@ -103,7 +113,7 @@ public class ColumbusUtils {
         return Hex.encodeHexString(rawHmac);
     }
 
-    private static StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
+    private StringBuffer getAppDeployInfoList(String versionName, Integer testedEnv) throws DefinitionException {
         ArrayList<AppDeployInfo> appDeployInfos = new ArrayList<AppDeployInfo>();
         StringBuffer ipList = new StringBuffer();
         try {
@@ -137,19 +147,19 @@ public class ColumbusUtils {
         }
     }
 
-    public static HashMap<String, Object> getAppDeployInfoFromBuildVersionList(String appId, String buildVersionName, Integer testedEnv) throws DefinitionException {
+    public HashMap<String, Object> getAppDeployInfoFromBuildVersionList(String appId, String buildVersionName, Integer testedEnv) throws DefinitionException {
         StringBuffer applicationIp;
         HashMap<String, Object> hashMap = new HashMap<>();
         String commitID;
         String buildBranch;
         String repositoryUrl;
-        ArrayList<AppVersionResponse> appVersionList = ColumbusUtils.getBuildVersionList(appId, buildVersionName);
+        ArrayList<AppVersionResponse> appVersionList = getBuildVersionList(appId, buildVersionName);
         if (appVersionList.size() > 0) {
             commitID = appVersionList.get(0).getCommitId();
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
 
-            applicationIp = ColumbusUtils.getAppDeployInfoList(buildVersionName, testedEnv);
+            applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
             hashMap.put("applicationIP", applicationIp.toString());
             hashMap.put("commitID", commitID);
             hashMap.put("buildBranch", buildBranch);
@@ -312,7 +322,7 @@ public class ColumbusUtils {
     }
 
 
-    public static String downloadColumbusBuildVersion(String repositoryUrl, String downloadPath) throws Exception {
+    public String downloadColumbusBuildVersion(String repositoryUrl, String downloadPath) {
         String fileName;
         File downloadFilePath = null;
         //Map<String, String> headers = new HashMap<>();

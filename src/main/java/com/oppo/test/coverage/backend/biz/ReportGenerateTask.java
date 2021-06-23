@@ -60,6 +60,8 @@ public class ReportGenerateTask implements Runnable {
 
     private CortBiz cortBiz;
 
+    private ColumbusUtils columbusUtils;
+
     private boolean isFirstRun = true;
 
     private ExecutorService cacheThreadPool;
@@ -84,6 +86,7 @@ public class ReportGenerateTask implements Runnable {
         this.httpUtils = (HttpUtils) SpringContextUtil.getBean("httpUtils");
         this.cortBiz = (CortBiz) SpringContextUtil.getBean("cortBiz");
         this.cacheThreadPool = (ExecutorService) SpringContextUtil.getBean("cacheThreadPool");
+        this.columbusUtils = (ColumbusUtils) SpringContextUtil.getBean("columbusUtils");
     }
 
 
@@ -141,9 +144,9 @@ public class ReportGenerateTask implements Runnable {
     }
 
 
-    private void classFileInit() throws Exception {
+    private void classFileInit() {
         // TODO: 2021/4/13 动态更新ip
-        HashMap<String, Object> applicationHash = ColumbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv());
+        HashMap<String, Object> applicationHash = columbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv());
         String applicationIpList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
         if (CollectionUtils.isEmpty(taskEntity.getIpList())) {
@@ -151,7 +154,7 @@ public class ReportGenerateTask implements Runnable {
         }
         String classPath = null;
         //获取下载buildVersion.zip包
-        String downloadFilePath = ColumbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
+        String downloadFilePath = columbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
         try {
             //解压zip包获取class文件
             classPath = ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, new File(taskEntity.getCoverageReportPath(), "classes").toString(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());

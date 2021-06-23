@@ -40,21 +40,23 @@ public class ExecutionDataClient {
 //                }
 //                address = systemConfig.getTransferBaseIp();
 //            }
-            switch (testedEnv){
+            switch (testedEnv) {
                 case 2:
-                   port = getPort(address, port);
-                   //生产环境
-                   if(port == -1){
-                       throw new Exception("生产环境获取转发端口失败");
-                   }
-                   address=systemConfig.getTransferBaseIp();
+                    port = getPort(address, port);
+                    //生产环境
+                    if (port == -1) {
+                        throw new Exception("生产环境获取转发端口失败");
+                    }
+                    address = systemConfig.getTransferBaseIp();
+                    break;
                 case 3:
-                    port = getDevPort(address,port);
-                    if(port == -1){
+                    port = getDevPort(address, port);
+                    if (port == -1) {
                         throw new Exception("开发环境获取转发端口失败");
                     }
-                    address=systemConfig.getTransferDevIp();
-
+                    address = systemConfig.getTransferDevIp();
+                    break;
+                default:
             }
 
 

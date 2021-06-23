@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
+
 import static org.junit.Assert.*;
 
 /**
@@ -15,9 +17,19 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class ColumbusUtilsTest {
 
+    @Resource
+    ColumbusUtils columbusUtils;
+
     @Test
-    public void test(){
-        System.out.println(ColumbusUtils.getAppDeployInfoFromBuildVersionList("ci-demo","ci-demo-20210326163909-181",1));
+    public void getAppDeployInfoFromBuildVersionList(){
+        System.out.println(columbusUtils.getAppDeployInfoFromBuildVersionList("jits-open-api","jits-open-api-20210514165809-39",1));
+    }
+
+    @Test
+    public void downloadColumbusBuildVersion(){
+        String repositoryUrl = "columbus-file-repo/columbus-repo-202105/jits-open-api-4.0.1-SNAPSHOT-20210514_0858-bin-20210514-15317941.zip";
+        String downloadPath = "F:\\业务场景\\play36";
+        System.out.println(columbusUtils.downloadColumbusBuildVersion(repositoryUrl,downloadPath));
     }
 
 }
