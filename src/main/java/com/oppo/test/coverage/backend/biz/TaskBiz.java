@@ -227,6 +227,20 @@ public class TaskBiz {
         coverageData.setTotalInstructions("10");
         coverageData.setMissedLines("2");
         coverageData.setTotalLines("6");
+        coverageData.setMissedBranches("2");
+        coverageData.setTotalBranches("3");
+        coverageData.setMissedClasses("2");
+        coverageData.setTotalClasses("3");
+        coverageData.setMissedCxty("4");
+        coverageData.setTotalCxty("16");
+        coverageData.setMissedMethods("5");
+        coverageData.setTotalMethods("22");
+
+        coverageData.setTotalCoverageReportPath("www.baidu.com");
+
+        coverageData.setTestedBranch(applicationCodeInfo.getTestedBranch());
+        coverageData.setBasicBranch(applicationCodeInfo.getBasicBranch());
+
         logger.info("mock result : {}",JSON.toJSON(coverageData));
         HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(coverageData), Data.class, 1);
     }
