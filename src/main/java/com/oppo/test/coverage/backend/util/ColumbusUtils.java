@@ -63,7 +63,7 @@ public class ColumbusUtils {
         params.put("env", "test");
 
         String sortedParams = sortParams(params);
-        List<AppVersionResponse> appVersionResponses = null;
+        List<AppVersionResponse> appVersionResponses;
         ArrayList<AppVersionResponse> appBranchResponses = new ArrayList<>();
 
         try {
