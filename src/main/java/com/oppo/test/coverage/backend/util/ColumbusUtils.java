@@ -18,6 +18,7 @@ import org.eclipse.jgit.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.crypto.Mac;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 
+@Service
 public class ColumbusUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumbusUtils.class);
