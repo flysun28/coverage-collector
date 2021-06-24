@@ -131,11 +131,7 @@
 			<scope>system</scope>
 			<systemPath>${pom.basedir}/src/main/resources/lib/org.eclipse.jgit.jar</systemPath>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jdt</groupId>
-			<artifactId>core</artifactId>
-			<version>3.1.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.jdt</groupId>
 			<artifactId>org.eclipse.jdt.core</artifactId>
