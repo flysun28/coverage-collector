@@ -54,6 +54,9 @@ public class ColumbusUtils {
     @Value("${columbus.cloudUrlProd}")
     private String CLOUD_URL_PROD;
 
+    @Value("${columbus.cloudUrlDev}")
+    private String cloudUrlDev;
+
 
     public ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName,Integer testedEnv) {
         Map<String, String> params = new HashMap<>();
@@ -131,11 +134,17 @@ public class ColumbusUtils {
         try {
             String ret;
             Gson gson = new Gson();
-            if (testedEnv == 2) {
-                ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
-            } else {
-                ret = HttpUtils.sendGet(CLOUD_URL + versionName);
+            switch (testedEnv) {
+                case 2:
+                    ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
+                    break;
+                case 3:
+                    ret = HttpUtils.sendGet(cloudUrlDev + versionName);
+                    break;
+                default:
+                    ret = HttpUtils.sendGet(CLOUD_URL + versionName);
             }
+
             JsonObject obj = gson.fromJson(ret, JsonObject.class);
             JsonObject listJsonObject = obj.get("data").getAsJsonObject().get("list").getAsJsonObject();
             if (null != listJsonObject && !"null".equals(listJsonObject.get("result").toString())) {
