@@ -638,6 +638,8 @@ public class ColumbusUtils {
             return appCodeArray[0] + "-" + appCodeArray[1];
         } else if (browserMultiRegionPlugin.contains(applicationID)) {
             return "browser-multi-region-plugin";
+        } else if ("insights-web".equals(applicationID)){
+            return "portal";
         }
         return "";
     }
