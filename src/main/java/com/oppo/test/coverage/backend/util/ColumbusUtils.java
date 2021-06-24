@@ -14,12 +14,12 @@ import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
 import com.oppo.test.coverage.backend.util.http.HttpRequestUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
 import org.apache.commons.codec.binary.Hex;
-import org.eclipse.jgit.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -30,7 +30,10 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 
 @Service
@@ -546,7 +549,7 @@ public class ColumbusUtils {
         }
         //针对特殊应用名处理
         String specialApplicationIDPrex = getSpecialApplicationIDPrefix(applicationID);
-        if (!StringUtils.isEmptyOrNull(specialApplicationIDPrex)) {
+        if (!StringUtils.isEmpty(specialApplicationIDPrex)) {
             jarPackageSet2 = new HashSet<>();
             jarPackageSet2 = getApplicationJarList(new File(localpath), specialApplicationIDPrex, jarPackageSet2);
         }
