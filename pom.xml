@@ -149,7 +149,16 @@
 					<groupId>org.eclipse.platform</groupId>
 					<artifactId>org.eclipse.core.filesystem</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.resources</artifactId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.platform</groupId>
+			<artifactId>org.eclipse.core.resources</artifactId>
+			<version>3.13.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.platform</groupId>
