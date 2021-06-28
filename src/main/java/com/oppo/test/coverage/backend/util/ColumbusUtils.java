@@ -504,12 +504,12 @@ public class ColumbusUtils {
         //再对解压的文件夹里，遍历解压一次
         if (jarPackageSet.size() > 0) {
             extractJarToClass2(jarPackagePath, jarPackagePath, "", sourceApplicationsMap, applicationID);
-            packageList = getComPackagePath(new File(jarPackagePath), packageList);
+            getComPackagePath(new File(jarPackagePath), packageList);
         } else {
-            packageList = getComPackagePath(new File(resultPath), packageList);
+            getComPackagePath(new File(resultPath), packageList);
         }
         if (deployJarPrefix.contains("tomcat")) {
-            packageList = getComPackagePath(new File(resultPath), packageList);
+            getComPackagePath(new File(resultPath), packageList);
         }
         if (CollectionUtils.isEmpty(packageList)) {
             logger.error(" packageList is null ! It may cause non classes :{} , {} , {}", downloadZipFile, targetPath, applicationID);
@@ -524,44 +524,50 @@ public class ColumbusUtils {
         return targetPath;
     }
 
-    private static HashSet extractJarToClass2(String localpath, String targetPath, String deployJarprefix, Map<String, Map> applicationsrclist, String applicationID) {
-        FileOperateUtil fileOperateUtil = new FileOperateUtil();
-        HashSet jarPackageSet = new HashSet();
-        String applicationIDPrefix = getApplicationIDPrefix(applicationID.replaceAll("_", "-"));
+    private static HashSet extractJarToClass2(String localPath, String targetPath, String deployJarprefix, Map<String, Map> applicationsrclist, String applicationID) {
+        HashSet<File> jarPackageSet = new HashSet<>();
+        File localPathFile = new File(localPath);
+        String applicationIdPrefix = getApplicationIDPrefix(applicationID.replaceAll("_", "-"));
         //先通过applicationID查找jar包
-        jarPackageSet = getApplicationJarList(new File(localpath), applicationID, jarPackageSet);
-        for (String applicationsrcname : applicationsrclist.keySet()) {
-            jarPackageSet = getApplicationJarList(new File(localpath), applicationsrcname.replaceAll("_", "-"), jarPackageSet);
+        getApplicationJarList(localPathFile, applicationID, jarPackageSet);
+        for (String applicationSrcName : applicationsrclist.keySet()) {
+            getApplicationJarList(localPathFile, applicationSrcName.replaceAll("_", "-"), jarPackageSet);
         }
 
         //还没有找到jar包，再通过应用前缀再搜索一次
-        jarPackageSet = getApplicationJarList(new File(localpath), applicationIDPrefix, jarPackageSet);
+        getApplicationJarList(localPathFile, applicationIdPrefix, jarPackageSet);
 
+        HashSet<File> jarPackageSet2 = new HashSet<>();
 
-        HashSet<File> jarPackageSet2 = new HashSet<File>();
-        Iterator<File> itr = jarPackageSet.iterator();
-
-        while (itr.hasNext()) {
-            File jarPackage = itr.next();
-            if (jarPackage.getName().replaceAll("_", "-").contains(applicationIDPrefix)) {
+        for (File jarPackage : jarPackageSet) {
+            if (jarPackage.getName().replaceAll("_", "-").contains(applicationIdPrefix)) {
                 jarPackageSet2.add(jarPackage);
             }
         }
         //针对特殊应用名处理
-        String specialApplicationIDPrex = getSpecialApplicationIDPrefix(applicationID);
-        if (!StringUtils.isEmpty(specialApplicationIDPrex)) {
+        String specialApplicationIDPrefix = getSpecialApplicationIDPrefix(applicationID);
+        if (!StringUtils.isEmpty(specialApplicationIDPrefix)) {
             jarPackageSet2 = new HashSet<>();
-            jarPackageSet2 = getApplicationJarList(new File(localpath), specialApplicationIDPrex, jarPackageSet2);
+            getApplicationJarList(localPathFile, specialApplicationIDPrefix, jarPackageSet2);
         }
+
+        //一个应用对应多个不同前缀的jar包开始的情况
+        List<String> specialAppCodePrefixList = getSpecialAppCodeListPrefix(applicationID);
+        if (!CollectionUtils.isEmpty(specialAppCodePrefixList)) {
+            for (String appCodePreFix : specialAppCodePrefixList){
+                getApplicationJarList(localPathFile, appCodePreFix, jarPackageSet2);
+            }
+        }
+
         //如果按应用前缀过滤jar包为零,则通过applicationsrclist再搜索一次
         if (jarPackageSet2.size() == 0) {
-            for (String applicationsrcname : applicationsrclist.keySet()) {
-                jarPackageSet2 = getApplicationJarList(new File(localpath), applicationsrcname.replaceAll("_", "-"), jarPackageSet2);
+            for (String applicationSrcName : applicationsrclist.keySet()) {
+                getApplicationJarList(localPathFile, applicationSrcName.replaceAll("_", "-"), jarPackageSet2);
             }
         }
         //如果没有找到jar包，通过压缩包前缀再搜索一次
         if (!"".equals(deployJarprefix) && jarPackageSet2.size() == 0) {
-            jarPackageSet2 = getApplicationJarList(new File(localpath), deployJarprefix, jarPackageSet);
+            jarPackageSet2 = getApplicationJarList(localPathFile, deployJarprefix, jarPackageSet);
         }
         HashSet<File> jarPackageSet3 = new HashSet<>();
         Iterator<File> itr2 = jarPackageSet2.iterator();
@@ -647,7 +653,19 @@ public class ColumbusUtils {
         return "";
     }
 
-    private static String getMaxCountVersion(HashSet<File> jarPackageSet, String applicationID) {
+    /**
+     * 用于当一应用打包出多个jar包,且jar包前缀不同的时候进行解析
+     * @param appCode : 应用名称
+     * @return : jar包前缀
+     * */
+    private static List<String> getSpecialAppCodeListPrefix(String appCode) {
+        if ("insights-web".equals(appCode)) {
+            return Lists.newArrayList("portal", "sms", "userinsight", "userorient");
+        }
+        return null;
+    }
+
+    private static String getMaxCountVersion(HashSet<File> jarPackageSet, String appCode) {
         Iterator<File> itr = jarPackageSet.iterator();
         HashMap maxMap = new HashMap();
         int maxcount = 0;
@@ -657,7 +675,7 @@ public class ColumbusUtils {
                 String jarversion = getJarPackageVersion(jarPackage);
                 String jarpackagepre = getJarPackagePre(jarPackage);
                 //如果jar包包含应用名,直接使用这个jar包的版本号
-                if (jarpackagepre.equals(applicationID)) {
+                if (jarpackagepre.equals(appCode)) {
                     maxMap.put("jarversion", jarversion);
                     break;
                 }
@@ -717,17 +735,24 @@ public class ColumbusUtils {
         return denpentjarpath;
     }
 
-    private static HashSet getApplicationJarList(File extractPath, String dependentjarname, HashSet jarPackageSet) {
+    /**
+     * @param dependentJarName : jar包前缀
+     *
+     * */
+    private static HashSet<File> getApplicationJarList(File extractPath, String dependentJarName, HashSet<File> jarPackageSet) {
         File[] fileList = extractPath.listFiles();
+        if (fileList == null || fileList.length < 1) {
+            return jarPackageSet;
+        }
         //遍历代码工程
         for (File f : fileList) {
             //判断是否文件夹目录
             if (f.isDirectory()) {
                 //如果当前文件夹名== src
-                getApplicationJarList(f, dependentjarname, jarPackageSet);
+                getApplicationJarList(f, dependentJarName, jarPackageSet);
             } else {
-                String fname = f.getName().replaceAll("_", "-");
-                if (fname.contains(dependentjarname) && fname.endsWith(".jar") && !fname.endsWith("sources.jar")) {
+                String fileName = f.getName().replaceAll("_", "-");
+                if (fileName.contains(dependentJarName) && fileName.endsWith(".jar") && !fileName.endsWith("sources.jar")) {
                     jarPackageSet.add(f);
                 }
             }
