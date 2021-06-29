@@ -208,23 +208,46 @@ public class CortBiz {
      *
      * @return : 成功true , 失败false
      */
-    public boolean postEcFile(EcUploadRequest request) {
+    CortResponse postEcFile(EcUploadRequest request) {
         Long timeStamp = getServerTimestamp();
         if (timeStamp == null) {
             logger.error("上报Ec获取时间戳失败");
-            return false;
+            return null;
         }
         String url = baseUrl + postEcFileUpload + "?" + urlCombine(postEcFileUpload, timeStamp);
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
-        CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
-        if (response == null || response.getErrno() == null || response.getErrno() != 0) {
-            logger.error("上报Ec信息失败 : {} , {}", request, response);
+        return HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
+    }
+
+
+    /**
+     * 上传Ec到cort,遇到无compiledFile进行重试
+     */
+    public boolean postEcFileToCort(EcUploadRequest request) {
+        for (int i = 0; i < 3; i++) {
+            CortResponse response = postEcFile(request);
+            //调用成功,返回
+            if (response != null && response.getErrno() != null && response.getErrno() == 0) {
+                return true;
+            }
+            //complied未完成,等待后重试
+            if (response != null && response.getErrno() != null && response.getErrno().equals(20010)) {
+                logger.warn("无制品,重试等待ing : {}", JSON.toJSON(request));
+                try {
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
+            }
+            logger.error("上报ec信息失败 : {}, {}", request, response);
             return false;
         }
-        logger.info("上报ec完成 : {} , {}", request.getAppCode(), request.getSceneId());
-        return true;
+        logger.error("上报ec信息失败 : {}", JSON.toJSON(request));
+        return false;
     }
+
 
     /**
      * url拼接,获取到带签名的所有参数集合

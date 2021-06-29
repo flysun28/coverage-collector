@@ -760,7 +760,7 @@ public class ReportGenerateTask implements Runnable {
         if (cortBiz.uploadEcFile(cortEcFile)){
             EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(),cortEcFile.getName());
             logger.info("upload ec file : {}",cortEcFile.getName());
-            cortBiz.postEcFile(ecUploadRequest);
+            cortBiz.postEcFileToCort(ecUploadRequest);
         }
     }
 
