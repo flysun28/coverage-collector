@@ -649,6 +649,8 @@ public class ColumbusUtils {
             return "browser-multi-region-plugin";
         } else if ("insights-web".equals(applicationID)){
             return "portal";
+        }else if ("bot-platform-management".equals(applicationID)){
+            return "bot-manage";
         }
         return "";
     }
