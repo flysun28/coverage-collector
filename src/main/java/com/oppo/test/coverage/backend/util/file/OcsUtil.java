@@ -78,9 +78,9 @@ public class OcsUtil {
      * @param key      : /path/fileName
      * @param filePath : /path/fileName
      */
-    public static void download(AmazonS3 s3, String key, String filePath) {
+    public static boolean download(AmazonS3 s3, String key, String filePath) {
         //get object from a bucket
-        getS3Result(s3, 3, key, filePath, null, null, null);
+        return getS3Result(s3, 3, key, filePath, null, null, null) != null;
     }
 
     /**
@@ -177,8 +177,8 @@ public class OcsUtil {
 
     /**
      * 预签名上传文件
-     * */
-    public static boolean preSignObjectPut(String url , File file) throws IOException {
+     */
+    public static boolean preSignObjectPut(String url, File file) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setDoOutput(true);
         connection.setRequestMethod("PUT");
@@ -186,8 +186,8 @@ public class OcsUtil {
         FileInputStream in = new FileInputStream(file.toString());
         byte[] temp = new byte[1024];
         int length;
-        while ((length = in.read(temp)) != -1){
-            out.write(temp,0,length);
+        while ((length = in.read(temp)) != -1) {
+            out.write(temp, 0, length);
         }
         in.close();
         out.close();

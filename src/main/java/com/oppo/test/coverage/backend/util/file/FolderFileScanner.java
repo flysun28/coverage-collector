@@ -29,7 +29,7 @@ public class FolderFileScanner {
 
     private static final List<String> REPORT_EXTENSION_NAME = Lists.newArrayList("html", "css", "js", "gif");
     private static final List<String> FILE_UPLOAD_EXTENSION_NAME = Lists.newArrayList("html", "css", "js", "gif", "exec", "zip");
-    private static final List<String> FILE_DOWNLOAD_EXTENSION_NAME = Lists.newArrayList("zip","class","exec");
+    private static final List<String> FILE_DOWNLOAD_EXTENSION_NAME = Lists.newArrayList("zip", "class", "exec");
 
     /**
      * 执行前下载对应文件
@@ -41,7 +41,11 @@ public class FolderFileScanner {
         List<String> fileList = getDownloadFileList(projectName, taskId);
         AmazonS3 s3 = OcsUtil.getAmazonS3();
         for (String fileName : fileList) {
-            OcsUtil.download(s3, fileName, fileName);
+            if (!OcsUtil.download(s3, fileName, fileName)) {
+                //重试一次
+                logger.warn("retry download : {} , {}", projectName, taskId);
+                OcsUtil.download(s3, fileName, fileName);
+            }
             if (fileName.endsWith("zip")) {
                 unZipAfterDownload(fileName);
             }
@@ -58,12 +62,12 @@ public class FolderFileScanner {
         return result;
     }
 
-    private void checkFileNeedDownload(List<String> result , List<String> fileList){
-        for (String fileName : fileList){
+    private void checkFileNeedDownload(List<String> result, List<String> fileList) {
+        for (String fileName : fileList) {
             //筛选指定的需要上传的文件
             List<String> splitList = Splitter.on(".").trimResults().splitToList(fileName);
             String extensionName = splitList.get(splitList.size() - 1);
-            if (FILE_DOWNLOAD_EXTENSION_NAME.contains(extensionName)){
+            if (FILE_DOWNLOAD_EXTENSION_NAME.contains(extensionName)) {
                 result.add(fileName);
             }
         }
@@ -115,11 +119,14 @@ public class FolderFileScanner {
             List<String> splitList = Splitter.on(".").trimResults().splitToList(file.getName());
             String extensionName = splitList.get(splitList.size() - 1);
             if (!OcsUtil.upload(s3, file.getAbsolutePath(), file, "html".equals(extensionName) ? "text/html" : null)) {
-                canDelete = false;
+                canDelete = OcsUtil.upload(s3, file.getAbsolutePath(), file, "html".equals(extensionName) ? "text/html" : null);
+                logger.warn("retry upload : {} , {}, result is - {}", projectName, taskId, canDelete);
             }
         }
         if (canDelete) {
             deleteAllFileAfterUpload(projectName, taskId);
+        } else {
+            logger.error("上传失败导致无法删除 : {} , {}", projectName, taskId);
         }
     }
 
@@ -233,8 +240,8 @@ public class FolderFileScanner {
      * 上传之前,将/taskID/${taskId}目录下的 classes和downloadZip文件做压缩
      */
     private static void zipBeforeUpload(String taskPath) {
-        FileOperateUtil.compressToZip(taskPath + "/classes",taskPath + "/classes","upload.zip");
-        FileOperateUtil.compressToZip(taskPath+"/downloadzip",taskPath+"/downloadzip","unpload.zip");
+        FileOperateUtil.compressToZip(taskPath + "/classes", taskPath + "/classes", "upload.zip");
+        FileOperateUtil.compressToZip(taskPath + "/downloadzip", taskPath + "/downloadzip", "unpload.zip");
     }
 
     /**

@@ -24,11 +24,20 @@ public class FileExtractUtil {
         }
     }
 
+
     public static String extractFile(File fileName) throws Exception {
+        // /home/service/app/coveragebackend/xxxxx/taskID/1049/downloadzip/ci-demo-20210408-1435xxxxxxxxxx
         String sourceFilePath = fileName.getAbsolutePath();
+
+        // ci-demo-20210408-1435xxxxxxxxxx
         String name = fileName.getName();
+
+        // ci-demo-20210408-1435
         String dirName = name.substring(0, name.length() - 11);
+
+        // /home/service/app/coveragebackend/xxxxx/taskID/1049/downloadzip/ci-demo-20210408-1435
         String resultPath = sourceFilePath.replace(name, dirName);
+
         if (name.endsWith(".tar.gz")) {
             FileOperateUtil.unTarGz(fileName, resultPath);
         } else {
