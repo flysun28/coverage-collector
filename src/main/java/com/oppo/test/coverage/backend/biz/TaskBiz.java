@@ -155,6 +155,7 @@ public class TaskBiz {
 
         //非轮询,正常停止(在轮询前处理,否则停止轮询后又成为了非轮询任务)
         if (!timerTaskBiz.isTimerTask(taskId) && errorEnum == null) {
+            folderFileScanner.reportUpload(projectName, taskId);
             logger.info("finished task : {}", taskId);
         }
 
@@ -176,7 +177,7 @@ public class TaskBiz {
         }
 
         //轮询任务结束,并且没有该应用的轮询任务存在了
-        if (!timerTaskBiz.stillTimerTask(appCode) && removeAppCodeAndCheckAppFinish(appCode)) {
+        if (!timerTaskBiz.stillTimerTask(appCode) & removeAppCodeAndCheckAppFinish(appCode)) {
             logger.info("app task finished and file upload : {} , {}", taskId, appCode);
             folderFileScanner.fileUpload(projectName, taskId);
         }
