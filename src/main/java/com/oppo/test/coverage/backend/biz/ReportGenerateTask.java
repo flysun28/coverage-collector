@@ -789,6 +789,7 @@ public class ReportGenerateTask implements Runnable {
         if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))) {
             logger.info("上报基线编译产物 : {}", taskEntity.getAppInfo().getId());
             CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
+            compilesFileRequest.setCommitId(taskEntity.getAppInfo().getBasicCommitId());
             compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
             cortBiz.postCompilesFile(compilesFileRequest);
             logger.info("基线编译产物上报完成 : {}", taskEntity.getAppInfo().getId());
