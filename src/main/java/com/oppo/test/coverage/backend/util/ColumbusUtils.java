@@ -227,8 +227,10 @@ public class ColumbusUtils {
         String repositoryUrl = appVersion.getRepositoryUrl();
 
         HashMap<String, Object> hashMap = new HashMap<>();
-        StringBuffer applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
-        hashMap.put("applicationIP", applicationIp.toString());
+        if (buildVersionName != null){
+            StringBuffer applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
+            hashMap.put("applicationIP", applicationIp.toString());
+        }
         hashMap.put("commitID", commitId);
         hashMap.put("buildBranch", buildBranch);
         hashMap.put("repositoryUrl", repositoryUrl);
