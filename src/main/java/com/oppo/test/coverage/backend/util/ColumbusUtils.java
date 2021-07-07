@@ -480,14 +480,14 @@ public class ColumbusUtils {
         }
     }
 
-    public static String getApplicationIDPrefix(String applicationID) {
-        String applicationIDPrefix;
-        if (applicationID.contains("-")) {
-            applicationIDPrefix = applicationID.substring(0, applicationID.lastIndexOf("-"));
+    public static String getApplicationIdPrefix(String applicationId) {
+        String applicationIdPrefix;
+        if (applicationId.contains("-")) {
+            applicationIdPrefix = applicationId.substring(0, applicationId.lastIndexOf("-"));
         } else {
-            applicationIDPrefix = applicationID;
+            applicationIdPrefix = applicationId;
         }
-        return applicationIDPrefix;
+        return applicationIdPrefix;
     }
 
 
@@ -608,10 +608,10 @@ public class ColumbusUtils {
         for (File jarPackage : jarPackageSet2) {
             if (validPackageCheck(jarPackage, jarVersion, applicationID)) {
                 FileOperateUtil.copyFile(jarPackage.toString(), targetPath + File.separator + jarPackage.getName());
-                FileExtractUtil.extractFiles(targetPath);
                 jarPackageSet3.add(jarPackage);
             }
         }
+        FileExtractUtil.extractFiles(targetPath);
 
         return jarPackageSet3;
     }
@@ -619,7 +619,7 @@ public class ColumbusUtils {
 
     private static Set<File> autoSearchJarPackage(String appCode, Set<File> jarPackageSet, File localPathFile, Map<String, Map> applicationSrcList) {
         //拿这个appId的前一小段(去掉最后一个"-"以后的字符)
-        String applicationIdPrefix = getApplicationIDPrefix(appCode.replaceAll("_", "-"));
+        String applicationIdPrefix = getApplicationIdPrefix(appCode.replaceAll("_", "-"));
 
         //1.先通过applicationID查找jar包
         //2.通过工程名称查找jar包
