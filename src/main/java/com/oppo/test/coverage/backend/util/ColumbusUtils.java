@@ -43,25 +43,45 @@ public class ColumbusUtils {
 
 
     @Value("${columbus.url}")
-    private String url;
+    private String columbusUrl;
 
     @Value("${columbus.downloadVersionUrl}")
-    private String download_version_url;
+    private String downloadVersionUrl;
 
     @Value("${columbus.apiVersionInfo}")
-    private String API_VERSION_INFO;
+    private String apiVersionInfo;
 
     @Value("${columbus.cloudUrlTest}")
-    private String CLOUD_URL;
+    private String cloudUrlTest;
 
     @Value("${columbus.cloudUrlProd}")
-    private String CLOUD_URL_PROD;
+    private String cloudUrlProd;
 
     @Value("${columbus.cloudUrlDev}")
     private String cloudUrlDev;
 
 
     public ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName, Integer testedEnv) {
+
+        List<AppVersionResponse> appVersionResponses = getAppVersionResponse(appId, testedEnv);
+
+        if (CollectionUtils.isEmpty(appVersionResponses)) {
+            return new ArrayList<>(0);
+        }
+
+        ArrayList<AppVersionResponse> appBranchResponses = new ArrayList<>();
+
+        for (AppVersionResponse appVersionResponse : appVersionResponses) {
+            if (buildVersionName.equals(appVersionResponse.getVersionName())) {
+                appBranchResponses.add(appVersionResponse);
+            }
+        }
+        //返回当期测试版本列表数据
+        return appBranchResponses;
+    }
+
+
+    private List<AppVersionResponse> getAppVersionResponse(String appId, Integer testedEnv) {
         Map<String, String> params = new HashMap<>();
         params.put("ts", String.valueOf(System.currentTimeMillis()));
         params.put("app_code", appId);
@@ -69,6 +89,7 @@ public class ColumbusUtils {
         switch (testedEnv) {
             case 2:
                 params.put("env", "prod");
+                params.put("isPeriod", "abc");
                 break;
             case 3:
                 params.put("env", "dev");
@@ -76,28 +97,21 @@ public class ColumbusUtils {
             default:
                 params.put("env", "test");
         }
-
-
         String sortedParams = sortParams(params);
         List<AppVersionResponse> appVersionResponses;
-        ArrayList<AppVersionResponse> appBranchResponses = new ArrayList<>();
-
         try {
             String signature = HMAC_MD5_encode("123456789", sortedParams);
-            String ret = HttpUtils.sendGet(url + API_VERSION_INFO + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=100&fuzzyQuery=0&versionName=");
+            String ret = HttpUtils.sendGet(columbusUrl + apiVersionInfo + "?" + sortedParams + "&signature=" + signature + "&pageNum=1&pageSize=100&fuzzyQuery=0&versionName=");
             appVersionResponses = new Gson().fromJson(ret, new TypeToken<List<AppVersionResponse>>() {
             }.getType());
-            for (AppVersionResponse appVersionResponse : appVersionResponses) {
-                if (buildVersionName.equals(appVersionResponse.getVersionName())) {
-                    appBranchResponses.add(appVersionResponse);
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("获取应用版本列表失败 : {} , {}", appId, testedEnv);
+            return null;
         }
-        //返回当期测试版本列表数据
-        return appBranchResponses;
+        return appVersionResponses;
     }
+
 
     /**
      * 参数排序(按key升序排)
@@ -139,13 +153,13 @@ public class ColumbusUtils {
             Gson gson = new Gson();
             switch (testedEnv) {
                 case 2:
-                    ret = HttpUtils.sendGet(CLOUD_URL_PROD + versionName);
+                    ret = HttpUtils.sendGet(cloudUrlProd + versionName);
                     break;
                 case 3:
                     ret = HttpUtils.sendGet(cloudUrlDev + versionName);
                     break;
                 default:
-                    ret = HttpUtils.sendGet(CLOUD_URL + versionName);
+                    ret = HttpUtils.sendGet(cloudUrlTest + versionName);
             }
 
             JsonObject obj = gson.fromJson(ret, JsonObject.class);
@@ -178,7 +192,7 @@ public class ColumbusUtils {
         String buildBranch;
         String repositoryUrl;
         ArrayList<AppVersionResponse> appVersionList = getBuildVersionList(appId, buildVersionName, testedEnv);
-        if (appVersionList.size() > 0) {
+        if (!CollectionUtils.isEmpty(appVersionList)) {
             commitId = appVersionList.get(0).getCommitId();
             buildBranch = appVersionList.get(0).getSourceBranch();
             repositoryUrl = appVersionList.get(0).getRepositoryUrl();
@@ -358,7 +372,7 @@ public class ColumbusUtils {
         //headers.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
         fileName = repositoryUrl.substring(repositoryUrl.lastIndexOf("/") + 1);
-        String downloadUrl = download_version_url + "/" + repositoryUrl;
+        String downloadUrl = downloadVersionUrl + "/" + repositoryUrl;
         logger.info("columbus build version download : {}", downloadUrl);
         try {
             downloadFilePath = new File(downloadPath, "downloadzip");
