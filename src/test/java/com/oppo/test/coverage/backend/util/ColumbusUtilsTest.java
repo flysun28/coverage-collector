@@ -22,7 +22,7 @@ public class ColumbusUtilsTest {
 
     @Test
     public void getAppDeployInfoFromBuildVersionList(){
-        System.out.println(columbusUtils.getAppDeployInfoFromBuildVersionList("jits-open-api","jits-open-api-20210514165809-39",1));
+        System.out.println(columbusUtils.getAppDeployInfoFromBuildVersionList("jits-open-api","jits-open-api-20210514165809-39",1, null, null));
     }
 
     @Test

@@ -146,7 +146,7 @@ public class ReportGenerateTask implements Runnable {
 
     private void classFileInit() {
         // TODO: 2021/4/13 动态更新ip
-        HashMap<String, Object> applicationHash = columbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv());
+        HashMap<String, Object> applicationHash = columbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getVersionName(), taskEntity.getAppInfo().getTestedEnv(), null, null);
         String applicationIpList = applicationHash.get("applicationIP").toString();
         String repositoryUrl = applicationHash.get("repositoryUrl").toString();
         if (CollectionUtils.isEmpty(taskEntity.getIpList())) {
@@ -166,6 +166,32 @@ public class ReportGenerateTask implements Runnable {
             e.printStackTrace();
         }
         taskEntity.setClassPath(classPath);
+        // TODO: 2021/7/7 上传基线的版本
+        if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
+            basicClassesInit(repositoryUrl);
+        }
+    }
+
+    private void basicClassesInit(String testedRepositoryUrl) {
+        Map<String, Object> repositoryUrlInfo = columbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), null, taskEntity.getAppInfo().getTestedEnv(), taskEntity.getAppInfo().getBasicBranch(), taskEntity.getAppInfo().getBasicCommitId());
+        String repositoryUrl = repositoryUrlInfo.get("repositoryUrl").toString();
+        if (testedRepositoryUrl.equals(repositoryUrl)) {
+            //基线与被测的相同,直接跳过
+            logger.info("基线产物与被测分支相同,不处理 : {}", taskEntity.getAppInfo().getId());
+            return;
+        }
+        //下载到taskId的目录下
+        String downloadFilePath = columbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
+        File basicClassesPath = new File(taskEntity.getCoverageReportPath().toString(), "basicClasses");
+        try {
+            ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, basicClassesPath.toString(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("基线处理classes出现异常 : {} , {}", testedRepositoryUrl, taskEntity.getAppInfo().getId());
+        }
+        //过滤配置的ignore class,package文件
+        ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), basicClassesPath);
+        cortBasicCompiledFileUpload();
     }
 
     /**
@@ -506,7 +532,7 @@ public class ReportGenerateTask implements Runnable {
             try {
                 String currentThreadName = Thread.currentThread().getName();
                 String[] threadNameArray = currentThreadName.split("-taskId-");
-                Thread.currentThread().setName(threadNameArray[0] + "-taskId-" +  taskEntity.getAppInfo().getId());
+                Thread.currentThread().setName(threadNameArray[0] + "-taskId-" + taskEntity.getAppInfo().getId());
                 classFileInit();
             } catch (Exception e) {
                 logger.error("class init failed : {} , {} ,{}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getId(), e.getMessage());
@@ -515,7 +541,7 @@ public class ReportGenerateTask implements Runnable {
                 taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),
                         errorEnum, taskEntity.getProjectName(),
                         taskEntity.getAppInfo().getApplicationID(),
-                        taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID()
+                        taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID()
                 );
                 return;
             } finally {
@@ -542,7 +568,7 @@ public class ReportGenerateTask implements Runnable {
             logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
             taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
                     taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                    taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
+                    taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
             return;
         }
 
@@ -573,7 +599,7 @@ public class ReportGenerateTask implements Runnable {
             logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
             taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,
                     taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                    taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
+                    taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
             return;
         }
 
@@ -596,7 +622,7 @@ public class ReportGenerateTask implements Runnable {
             httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), "报告生成失败 :" + e.getMessage());
         }
 
-        if (taskEntity.getAppInfo().getSceneId()!=null && taskEntity.getAppInfo().getSceneId()!=0){
+        if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
             // 把classes文件打包上传到cort
             cortCompiledFileUpload();
             // 将jacocoAll上传到cort的OCS
@@ -615,7 +641,7 @@ public class ReportGenerateTask implements Runnable {
 
         taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
                 taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                taskEntity.getAppInfo().getIsBranchTask(),taskEntity.getAppInfo().getBranchTaskID());
+                taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
     }
 
     /**
@@ -738,13 +764,13 @@ public class ReportGenerateTask implements Runnable {
 
     /**
      * 将编译产物上传到OCS,并且上报cort
-     * */
-    private void cortCompiledFileUpload(){
+     */
+    private void cortCompiledFileUpload() {
         String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
-        String cortClassDirectory = systemConfig.getReportBasePath() + "/taskID/"+taskEntity.getAppInfo().getId()+"/classes";
-        String zipFile = "cort-"+taskEntity.getAppInfo().getId()+".zip";
-        FileOperateUtil.compressToZip(cortClassDirectory,zipFilePath,zipFile);
-        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))){
+        String cortClassDirectory = zipFilePath + "/classes";
+        String zipFile = "cort-" + taskEntity.getAppInfo().getId() + ".zip";
+        FileOperateUtil.compressToZip(cortClassDirectory, zipFilePath, zipFile);
+        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))) {
             CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
             compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
             cortBiz.postCompilesFile(compilesFileRequest);
@@ -752,20 +778,35 @@ public class ReportGenerateTask implements Runnable {
     }
 
     /**
-     * 将覆盖率数据ec上传到OCS,并且上报cort
-     * */
-    private void cortEcFileUpload(){
-        File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(),"jacocoAll-"+taskEntity.getAppInfo().getId()+".ec");
-        FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(),cortEcFile.toString());
-        if (cortBiz.uploadEcFile(cortEcFile)){
-            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(),cortEcFile.getName());
-            logger.info("upload ec file : {}",cortEcFile.getName());
-            cortBiz.postEcFileToCort(ecUploadRequest);
+     * 处理基线编译产物
+     */
+    private void cortBasicCompiledFileUpload() {
+        logger.info("基线编译产物处理 : {}", taskEntity.getAppInfo().getId());
+        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
+        String cortClassesDirectory = zipFilePath + "/basicClasses";
+        String zipFile = "cort-" + taskEntity.getAppInfo().getId() + "-basic.zip";
+        FileOperateUtil.compressToZip(cortClassesDirectory, zipFilePath, zipFile);
+        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))) {
+            logger.info("上报基线编译产物 : {}", taskEntity.getAppInfo().getId());
+            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
+            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
+            cortBiz.postCompilesFile(compilesFileRequest);
+            logger.info("基线编译产物上报完成 : {}", taskEntity.getAppInfo().getId());
         }
     }
 
-
-
+    /**
+     * 将覆盖率数据ec上传到OCS,并且上报cort
+     */
+    private void cortEcFileUpload() {
+        File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(), "jacocoAll-" + taskEntity.getAppInfo().getId() + ".ec");
+        FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(), cortEcFile.toString());
+        if (cortBiz.uploadEcFile(cortEcFile)) {
+            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(), cortEcFile.getName());
+            logger.info("upload ec file : {}", cortEcFile.getName());
+            cortBiz.postEcFileToCort(ecUploadRequest);
+        }
+    }
 
 
 }

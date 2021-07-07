@@ -60,27 +60,50 @@ public class ColumbusUtils {
     @Value("${columbus.cloudUrlDev}")
     private String cloudUrlDev;
 
-
-    public ArrayList<AppVersionResponse> getBuildVersionList(String appId, String buildVersionName, Integer testedEnv) {
+    /**
+     * 获取指定的应用版本
+     */
+    public AppVersionResponse getBuildVersionList(String appId, String buildVersionName, Integer testedEnv) {
 
         List<AppVersionResponse> appVersionResponses = getAppVersionResponse(appId, testedEnv);
 
         if (CollectionUtils.isEmpty(appVersionResponses)) {
-            return new ArrayList<>(0);
+            return null;
         }
-
-        ArrayList<AppVersionResponse> appBranchResponses = new ArrayList<>();
 
         for (AppVersionResponse appVersionResponse : appVersionResponses) {
             if (buildVersionName.equals(appVersionResponse.getVersionName())) {
-                appBranchResponses.add(appVersionResponse);
+                return appVersionResponse;
             }
         }
-        //返回当期测试版本列表数据
-        return appBranchResponses;
+        //没有找到
+        return null;
     }
 
 
+    /**
+     * 获取基线分支对应的版本
+     */
+    public AppVersionResponse getBasicVersion(String appId, String branch, String commitId, Integer testedEnv) {
+
+        List<AppVersionResponse> appVersionResponses = getAppVersionResponse(appId, testedEnv);
+
+        if (CollectionUtils.isEmpty(appVersionResponses)){
+            return null;
+        }
+
+        for (AppVersionResponse appVersion : appVersionResponses) {
+            if (branch.equals(appVersion.getSourceBranch()) && commitId.equals(appVersion.getCommitId())){
+                return appVersion;
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * 拿到应用在某一环境的版本列表
+     */
     private List<AppVersionResponse> getAppVersionResponse(String appId, Integer testedEnv) {
         Map<String, String> params = new HashMap<>();
         params.put("ts", String.valueOf(System.currentTimeMillis()));
@@ -185,26 +208,30 @@ public class ColumbusUtils {
         }
     }
 
-    public HashMap<String, Object> getAppDeployInfoFromBuildVersionList(String appId, String buildVersionName, Integer testedEnv) throws DefinitionException {
-        StringBuffer applicationIp;
-        HashMap<String, Object> hashMap = new HashMap<>();
-        String commitId;
-        String buildBranch;
-        String repositoryUrl;
-        ArrayList<AppVersionResponse> appVersionList = getBuildVersionList(appId, buildVersionName, testedEnv);
-        if (!CollectionUtils.isEmpty(appVersionList)) {
-            commitId = appVersionList.get(0).getCommitId();
-            buildBranch = appVersionList.get(0).getSourceBranch();
-            repositoryUrl = appVersionList.get(0).getRepositoryUrl();
+    public HashMap<String, Object> getAppDeployInfoFromBuildVersionList(String appId, String buildVersionName, Integer testedEnv,
+                                                                        String basicBranch,String basicCommitId) throws DefinitionException {
 
-            applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
-            hashMap.put("applicationIP", applicationIp.toString());
-            hashMap.put("commitID", commitId);
-            hashMap.put("buildBranch", buildBranch);
-            hashMap.put("repositoryUrl", repositoryUrl);
-        } else {
+        AppVersionResponse appVersion;
+        if (buildVersionName!=null){
+            appVersion = getBuildVersionList(appId, buildVersionName, testedEnv);
+        }else {
+            appVersion = getBasicVersion(appId,basicBranch,basicCommitId,testedEnv);
+        }
+
+        if (appVersion == null){
             throw new DefinitionException(ErrorEnum.GET_DOWNLOAD_PACKAGE_FAILED);
         }
+
+        String commitId = appVersion.getCommitId();
+        String buildBranch = appVersion.getSourceBranch();
+        String repositoryUrl = appVersion.getRepositoryUrl();
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        StringBuffer applicationIp = getAppDeployInfoList(buildVersionName, testedEnv);
+        hashMap.put("applicationIP", applicationIp.toString());
+        hashMap.put("commitID", commitId);
+        hashMap.put("buildBranch", buildBranch);
+        hashMap.put("repositoryUrl", repositoryUrl);
 
         return hashMap;
     }
