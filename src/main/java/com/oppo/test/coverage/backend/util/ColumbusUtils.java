@@ -748,6 +748,8 @@ public class ColumbusUtils {
             return "portal";
         } else if ("bot-platform-management".equals(applicationID)) {
             return "bot-manage";
+        } else if (applicationID.startsWith("annotate-modular")){
+            return "annotate";
         }
         return "";
     }
