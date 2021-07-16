@@ -16,6 +16,7 @@ public class CompilesFileRequest {
         this.appCode = codeInfo.getApplicationID();
         this.packageName = codeInfo.getApplicationID();
         this.commitId = codeInfo.getTestedCommitId();
+        this.branchName = codeInfo.getTestedBranch();
     }
 
     /**
@@ -27,6 +28,11 @@ public class CompilesFileRequest {
      * 包名,应用下级区分
      * */
     private String packageName;
+
+    /**
+     * 分支名称
+     * */
+    private String branchName;
 
     /**
      * commitId
@@ -64,6 +70,14 @@ public class CompilesFileRequest {
         this.packageName = packageName;
     }
 
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
     public String getCommitId() {
         return commitId;
     }
@@ -93,6 +107,7 @@ public class CompilesFileRequest {
         return "CompilesFileRequest{" +
                 "appCode='" + appCode + '\'' +
                 ", packageName='" + packageName + '\'' +
+                ", branchName='" + branchName + '\'' +
                 ", commitId='" + commitId + '\'' +
                 ", artifactType=" + artifactType +
                 ", fileType=" + fileType +
