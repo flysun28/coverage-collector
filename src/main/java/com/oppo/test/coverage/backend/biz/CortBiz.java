@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.oppo.basic.heracles.client.core.spring.annotation.HeraclesDynamicConfig;
 import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import com.oppo.test.coverage.backend.model.response.CortResponse;
@@ -40,46 +41,46 @@ public class CortBiz {
 
     private static final Logger logger = LoggerFactory.getLogger(CortBiz.class);
 
-    @Value("${cort.url.base}")
-    private String baseUrl;
+    @HeraclesDynamicConfig(key = "cort.url.receiver" , fileName = "application.yml")
+    private String receiverUrl;
 
-    @Value("${cort.path.sceneId.get}")
+    @HeraclesDynamicConfig(key = "cort.path.sceneId.get" , fileName = "application.yml")
     private String getSceneIdPath;
 
-    @Value("${cort.path.preSign.get}")
+    @HeraclesDynamicConfig(key = "cort.path.preSign.get" , fileName = "application.yml")
     private String getPreSignPath;
 
-    @Value("${cort.path.serverTime.get}")
+    @HeraclesDynamicConfig(key = "cort.path.serverTime.get" , fileName = "application.yml")
     private String getServerTimePath;
 
-    @Value("${cort.path.compilesFile.post}")
+    @HeraclesDynamicConfig(key = "cort.path.compilesFile.post" , fileName = "application.yml")
     private String postCompilesFilePath;
 
-    @Value("${cort.path.ec.post}")
+    @HeraclesDynamicConfig(key = "cort.path.ec.post" , fileName = "application.yml")
     private String postEcFileUpload;
 
-    @Value("${cort.appId}")
+    @HeraclesDynamicConfig(key = "cort.appId" , fileName = "application.yml")
     private String appId;
 
-    @Value("${cort.secret}")
+    @HeraclesDynamicConfig(key = "cort.secret" , fileName = "application.yml")
     private String secret;
 
-    @Value("${ocs.credential.access-key-id}")
+    @HeraclesDynamicConfig(key = "ocs.credential.access-key-id" , fileName = "application.yml")
     private String accessKeyId;
 
-    @Value("${ocs.credential.secret-key-id}")
+    @HeraclesDynamicConfig(key = "ocs.credential.secret-key-id" , fileName = "application.yml")
     private String accessKeySecret;
 
-    @Value("${ocs.client.end-point}")
+    @HeraclesDynamicConfig(key = "ocs.client.end-point" , fileName = "application.yml")
     private String endPoint;
 
-    @Value("${ocs.client.region}")
+    @HeraclesDynamicConfig(key = "ocs.client.region" , fileName = "application.yml")
     private String region;
 
-    @Value("${ocs.config.binary-ec-bucket-name}")
+    @HeraclesDynamicConfig(key = "ocs.config.binary-ec-bucket-name" , fileName = "application.yml")
     private String ecBucketName;
 
-    @Value("${ocs.config.compiled-file-bucket-name}")
+    @HeraclesDynamicConfig(key = "ocs.config.compiled-file-bucket-name" , fileName = "application.yml")
     private String compiledBucketName;
 
     /**
@@ -94,7 +95,7 @@ public class CortBiz {
             logger.error("场景id获取时间戳失败");
             return null;
         }
-        String url = baseUrl + getSceneIdPath + "/" + sceneType + "?" + urlCombine(getSceneIdPath, timeStamp);
+        String url = receiverUrl + getSceneIdPath + "/" + sceneType + "?" + urlCombine(getSceneIdPath, timeStamp);
         CortResponse response = HttpRequestUtil.getForObject(url, CortResponse.class, 1);
         if (response == null || response.getErrno() == null || response.getErrno() != 0) {
             logger.error("获取cort场景id失败 : {}", response == null ? sceneType : response);
@@ -117,7 +118,7 @@ public class CortBiz {
             logger.error("预签名获取时间戳失败");
             return null;
         }
-        String url = baseUrl + getPreSignPath + "?"
+        String url = receiverUrl + getPreSignPath + "?"
                 + urlCombine(getPreSignPath, timeStamp)
                 + "&type=" + type
                 + "&fileKey=" + fileKey
@@ -173,7 +174,7 @@ public class CortBiz {
      * @return : 时间戳,获取失败返回null
      */
     public Long getServerTimestamp() {
-        CortResponse response = HttpRequestUtil.getForObject(baseUrl + getServerTimePath, CortResponse.class, 1);
+        CortResponse response = HttpRequestUtil.getForObject(receiverUrl + getServerTimePath, CortResponse.class, 1);
         if (response == null || response.getErrno() == null || response.getErrno() != 0) {
             logger.error("获取服务端时间戳失败 : {}", response);
             return null;
@@ -192,7 +193,7 @@ public class CortBiz {
             logger.error("上报编译产物获取时间戳失败");
             return false;
         }
-        String url = baseUrl + postCompilesFilePath + "?" + urlCombine(postCompilesFilePath, timeStamp);
+        String url = receiverUrl + postCompilesFilePath + "?" + urlCombine(postCompilesFilePath, timeStamp);
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         CortResponse response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
@@ -214,7 +215,7 @@ public class CortBiz {
             logger.error("上报Ec获取时间戳失败");
             return null;
         }
-        String url = baseUrl + postEcFileUpload + "?" + urlCombine(postEcFileUpload, timeStamp);
+        String url = receiverUrl + postEcFileUpload + "?" + urlCombine(postEcFileUpload, timeStamp);
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         return HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
