@@ -23,20 +23,21 @@ public class GitUtil {
     public static void cloneRepository(String url, File localPath, String newBranchName) {
         try {
             Git.cloneRepository().setURI(url).setDirectory(localPath).setBranch(newBranchName).call();
-            logger.info("代码下载完成 : {}",url);
+            logger.info("代码下载完成 : {}", url);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("自动clone代码失败 : {}",url);
+            logger.error("自动clone代码失败 : {}", url);
             throw new DefinitionException(ErrorEnum.CLONE_FAILED);
         }
     }
 
     /**
      * 切换分支
+     *
      * @param newBranchName : 被测分支
      * @param oldBranchName : 基线分支
-     * @param newTag : 被测commitId
-     * */
+     * @param newTag        : 被测commitId
+     */
     public static String checkoutBranch(String gitPath, String newBranchName, String oldBranchName, String newTag) throws DefinitionException {
         GitAdapter gitAdapter = new GitAdapter(gitPath);
         Git git = gitAdapter.getGit();
@@ -44,7 +45,7 @@ public class GitUtil {
         //默认master分支，如果不存在，取release分支
         try {
             git.reset().setMode(ResetCommand.ResetType.HARD).call();
-            logger.info("分支切换: {}",repo.getBranch());
+            logger.info("分支切换: {}", repo.getBranch());
             Ref localMasterRef = repo.exactRef("refs/heads/" + oldBranchName);
             gitAdapter.checkOutAndPull(localMasterRef, oldBranchName);
             gitAdapter.checkOut(oldBranchName);
@@ -55,38 +56,43 @@ public class GitUtil {
             gitAdapter.checkOut(newBranchName);
             git.pull().call();
             git.reset().setMode(ResetCommand.ResetType.HARD).setRef(newTag).call();
+            logger.info("切换完成 : {}", repo.getBranch());
         } catch (RefNotFoundException rfnf) {
+            logger.error("分支切换出错 : {}", rfnf.getMessage());
             try {
                 git.reset().setMode(ResetCommand.ResetType.HARD).setRef(newTag).call();
                 newBranchName = oldBranchName;
             } catch (Exception ep) {
+                logger.error("分支修复出错 : {}", ep.getMessage());
                 ep.printStackTrace();
             }
         } catch (Exception e) {
+            logger.error("分支异常:{}", e.getMessage());
             e.printStackTrace();
         }
         return newBranchName;
     }
 
-    public static String getLastUrlString(String strUrl){
+    public static String getLastUrlString(String strUrl) {
         String[] splitStr = strUrl.split("/");
         int len = splitStr.length;
-        String result = splitStr[len -1];
+        String result = splitStr[len - 1];
         //去除末尾.git
-        result = result.substring(0,result.length()-4);
+        result = result.substring(0, result.length() - 4);
 
         return result;
     }
 
     /**
      * 获取各个应用名
+     *
      * @param codeCoveragePath :
      */
-    public static ArrayList<File> getApplicationNames(File codeCoveragePath, ArrayList<File> applicationList){
-        if(codeCoveragePath.isDirectory()) {
+    public static ArrayList<File> getApplicationNames(File codeCoveragePath, ArrayList<File> applicationList) {
+        if (codeCoveragePath.isDirectory()) {
             File[] fileList = codeCoveragePath.listFiles();
 
-            if (fileList==null || fileList.length<1){
+            if (fileList == null || fileList.length < 1) {
                 return applicationList;
             }
 
@@ -95,13 +101,12 @@ public class GitUtil {
                 //判断是否文件夹目录
                 if (f.isDirectory()) {
                     //如果当前文件夹名== src
-                    if ( "src".equals(f.getName())) {
+                    if ("src".equals(f.getName())) {
                         //断定当前是应用名
                         applicationList.add(codeCoveragePath);
                         return applicationList;
-                    }
-                    else{
-                        getApplicationNames(f,applicationList);
+                    } else {
+                        getApplicationNames(f, applicationList);
                     }
                 }
             }
@@ -109,7 +114,7 @@ public class GitUtil {
         return applicationList;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 //        GitUtil gitUtil = new GitUtil("80289528","Zhc_172520");
 //        String urlString = "git@gitlab.os.adc.com:financeTestTechGroup/luckymonkey.git";
 //        String projectName = gitUtil.getLastUrlString(urlString);
@@ -117,6 +122,6 @@ public class GitUtil {
 //        File projectPath = new File("D:\\codeCoverage",projectName);
 //        gitUtil.cloneRepository(urlString,projectPath);
 
-        GitUtil.cloneRepository("git@gitlab.os.adc.com:bot/java/bot-dm-system.git",new File("D:\\codeCoverage\\bot-dm-system"),"revolution");
+        GitUtil.cloneRepository("git@gitlab.os.adc.com:bot/java/bot-dm-system.git", new File("D:\\codeCoverage\\bot-dm-system"), "revolution");
     }
 }
