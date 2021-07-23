@@ -746,8 +746,6 @@ public class ColumbusUtils {
             return "browser-multi-region-plugin";
         } else if ("insights-web".equals(applicationID)) {
             return "portal";
-        } else if ("bot-platform-management".equals(applicationID)) {
-            return "bot-manage";
         } else if (applicationID.startsWith("annotate-modular")){
             return "annotate";
         }
@@ -763,6 +761,9 @@ public class ColumbusUtils {
     private static List<String> getSpecialAppCodeListPrefix(String appCode) {
         if ("insights-web".equals(appCode)) {
             return Lists.newArrayList("portal", "sms", "userinsight", "userorient");
+        }
+        if ("bot-platform-management".equals(appCode)) {
+            return Lists.newArrayList("bot-manage","bot-datadig","bot-service");
         }
         return null;
     }
