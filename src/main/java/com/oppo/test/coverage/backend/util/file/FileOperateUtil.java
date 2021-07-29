@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -122,6 +124,63 @@ public class FileOperateUtil {
         //3.极有可能有可能自己前面没有关闭此文件的流(我遇到的情况)
         if (isDelete && isUnZipSuccess) {
             boolean flag = new File(zipFilePath).delete();
+        }
+    }
+
+    static void unZipJarFiles(String jarFilePath, String fileSavePath, boolean isDelete) {
+        boolean isUnZipSuccess = true;
+        try {
+            (new File(fileSavePath)).mkdirs();
+            File f = new File(jarFilePath);
+            if ((!f.exists()) && (f.length() <= 0)) {
+                throw new RuntimeException("not find " + jarFilePath + "!");
+            }
+            JarFile jarFile = new JarFile(f);
+            String gbkPath, strtemp;
+
+            Enumeration<JarEntry> e = jarFile.entries();
+            while (e.hasMoreElements()) {
+                JarEntry jarEntry = e.nextElement();
+                gbkPath = jarEntry.getName();
+                strtemp = fileSavePath + File.separator + gbkPath;
+                if (jarEntry.isDirectory()) {
+                    //目录
+                    File dir = new File(strtemp);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                } else {
+                    // 读写文件
+                    InputStream is = jarFile.getInputStream(jarEntry);
+                    BufferedInputStream bis = new BufferedInputStream(is);
+                    // 建目录
+                    for (int i = 0; i < gbkPath.length(); i++) {
+                        if ("/".equalsIgnoreCase(gbkPath.substring(i, i + 1))) {
+                            String temp = fileSavePath + File.separator + gbkPath.substring(0, i);
+                            File subdir = new File(temp);
+                            if (!subdir.exists()) {
+                                subdir.mkdir();
+                            }
+                        }
+                    }
+                    FileOutputStream fos = new FileOutputStream(strtemp);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    int len;
+                    byte[] buff = new byte[5120];
+                    while ((len = bis.read(buff)) != -1) {
+                        bos.write(buff, 0, len);
+                    }
+                    bos.close();
+                    fos.close();
+                }
+            }
+            jarFile.close();
+        } catch (Exception e) {
+            logger.error("解压jar文件出现异常: {}, {} - {}", jarFilePath, e.getMessage(), e.getCause());
+            isUnZipSuccess = false;
+        }
+        if (isDelete && isUnZipSuccess) {
+            boolean flag = new File(jarFilePath).delete();
         }
     }
 
