@@ -191,7 +191,7 @@ public class ReportGenerateTask implements Runnable {
         }
         //过滤配置的ignore class,package文件
         ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), basicClassesPath);
-        cortBasicCompiledFileUpload();
+        //cortBasicCompiledFileUpload();
     }
 
     /**
@@ -624,7 +624,7 @@ public class ReportGenerateTask implements Runnable {
 
         if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
             // 把classes文件打包上传到cort
-            cortCompiledFileUpload();
+            //cortCompiledFileUpload();
             // 将jacocoAll上传到cort的OCS
             cortEcFileUpload();
         }
