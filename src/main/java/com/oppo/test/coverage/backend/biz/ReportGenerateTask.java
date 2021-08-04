@@ -166,10 +166,9 @@ public class ReportGenerateTask implements Runnable {
             e.printStackTrace();
         }
         taskEntity.setClassPath(classPath);
-        // TODO: 2021/7/7 上传基线的版本
-        if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
-            basicClassesInit(repositoryUrl);
-        }
+//        if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
+//            basicClassesInit(repositoryUrl);
+//        }
     }
 
     private void basicClassesInit(String testedRepositoryUrl) {
@@ -191,7 +190,7 @@ public class ReportGenerateTask implements Runnable {
         }
         //过滤配置的ignore class,package文件
         ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), basicClassesPath);
-        //cortBasicCompiledFileUpload();
+        cortBasicCompiledFileUpload();
     }
 
     /**
