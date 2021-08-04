@@ -8,7 +8,6 @@ import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
 import com.oppo.test.coverage.backend.model.entity.CoverageData;
 import com.oppo.test.coverage.backend.model.entity.Data;
 import com.oppo.test.coverage.backend.model.entity.ReportGeneratorTaskEntity;
-import com.oppo.test.coverage.backend.model.request.CompilesFileRequest;
 import com.oppo.test.coverage.backend.model.request.EcUploadRequest;
 import com.oppo.test.coverage.backend.model.response.DefinitionException;
 import com.oppo.test.coverage.backend.util.ColumbusUtils;
@@ -166,31 +165,6 @@ public class ReportGenerateTask implements Runnable {
             e.printStackTrace();
         }
         taskEntity.setClassPath(classPath);
-//        if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
-//            basicClassesInit(repositoryUrl);
-//        }
-    }
-
-    private void basicClassesInit(String testedRepositoryUrl) {
-        Map<String, Object> repositoryUrlInfo = columbusUtils.getAppDeployInfoFromBuildVersionList(taskEntity.getAppInfo().getApplicationID(), null, taskEntity.getAppInfo().getTestedEnv(), taskEntity.getAppInfo().getBasicBranch(), taskEntity.getAppInfo().getBasicCommitId());
-        String repositoryUrl = repositoryUrlInfo.get("repositoryUrl").toString();
-        if (testedRepositoryUrl.equals(repositoryUrl)) {
-            //基线与被测的相同,直接跳过
-            logger.info("基线产物与被测分支相同,不处理 : {}", taskEntity.getAppInfo().getId());
-            return;
-        }
-        //下载到taskId的目录下
-        String downloadFilePath = columbusUtils.downloadColumbusBuildVersion(repositoryUrl, taskEntity.getCoverageReportPath().toString());
-        File basicClassesPath = new File(taskEntity.getCoverageReportPath().toString(), "basicClasses");
-        try {
-            ColumbusUtils.extractColumbusBuildVersionClasses(downloadFilePath, basicClassesPath.toString(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getSourceApplicationsMap());
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("基线处理classes出现异常 : {} , {}", testedRepositoryUrl, taskEntity.getAppInfo().getId());
-        }
-        //过滤配置的ignore class,package文件
-        ColumbusUtils.filterIgnoreClass(taskEntity.getIgnoreClassList(), basicClassesPath);
-        cortBasicCompiledFileUpload();
     }
 
     /**
@@ -758,41 +732,6 @@ public class ReportGenerateTask implements Runnable {
         createCoverageReport(classesDirectoryList, taskEntity.getFilterReportAllCovDirectory(), taskEntity.getCoverageReportPath().getName(), taskEntity.getSourceDirectoryList());
         //上传已过滤覆盖率报告
         sendCoverageDataResult(taskEntity.getFilterReportAllCovDirectory(), taskEntity.getFilterReportDiffDirectory(), 1, 1);
-
-    }
-
-    /**
-     * 将编译产物上传到OCS,并且上报cort
-     */
-    private void cortCompiledFileUpload() {
-        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
-        String cortClassDirectory = zipFilePath + "/classes";
-        String zipFile = "cort-" + taskEntity.getAppInfo().getId() + ".zip";
-        FileOperateUtil.compressToZip(cortClassDirectory, zipFilePath, zipFile);
-        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))) {
-            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
-            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
-            cortBiz.postCompilesFile(compilesFileRequest);
-        }
-    }
-
-    /**
-     * 处理基线编译产物
-     */
-    private void cortBasicCompiledFileUpload() {
-        logger.info("基线编译产物处理 : {}", taskEntity.getAppInfo().getId());
-        String zipFilePath = systemConfig.getReportBasePath() + "/taskID/" + taskEntity.getAppInfo().getId();
-        String cortClassesDirectory = zipFilePath + "/basicClasses";
-        String zipFile = "cort-" + taskEntity.getAppInfo().getId() + "-basic.zip";
-        FileOperateUtil.compressToZip(cortClassesDirectory, zipFilePath, zipFile);
-        if (cortBiz.uploadCompilesFile(new File(zipFilePath + File.separator + zipFile))) {
-            logger.info("上报基线编译产物 : {}", taskEntity.getAppInfo().getId());
-            CompilesFileRequest compilesFileRequest = new CompilesFileRequest(taskEntity.getAppInfo());
-            compilesFileRequest.setCommitId(taskEntity.getAppInfo().getBasicCommitId());
-            compilesFileRequest.setFileUrl(cortBiz.getPreSignObjectUrl(zipFile));
-            cortBiz.postCompilesFile(compilesFileRequest);
-            logger.info("基线编译产物上报完成 : {}", taskEntity.getAppInfo().getId());
-        }
     }
 
     /**
@@ -803,8 +742,8 @@ public class ReportGenerateTask implements Runnable {
         FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(), cortEcFile.toString());
         if (cortBiz.uploadEcFile(cortEcFile)) {
             EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(), cortEcFile.getName());
-            logger.info("upload ec file : {}", cortEcFile.getName());
-            cortBiz.postEcFileToCort(ecUploadRequest);
+            boolean result = cortBiz.postEcFileToCort(ecUploadRequest);
+            logger.info("upload ec file : {} , result is {}", cortEcFile.getName(), result);
         }
     }
 
