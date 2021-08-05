@@ -49,9 +49,7 @@ public class CortBizTest {
 
     @Test
     public void testGetExecutionData() throws Exception {
-        boolean executionData = executionDataClient.getExecutionData("10.176.133.217", 8098, new File("F:\\业务场景\\play35\\cdojacoco.exec"), 3);
-//        boolean executionData = executionDataClient.getExecutionData("10.177.245.87", 8098, new File("cdojacoco.exec"), 1);
-
+        boolean executionData = executionDataClient.getEcData("10.177.205.211", 8098, new File("F:\\file-temp\\code-coverage\\atms\\temp\\cdojacoco.exec"), 1);
         System.out.println(executionData);
     }
 }

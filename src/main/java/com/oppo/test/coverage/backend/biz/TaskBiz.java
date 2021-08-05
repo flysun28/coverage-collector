@@ -106,7 +106,7 @@ public class TaskBiz {
      */
     private void startCoverageTask(ApplicationCodeInfo applicationCodeInfo) {
 
-        if (resultMockFlag){
+        if (resultMockFlag) {
             mockResult(applicationCodeInfo);
             return;
         }
@@ -215,7 +215,7 @@ public class TaskBiz {
     }
 
 
-    private void mockResult(ApplicationCodeInfo applicationCodeInfo){
+    private void mockResult(ApplicationCodeInfo applicationCodeInfo) {
         String url = systemConfig.getSendCoverageResultUrl();
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
@@ -242,7 +242,7 @@ public class TaskBiz {
         coverageData.setTestedBranch(applicationCodeInfo.getTestedBranch());
         coverageData.setBasicBranch(applicationCodeInfo.getBasicBranch());
 
-        logger.info("mock result : {}",JSON.toJSON(coverageData));
+        logger.info("mock result : {}", JSON.toJSON(coverageData));
         HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(coverageData), Data.class, 1);
     }
 

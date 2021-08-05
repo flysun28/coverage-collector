@@ -623,7 +623,7 @@ public class ReportGenerateTask implements Runnable {
     private boolean getExecDataFromMachine(File executionDataFile, String serverIp, String portNum) {
         boolean result;
         try {
-            result = executionDataClient.getExecutionData(serverIp, Integer.parseInt(portNum), executionDataFile, taskEntity.getAppInfo().getTestedEnv());
+            result = executionDataClient.getEcData(serverIp, Integer.parseInt(portNum), executionDataFile, taskEntity.getAppInfo().getTestedEnv());
         } catch (Exception e) {
             logger.warn("获取覆盖率失败: 应用-{} , taskId-{}, ip-{}:{}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId(), serverIp, portNum, e.getMessage());
             e.printStackTrace();
