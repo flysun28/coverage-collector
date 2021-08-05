@@ -122,14 +122,7 @@
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>5.6.0.201912101111-r</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse</groupId>
-			<artifactId>jgit</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${pom.basedir}/src/main/resources/lib/org.eclipse.jgit.jar</systemPath>
+			<version>5.7.0.202003110725-r</version>
 		</dependency>
 
 		<dependency>
