@@ -2,6 +2,8 @@ package com.oppo.test.coverage.backend.model.request;
 
 import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
 
+import java.util.*;
+
 /**
  * 上传ec文件到cort后台的请求体
  *
@@ -20,9 +22,11 @@ public class EcUploadRequest {
         this.branchName = codeInfo.getTestedBranch();
         this.sceneId = Math.toIntExact(codeInfo.getSceneId());
         this.packageName = codeInfo.getApplicationID();
-        this.deviceId = codeInfo.getIp();
         this.caseId = codeInfo.getId().toString();
         this.fileKey = fileKey;
+        List<String> ipList = Arrays.asList(codeInfo.getIp().split(","));
+        Collections.sort(ipList);
+        this.deviceId = String.join(",", ipList);
     }
 
     /**
