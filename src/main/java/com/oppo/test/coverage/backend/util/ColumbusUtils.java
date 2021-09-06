@@ -238,7 +238,6 @@ public class ColumbusUtils {
         return hashMap;
     }
 
-    // TODO: 2021/6/11 这个方法指定有点大病
     public static void filterIgnoreClass(String[] classArrayList, File basePath) {
 
         if (classArrayList == null || classArrayList.length < 1) {
@@ -252,10 +251,15 @@ public class ColumbusUtils {
         }
 
         for (String classname : classArrayList) {
+            //com.oppo.test.JavaTest
             if (classname.contains(".")) {
+                //JavaTest
                 String classPathLastStr = classname.substring(classname.lastIndexOf(".") + 1);
+                // com/oppo/test
                 String classParentPathStr = classname.substring(0, classname.lastIndexOf(".")).replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+                // /home/service/xxx/com/oppo/test
                 File classParentPath = new File(basePath, classParentPathStr);
+                //
                 if (classPathLastStr.endsWith("*")) {
                     String prefix = classPathLastStr.substring(0, classPathLastStr.indexOf("*"));
                     if (classParentPath.exists()) {
@@ -282,13 +286,19 @@ public class ColumbusUtils {
             return;
         }
 
+        //com.oppo.test
+
         for (String packageName : packageArrayList) {
             if (packageName.contains(".")) {
+                //test
                 String packageNameLastStr = packageName.substring(packageName.lastIndexOf(".") + 1);
+                //com.oppo
                 String packageParentNameStr = packageName.substring(0, packageName.lastIndexOf("."));
-
+                // com/oppo
                 String packageParentNamePath = packageParentNameStr.replaceAll("\\.", Matcher.quoteReplacement(File.separator));
+                // /home/service/xxx/com/oppo
                 File packageNameParentFile = new File(basePath, packageParentNamePath);
+
                 if (packageNameLastStr.endsWith("*")) {
                     if (packageNameParentFile.exists()) {
                         for (File packageFile : Objects.requireNonNull(packageNameParentFile.listFiles())) {
@@ -300,6 +310,7 @@ public class ColumbusUtils {
 
                     }
                 } else {
+
                     if (new File(packageNameParentFile, packageNameLastStr).exists()) {
                         FileOperateUtil.delAllFile(new File(packageNameParentFile, packageNameLastStr).toString());
                     }

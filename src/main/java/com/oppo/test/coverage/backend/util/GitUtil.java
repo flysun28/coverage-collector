@@ -26,7 +26,7 @@ public class GitUtil {
             logger.info("代码下载完成 : {}", url);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("自动clone代码失败 : {}", url);
+            logger.error("自动clone代码失败 : {} , {}", url, e.getMessage());
             throw new DefinitionException(ErrorEnum.CLONE_FAILED);
         }
     }
