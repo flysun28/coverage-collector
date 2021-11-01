@@ -26,7 +26,6 @@ public class EcUploadRequest {
         this.fileKey = fileKey;
         List<String> ipList = Arrays.asList(codeInfo.getIp().split(","));
         Collections.sort(ipList);
-        this.deviceId = String.join(",", ipList);
     }
 
     /**

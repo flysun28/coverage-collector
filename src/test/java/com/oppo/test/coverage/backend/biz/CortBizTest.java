@@ -41,7 +41,6 @@ public class CortBizTest {
         request.setPackageName("ci-demo");
         request.setBranchName("master");
         request.setCaseId("847");
-        request.setDeviceId("10.177.205.211,10.177.131.132,10.177.131.208");
         request.setSceneId(13595);
         request.setFileKey("jacocoAll-847.ec");
         cortBiz.postEcFile(request);
