@@ -51,7 +51,7 @@ public class EcUploadRequest {
     /**
      * 在客户端是用于定位到具体手机的,后期可以在前端做一些区分查看
      */
-    private String deviceId;
+    private String deviceId = "";
 
     /**
      * 精准预留的,暂时写死一个数字
