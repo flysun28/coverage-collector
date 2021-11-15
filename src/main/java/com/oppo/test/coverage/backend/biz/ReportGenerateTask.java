@@ -118,11 +118,9 @@ public class ReportGenerateTask implements Runnable {
 
 
     private void createFileDirectory() {
-
         //创建测试报告文件名
         File coverageReportPath = createCoverageReportPathByTaskId(taskEntity.getAppInfo().getId().toString());
         taskEntity.setCoverageReportPath(coverageReportPath);
-
         //创建未过滤报告存储地址
         taskEntity.setReportAllCovDirectory(createFile(taskEntity.getCoverageReportPath().getPath(), "coveragereport"));
         taskEntity.setReportDiffDirectory(createFile(taskEntity.getCoverageReportPath().getPath(), "coveragediffreport"));
@@ -139,7 +137,6 @@ public class ReportGenerateTask implements Runnable {
         taskEntity.setCoverageExecutionDataPath(createFile(taskEntity.getCoverageReportPath().getPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_")));
         //创建jacocoAll汇总文件
         taskEntity.setAllExecutionDataFile(new File(taskEntity.getCoverageExecutionDataPath().getPath(), "jacocoAll.exec"));
-
     }
 
 
@@ -178,18 +175,6 @@ public class ReportGenerateTask implements Runnable {
         return file;
     }
 
-    /**
-     * 创建 /${basePath}/taskID/${branchTaskId}/branchcoverage/${branch}
-     *
-     * @param branchTaskId  : 合并的上一条任务id
-     * @param newBranchName : 被测分支名
-     */
-    private File createBranchCoverageReportPathByTaskId(String branchTaskId, String newBranchName) {
-        File branchTaskPath = createCoverageReportPathByTaskId(branchTaskId);
-        File branchCoverage1 = createFile(branchTaskPath.getPath(), "branchcoverage");
-        File branchCoverage2 = createFile(branchCoverage1.getPath(), newBranchName);
-        return branchCoverage2;
-    }
 
     /**
      * 创建文件并检测创建成功与否
@@ -447,48 +432,9 @@ public class ReportGenerateTask implements Runnable {
             sendCoverageDataResult(versionAllCovDirectory, versionDiffDirectory, 1, 3);
         } catch (DefinitionException e) {
             logger.error("版本报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getErrorMsg());
-            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
+            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorEnum());
         } catch (Exception e) {
             logger.error("版本报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void startBranchCoverageTask() {
-        try {
-            File branchTaskCoverageReportPath = createBranchCoverageReportPathByTaskId(taskEntity.getAppInfo().getBranchTaskID().toString(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_"));
-            File branchTaskPath = createCoverageReportPathByTaskId(taskEntity.getAppInfo().getBranchTaskID().toString());
-            File branchClassPath = createFile(branchTaskPath.getPath(), "classes");
-            File gitLocalExecutionDataPath = createFile(taskEntity.getProjectCovPath(), taskEntity.getAppInfo().getTestedBranch().replace("/", "_"));
-            File filterExecFile = filterBranchData(gitLocalExecutionDataPath, branchTaskCoverageReportPath, branchClassPath.toString());
-
-            //要保存报告的地址
-            File reportAllCovDirectory = createFile(branchTaskCoverageReportPath.getPath(), "totalcoveragereport");
-            File reportDiffDirectory = createFile(branchTaskCoverageReportPath.getPath(), "diffcoveragereport");
-
-            //目录下必须包含源码编译过的class文件,用来统计覆盖率。所以这里用server打出的jar包地址即可,运行的jar或者Class目录
-            ArrayList<File> classesDirectoryList = Lists.newArrayList(branchClassPath);
-            ArrayList<File> sourceDirectoryList = taskEntity.getSourceDirectoryList();
-
-            //合并taskID目录代码覆盖率
-            if (!filterExecFile.exists()) {
-                throw new DefinitionException(ErrorEnum.JACOCO_EXEC_FAILED);
-            }
-            loadExecutionData(filterExecFile);
-
-            //生成差异化覆盖率
-            if (!taskEntity.getAppInfo().getTestedCommitId().equals(taskEntity.getAppInfo().getBasicCommitId())) {
-                createDiff(classesDirectoryList, reportDiffDirectory, sourceDirectoryList, branchTaskCoverageReportPath.getName());
-            }
-            //生成整体覆盖率报告
-            createCoverageReport(classesDirectoryList, reportAllCovDirectory, branchTaskCoverageReportPath.getName(), sourceDirectoryList);
-            //上传覆盖率报告
-            sendCoverageDataResult(reportAllCovDirectory, reportDiffDirectory, 1, 2);
-        } catch (DefinitionException e) {
-            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getErrorMsg());
-            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), e.getErrorMsg());
-        } catch (Exception e) {
-            logger.error("分支报告生成失败 : {},{}", taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
         }
     }
@@ -513,8 +459,7 @@ public class ReportGenerateTask implements Runnable {
                 errorEnum = ErrorEnum.DOWNLOAD_BUILD_VERSION_FAILED;
                 taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(),
                         errorEnum, taskEntity.getProjectName(),
-                        taskEntity.getAppInfo().getApplicationID(),
-                        taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID()
+                        taskEntity.getAppInfo().getApplicationID()
                 );
                 return;
             } finally {
@@ -540,9 +485,8 @@ public class ReportGenerateTask implements Runnable {
             e.printStackTrace();
             logger.error("下载源码失败 : {} , {} , {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getGitPath());
             taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
-                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                    taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
-            return;
+                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
+            //classes失败了就失败了,一样去拉exec
         }
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
@@ -571,8 +515,7 @@ public class ReportGenerateTask implements Runnable {
             //没有获取到覆盖率数据,报错结束
             logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
             taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,
-                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                    taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
+                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
             return;
         }
 
@@ -592,7 +535,7 @@ public class ReportGenerateTask implements Runnable {
             logger.error("生成报告失败: {}, {}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId(), e.getMessage());
             e.printStackTrace();
             errorEnum = ErrorEnum.PRODUCT_REPORT;
-            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), "报告生成失败 :" + e.getMessage());
+            httpUtils.sendErrorMsg(taskEntity.getAppInfo().getId(), errorEnum);
         }
 
         if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
@@ -602,19 +545,13 @@ public class ReportGenerateTask implements Runnable {
             cortEcFileUpload();
         }
 
-        //生成分支数据
-        if (taskEntity.getAppInfo().getIsBranchTask() == 1) {
-            startBranchCoverageTask();
-        }
-
         //生成版本数据
         if (!StringUtils.isEmpty(taskEntity.getAppInfo().getVersionId())) {
             startVersionCoverageTask();
         }
 
         taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), errorEnum,
-                taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID(),
-                taskEntity.getAppInfo().getIsBranchTask(), taskEntity.getAppInfo().getBranchTaskID());
+                taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
     }
 
     /**
@@ -658,12 +595,9 @@ public class ReportGenerateTask implements Runnable {
     }
 
     /**
-     * 将taskId下的exec复制到branch、version文件目录下
+     * 将taskId下的exec复制到version文件目录下
      */
     private void copyExecToBranchAndVersionDirectory(File executionDataFile, String serverIp) {
-        File branchFile = new File(taskEntity.getTestedBranchCoverageDirectory().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
-
-        FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), branchFile.getPath());
         if (!StringUtils.isEmpty(taskEntity.getAppInfo().getVersionId())) {
             File versionFile = new File(taskEntity.getVersionIdDataPath().getPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
             FileOperateUtil.copyFile(executionDataFile.getAbsolutePath(), versionFile.getPath());

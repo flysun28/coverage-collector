@@ -1,6 +1,7 @@
 package com.oppo.test.coverage.backend.util.http;
 
 import com.alibaba.fastjson.JSON;
+import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
 import com.oppo.test.coverage.backend.model.entity.Data;
 import com.oppo.test.coverage.backend.model.request.ErrorMsg;
 import com.oppo.test.coverage.backend.util.SystemConfig;
@@ -34,47 +35,52 @@ public class HttpUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
-    public static String sendGet(String url){
+    public static String sendGet(String url) {
         System.out.println("\nSending 'GET' request to URL : " + url);
-        return HttpRequestUtil.getForObject(url,String.class,3);
+        return HttpRequestUtil.getForObject(url, String.class, 3);
     }
 
-    public void sendErrorMsg(Long taskId,String msg){
+    public void sendErrorMsg(Long taskId, ErrorEnum errorEnum) {
+        if (!errorEnum.equals(ErrorEnum.JACOCO_EXEC_FAILED)){
+            return;
+        }
         ErrorMsg errorMsg = new ErrorMsg();
         errorMsg.setId(taskId);
-        errorMsg.setMsg(msg);
-        HttpUtils.sendPostRequest(systemConfig.getSendErrorMsgUrl(),errorMsg);
+        errorMsg.setMsg(errorEnum.getErrorMsg());
+        HttpUtils.sendPostRequest(systemConfig.getSendErrorMsgUrl(), errorMsg);
     }
 
-    public static Data sendPostRequest(String url, Object obj){
+    public static Data sendPostRequest(String url, Object obj) {
         ResponseEntity<Data> response = null;
 
-        Map<CharSequence,CharSequence> headersMap = new HashMap<>(1);
-        headersMap.put("Content-type",MediaType.APPLICATION_JSON_VALUE);
+        Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
+        headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
         try {
             //执行HTTP请求，将返回的结构格式化
-            response = HttpRequestUtil.postForObject(url,headersMap, JSON.toJSONBytes(obj),ResponseEntity.class,3);
-        }catch (Exception e){
-            logger.error("post request error : {}, {}",url,e.getMessage());
+            response = HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(obj), ResponseEntity.class, 3);
+        } catch (Exception e) {
+            logger.error("post request error : {}, {}", url, e.getMessage());
             e.printStackTrace();
         }
 
-        if (response != null){
+        if (response != null) {
             return response.getBody();
         }
         return null;
     }
 
     //2021/4/23 换掉这个文件下载
+
     /**
      * 下载文件
+     *
      * @param url
      * @param filePath
      */
     public static void httpDownloadFile(String url,
-                                 String filePath,
-                                 Map<String, String> headMap) {
+                                        String filePath,
+                                        Map<String, String> headMap) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(url);
@@ -130,7 +136,7 @@ public class HttpUtils {
     public static void main(String[] args) {
         HttpClientUtil httpClientUtil = new HttpClientUtil();
 
-        sendGet("http://atms-test.itest.wanyol.com/api/codeCoverage/execution/stop/timerTask?id=747&msg="+URLEncoder.encode("获取测试环境覆盖率文件失败,请检查jacoco服务是否正确部署"));
+        sendGet("http://atms-test.itest.wanyol.com/api/codeCoverage/execution/stop/timerTask?id=747&msg=" + URLEncoder.encode("获取测试环境覆盖率文件失败,请检查jacoco服务是否正确部署"));
     }
 
 }
