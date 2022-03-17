@@ -206,10 +206,6 @@ public class ReportGenerateTask implements Runnable {
         File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(), "jacocoAll-" + taskEntity.getAppInfo().getId() + ".ec");
         FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(), cortEcFile.toString());
 
-        if ("ci-demo".equals(taskEntity.getAppInfo().getApplicationID())) {
-            jsonEcUpload(cortEcFile);
-            return;
-        }
         //二进制格式上传
         binaryEcUpload(cortEcFile);
     }
