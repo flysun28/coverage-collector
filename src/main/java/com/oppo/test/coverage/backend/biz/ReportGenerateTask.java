@@ -205,11 +205,48 @@ public class ReportGenerateTask implements Runnable {
     private void cortEcFileUpload() {
         File cortEcFile = new File(taskEntity.getCoverageExecutionDataPath().toString(), "jacocoAll-" + taskEntity.getAppInfo().getId() + ".ec");
         FileOperateUtil.copyFile(taskEntity.getAllExecutionDataFile().toString(), cortEcFile.toString());
-        if (cortBiz.uploadEcFile(cortEcFile)) {
-            EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(), cortEcFile.getName());
-            boolean result = cortBiz.postEcFileToCort(ecUploadRequest);
-            logger.info("upload ec file : {} , result is {}", cortEcFile.getName(), result);
+
+        if ("ci-demo".equals(taskEntity.getAppInfo().getApplicationID())) {
+            jsonEcUpload(cortEcFile);
+            return;
         }
+        //二进制格式上传
+        binaryEcUpload(cortEcFile);
+    }
+
+
+    private void binaryEcUpload(File cortEcFile) {
+        boolean cortEcUploadResult = cortBiz.uploadEcFile(cortEcFile);
+        if (!cortEcUploadResult) {
+            logger.error("上传binary ec失败 : {}", cortEcFile.toString());
+            return;
+        }
+        EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(), cortEcFile.getName());
+        boolean result = cortBiz.postEcFileToCort(ecUploadRequest, 1);
+        logger.info("upload binary ec file : {} , {} , {} ,  result is {}", cortEcFile.getName(), ecUploadRequest.getAppCode(), ecUploadRequest.getCommitId(), result);
+    }
+
+    private void jsonEcUpload(File cortEcFile) {
+
+        //文件所在路径
+        File path = taskEntity.getCoverageExecutionDataPath();
+
+        // TODO: 2022/1/4 转换ec为json后上传文件,再上报
+
+        //ec转json
+        File jsonEcFile = new File(path, cortEcFile.getName());
+
+        //json上传ocs
+        boolean cortEcUploadResult = cortBiz.uploadEcFile(jsonEcFile);
+        if (!cortEcUploadResult) {
+            logger.error("上传json ec失败 : {}", jsonEcFile.toString());
+            return;
+        }
+
+        //上报cort
+        EcUploadRequest ecUploadRequest = new EcUploadRequest(taskEntity.getAppInfo(), jsonEcFile.getName());
+        boolean result = cortBiz.postEcFileToCort(ecUploadRequest, 2);
+        logger.info("upload json ec file : {} , result is {}", jsonEcFile.getName(), result);
     }
 
 

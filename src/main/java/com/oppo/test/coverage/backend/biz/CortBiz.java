@@ -51,6 +51,9 @@ public class CortBiz {
     @HeraclesDynamicConfig(key = "cort.path.ec.post", fileName = "application.yml")
     private String postEcFileUpload;
 
+    @HeraclesDynamicConfig(key = "cort.path.json.post", fileName = "application.yml")
+    private String postJsonFileUpload;
+
     @HeraclesDynamicConfig(key = "cort.appId", fileName = "application.yml")
     private String appId;
 
@@ -103,13 +106,14 @@ public class CortBiz {
      *
      * @return : 成功true , 失败false
      */
-    CortResponse postEcFile(EcUploadRequest request) {
+    CortResponse postEcFile(EcUploadRequest request, int ecType) {
         Long timeStamp = getServerTimestamp();
         if (timeStamp == null) {
             logger.error("上报Ec获取时间戳失败");
             return null;
         }
-        String url = receiverUrl + postEcFileUpload + "?" + urlCombine(postEcFileUpload, timeStamp);
+        String path = ecType == 1 ? postEcFileUpload : postJsonFileUpload;
+        String url = receiverUrl + path + "?" + urlCombine(postEcFileUpload, timeStamp);
         Map<CharSequence, CharSequence> headersMap = new HashMap<>(1);
         headersMap.put("Content-type", MediaType.APPLICATION_JSON_VALUE);
         return HttpRequestUtil.postForObject(url, headersMap, JSON.toJSONBytes(request), CortResponse.class, 1);
@@ -119,9 +123,9 @@ public class CortBiz {
     /**
      * 上传Ec到cort,遇到无compiledFile进行重试
      */
-    boolean postEcFileToCort(EcUploadRequest request) {
+    boolean postEcFileToCort(EcUploadRequest request, int ecType) {
         for (int i = 0; i < 6; i++) {
-            CortResponse response = postEcFile(request);
+            CortResponse response = postEcFile(request, ecType);
             //调用成功,返回
             if (response != null && response.getErrno() != null && response.getErrno() == 0) {
                 return true;

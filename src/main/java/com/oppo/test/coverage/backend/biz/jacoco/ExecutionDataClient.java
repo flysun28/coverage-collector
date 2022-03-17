@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author 80264236
@@ -58,6 +59,14 @@ public class ExecutionDataClient {
     private int getDevPort(String address, int port) {
         String tempUrl = systemConfig.getTransferDevUrl() + "?address=" + address + "&port=" + port;
         return Integer.parseInt(HttpRequestUtil.getForObject(tempUrl, String.class, 3));
+    }
+
+    public static void main(String[] args) throws IOException {
+        ExecDumpClient client = new ExecDumpClient();
+        client.setDump(true);
+        client.setReset(false);
+        ExecFileLoader fileLoader = client.dump("10.176.52.174", 8098);
+        fileLoader.save(new File("F:\\业务场景\\47\\test.ec"), false);
     }
 
 }

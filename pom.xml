@@ -383,6 +383,13 @@
             <artifactId>framework-trace-threadpool</artifactId>
             <version>6.1.10.GA</version>
         </dependency>
+
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.cli</artifactId>
+			<version>0.8.8-FZC-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

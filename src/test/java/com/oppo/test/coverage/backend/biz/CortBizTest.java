@@ -43,7 +43,7 @@ public class CortBizTest {
         request.setCaseId("847");
         request.setSceneId(13595);
         request.setFileKey("jacocoAll-847.ec");
-        cortBiz.postEcFile(request);
+        cortBiz.postEcFile(request, 1);
     }
 
     @Test

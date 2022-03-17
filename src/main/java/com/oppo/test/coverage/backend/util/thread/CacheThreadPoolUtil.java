@@ -22,7 +22,7 @@ public class CacheThreadPoolUtil {
                 5,
                 100,
                 60L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>(),
+                new SynchronousQueue<>(),
                 new ThreadFactoryBuilder().setNameFormat("cache-threadPool-%d").build(),
                 new MyIgnorePolicy());
         ExecutorService threadPool=new TraceExecutorService(executorService);
