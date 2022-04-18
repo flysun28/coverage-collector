@@ -39,6 +39,9 @@ public class ApplicationCodeInfo {
 
 
     public boolean enableCheck() {
+        if (StringUtils.isEmpty(this.gitPath)) {
+            return false;
+        }
         if (StringUtils.isEmpty(this.testedBranch)) {
             return false;
         }
