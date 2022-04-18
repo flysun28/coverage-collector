@@ -116,9 +116,6 @@ public class TaskBiz {
         //将相关文件从OCS下载到本地,分支统计需要下载历史数据
         String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
         folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getId());
-        if (applicationCodeInfo.getIsBranchTask() != 0) {
-            folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getBranchTaskID());
-        }
 
         logger.info("文件下载完毕 : {} ,{}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
 
