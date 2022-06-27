@@ -37,6 +37,10 @@ public class ApplicationCodeInfo {
      */
     private Long sceneId;
 
+    /**
+     * goblin ec文件名
+     */
+    private String goblinEcFile;
 
     public boolean enableCheck() {
         if (StringUtils.isEmpty(this.gitPath)) {
