@@ -10,10 +10,13 @@ import com.oppo.test.coverage.backend.util.SpringContextUtil;
 import com.oppo.test.coverage.backend.util.SystemConfig;
 import com.oppo.test.coverage.backend.util.file.FileOperateUtil;
 import com.oppo.test.coverage.backend.util.http.HttpUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
+import java.net.URL;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -37,6 +40,9 @@ public class ReportGenerateTask implements Runnable {
     private CortBiz cortBiz;
 
     private ExecutorService cacheThreadPool;
+
+    @Value("${ocs.goblin.ec.url}")
+    private String ocsGoblinEcUrl;
 
     ReportGeneratorTaskEntity getTaskEntity() {
         return taskEntity;
@@ -128,34 +134,37 @@ public class ReportGenerateTask implements Runnable {
         Thread.currentThread().setName(threadNameArray[0] + "-taskId-" + taskEntity.getAppInfo().getSceneId());
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
-        int failCount = 0;
 
-        for (String serverIp : taskEntity.getIpList()) {
-            for (String portNum : taskEntity.getPort()) {
-                File executionDataFile = new File(taskEntity.getCoverageExecutionDataPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
-                //先获取数据
-                if (!getExecDataFromMachine(executionDataFile, serverIp, portNum)) {
-                    failCount++;
+        if(!getGoblinEcFile()) {
+
+            int failCount = 0;
+
+            for (String serverIp : taskEntity.getIpList()) {
+                for (String portNum : taskEntity.getPort()) {
+                    File executionDataFile = new File(taskEntity.getCoverageExecutionDataPath(), serverIp + System.currentTimeMillis() + "_jacoco.exec");
+                    //先获取数据
+                    if (!getExecDataFromMachine(executionDataFile, serverIp, portNum)) {
+                        failCount++;
+                    }
+
+                    // TODO: 2021/11/16  判断是否是新版本?这个怎么办
+
                 }
+            }
 
-                // TODO: 2021/11/16  判断是否是新版本?这个怎么办
+            if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
+                //没有获取到覆盖率数据,报错结束
+                logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
+                taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,
+                        taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
+                return;
+            }
 
+            //合并目录下的各机器数据
+            if (!mergeExecData()) {
+                logger.error("合并覆盖率数据失败: {},{}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId());
             }
         }
-
-        if (failCount == taskEntity.getIpList().size() * taskEntity.getPort().length) {
-            //没有获取到覆盖率数据,报错结束
-            logger.error("获取覆盖率数据失败 : {}, {}, {}", taskEntity.getAppInfo().getId(), taskEntity.getAppInfo().getApplicationID(), taskEntity.getIpList());
-            taskBiz.endCoverageTask(taskEntity.getAppInfo().getId(), ErrorEnum.JACOCO_EXEC_FAILED,
-                    taskEntity.getProjectName(), taskEntity.getAppInfo().getApplicationID());
-            return;
-        }
-
-        //合并目录下的各机器数据
-        if (!mergeExecData()) {
-            logger.error("合并覆盖率数据失败: {},{}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId());
-        }
-
         //生成各目录下的数据报告,分别上传回调
         if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
             // 将jacocoAll上传到cort的OCS
@@ -181,6 +190,22 @@ public class ReportGenerateTask implements Runnable {
         return result;
     }
 
+    private boolean getGoblinEcFile(){
+        boolean result = true;
+        try{
+            if(null == taskEntity.getAppInfo().getGoblinEcFile()){
+                return false;
+            }
+            String fileName = taskEntity.getAppInfo().getGoblinEcFile()+".exec";
+            String url = ocsGoblinEcUrl + fileName;
+            FileUtils.copyURLToFile(new URL(url), new File(taskEntity.getCoverageExecutionDataPath() + File.separator + "jacocoAll.exec"));
+        } catch (Exception e) {
+            logger.warn("获取goblin覆盖率文件失败: 应用-{} , taskId-{}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getSceneId(),e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return result;
+    }
 
     /**
      * 合并各目录覆盖率文件,并加载taskId - jacocoAll
