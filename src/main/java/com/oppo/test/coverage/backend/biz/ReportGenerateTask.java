@@ -1,5 +1,6 @@
 package com.oppo.test.coverage.backend.biz;
 
+import com.oppo.basic.heracles.client.core.spring.annotation.HeraclesDynamicConfig;
 import com.oppo.test.coverage.backend.biz.jacoco.ExecutionDataClient;
 import com.oppo.test.coverage.backend.biz.jacoco.MergeDump;
 import com.oppo.test.coverage.backend.model.constant.ErrorEnum;
@@ -41,7 +42,7 @@ public class ReportGenerateTask implements Runnable {
 
     private ExecutorService cacheThreadPool;
 
-    @Value("${ocs.goblin.ec.url}")
+    @HeraclesDynamicConfig(key = "ocs.goblin.ec.url", fileName = "application.yml")
     private String ocsGoblinEcUrl;
 
     ReportGeneratorTaskEntity getTaskEntity() {
@@ -198,7 +199,9 @@ public class ReportGenerateTask implements Runnable {
             }
             String fileName = taskEntity.getAppInfo().getGoblinEcFile()+".exec";
             String url = ocsGoblinEcUrl + fileName;
-            FileUtils.copyURLToFile(new URL(url), new File(taskEntity.getCoverageExecutionDataPath() + File.separator + "jacocoAll.exec"));
+            String localPath = taskEntity.getCoverageExecutionDataPath() + File.separator + "jacocoAll.exec";
+            logger.info("goblin覆盖率文件url：{}, 保存路径：{}",url,localPath);
+            FileUtils.copyURLToFile(new URL(url), new File(localPath));
         } catch (Exception e) {
             logger.warn("获取goblin覆盖率文件失败: 应用-{} , taskId-{}, {}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getSceneId(),e.getMessage());
             e.printStackTrace();
