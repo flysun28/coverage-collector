@@ -42,8 +42,7 @@ public class ReportGenerateTask implements Runnable {
 
     private ExecutorService cacheThreadPool;
 
-    @HeraclesDynamicConfig(key = "ocs.goblin.ec.url", fileName = "application.yml")
-    private String ocsGoblinEcUrl;
+    private final String ocsGoblinEcUrl = "http://s3v2.dg-access-test.wanyol.com/goblin/";
 
     ReportGeneratorTaskEntity getTaskEntity() {
         return taskEntity;
