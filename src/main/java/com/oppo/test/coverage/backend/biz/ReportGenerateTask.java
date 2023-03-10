@@ -135,7 +135,7 @@ public class ReportGenerateTask implements Runnable {
 
         //组合ip、port,遍历每台机器,获取数据,并将各笔数据聚合在一起,需要处理版本判断
 
-        if(!getGoblinEcFile()) {
+        getGoblinEcFile();
 
             int failCount = 0;
 
@@ -164,7 +164,7 @@ public class ReportGenerateTask implements Runnable {
             if (!mergeExecData()) {
                 logger.error("合并覆盖率数据失败: {},{}", taskEntity.getAppInfo().getApplicationID(), taskEntity.getAppInfo().getId());
             }
-        }
+
         //生成各目录下的数据报告,分别上传回调
         if (taskEntity.getAppInfo().getSceneId() != null && taskEntity.getAppInfo().getSceneId() != 0) {
             // 将jacocoAll上传到cort的OCS
@@ -198,7 +198,7 @@ public class ReportGenerateTask implements Runnable {
             }
             String fileName = taskEntity.getAppInfo().getGoblinEcFile()+".exec";
             String url = ocsGoblinEcUrl + fileName;
-            String localPath = taskEntity.getCoverageExecutionDataPath() + File.separator + "jacocoAll.exec";
+            String localPath = taskEntity.getCoverageExecutionDataPath() + File.separator + "goblinJacoco.exec";
             logger.info("goblin覆盖率文件url：{}, 保存路径：{}",url,localPath);
             FileUtils.copyURLToFile(new URL(url), new File(localPath));
         } catch (Exception e) {
