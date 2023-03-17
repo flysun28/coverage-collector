@@ -60,11 +60,11 @@ public class TaskBiz {
      */
     private BlockingQueue<ApplicationCodeInfo> taskQueue = new LinkedBlockingQueue<>(MAX_CASE_SIZE);
 
-    private ThreadPoolExecutor pool = new ThreadPoolExecutor(2,
-            100,
+    private ThreadPoolExecutor pool = new ThreadPoolExecutor(100,
+            200,
             10L,
             TimeUnit.MINUTES,
-            new SynchronousQueue<>(),
+            new LinkedBlockingQueue<Runnable>(512),
             new ThreadFactoryBuilder().setNameFormat("task-biz-%d").build());
 
     private Map<String, Integer> appCodeCount = new ConcurrentHashMap<>(256);
