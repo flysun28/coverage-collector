@@ -220,7 +220,7 @@ public class ReportGenerateTask implements Runnable {
         if (allExecutionDataFile == null) {
             return false;
         }
-
+        logger.info("allExecutionDataFile：{},{}",allExecutionDataFile.getAbsolutePath(),allExecutionDataFile.getName());
         taskEntity.setAllExecutionDataFile(allExecutionDataFile);
 
         return true;
