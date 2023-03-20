@@ -69,6 +69,10 @@ public class MergeDump {
                 fileSet.delete();
             }
         }
+        logger.info("destFile isExist：{}",destFile.exists());
+        fileList.stream().forEach(file->{
+            logger.info("filePath：{},fileName:{}",file.getAbsolutePath(),file.getName());
+        });
         return this.destFile;
     }
 

@@ -221,6 +221,7 @@ public class ReportGenerateTask implements Runnable {
             return false;
         }
         logger.info("allExecutionDataFile：{},{}",allExecutionDataFile.getAbsolutePath(),allExecutionDataFile.getName());
+        logger.info("allExecutionDataFile isExist：{}",allExecutionDataFile.exists());
         taskEntity.setAllExecutionDataFile(allExecutionDataFile);
 
         return true;
