@@ -48,6 +48,10 @@ public class MergeDump {
     public File executeMerge() {
         final ExecFileLoader loader = new ExecFileLoader();
         List<File> fileList = fileSets(this.path);
+        logger.info("path：{}",path);
+        fileList.stream().forEach(file->{
+            logger.info("filePath：{},fileName:{}",file.getAbsolutePath(),file.getName());
+        });
         if (fileList == null || fileList.size() == 0) {
             return null;
         }
@@ -65,6 +69,10 @@ public class MergeDump {
                 fileSet.delete();
             }
         }
+        logger.info("destFile isExist：{}",destFile.exists());
+        fileList.stream().forEach(file->{
+            logger.info("filePath：{},fileName:{}",file.getAbsolutePath(),file.getName());
+        });
         return this.destFile;
     }
 
