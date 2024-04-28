@@ -4,14 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
 import com.oppo.test.coverage.backend.model.entity.Data;
 import com.oppo.test.coverage.backend.service.CoverageBackendService;
-import com.oppo.trace.threadpool.TraceExecutorService;
 import esa.restlight.spring.shaded.org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 
 /**
@@ -20,21 +18,21 @@ import java.util.concurrent.ExecutorService;
 @RestController
 public class CoverageBackendController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CoverageBackendController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoverageBackendController.class);
 
     @Resource
     CoverageBackendService coverageBackendService;
 
     @PostMapping("/startcoveragetask")
-    public Data startCoverageTask(@RequestBody ApplicationCodeInfo applicationCodeInfo) {
-        logger.info("receive task : {}", JSON.toJSONString(applicationCodeInfo));
+    public Data<String> startCoverageTask(@RequestBody ApplicationCodeInfo applicationCodeInfo) {
+        LOGGER.info("receive task : {}", JSON.toJSONString(applicationCodeInfo));
         return coverageBackendService.startCoverageTask(applicationCodeInfo);
     }
 
     @GetMapping("/stopcoveragetask")
-    public Data stopTimerTask(@RequestParam(name = "taskID") Long taskId,
+    public Data<String> stopTimerTask(@RequestParam(name = "taskID") Long taskId,
                               @RequestParam(name = "appCode") String appCode) {
-        logger.info("user stop timer task : {} , {}", taskId, appCode);
+        LOGGER.info("user stop timer task : {} , {}", taskId, appCode);
         return coverageBackendService.stopTimerTask(taskId, appCode);
     }
 
@@ -44,7 +42,7 @@ public class CoverageBackendController {
     }
 
     @GetMapping("/timer-task-set")
-    public Set<Long> getTimerTaskIdList(){
+    public Set<Long> getTimerTaskIdList() {
         return coverageBackendService.getTimerTaskIdList();
     }
 
