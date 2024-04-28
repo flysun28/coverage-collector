@@ -18,7 +18,7 @@ public interface CoverageBackendService {
      * @param applicationCodeInfo : 覆盖率信息
      * @return : 任务启动结果
      */
-    Data startCoverageTask(ApplicationCodeInfo applicationCodeInfo);
+    Data<String> startCoverageTask(ApplicationCodeInfo applicationCodeInfo);
 
     /**
      * 停止轮询任务
@@ -27,7 +27,7 @@ public interface CoverageBackendService {
      * @param appCode : 应用名
      * @return : 停止结果
      */
-    Data stopTimerTask(Long taskId, String appCode);
+    Data<String> stopTimerTask(Long taskId, String appCode);
 
     /**
      * 获取队列

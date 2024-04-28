@@ -25,12 +25,12 @@ public class CoverageBackendServiceImpl implements CoverageBackendService {
     TimerTaskBiz timerTaskBiz;
 
     @Override
-    public Data startCoverageTask(ApplicationCodeInfo applicationCodeInfo) {
+    public Data<String> startCoverageTask(ApplicationCodeInfo applicationCodeInfo) {
         return taskBiz.addTaskToQueue(applicationCodeInfo);
     }
 
     @Override
-    public Data stopTimerTask(Long taskId, String appCode) {
+    public Data<String> stopTimerTask(Long taskId, String appCode) {
         return taskBiz.stopTimerTask(taskId, appCode);
     }
 
