@@ -97,26 +97,30 @@ public class TaskBiz {
      * @param applicationCodeInfo 应用信息
      */
     private void startCoverageTask(ApplicationCodeInfo applicationCodeInfo) {
-        if (resultMockFlag) {
-            mockResult(applicationCodeInfo);
-            return;
-        }
+        try {
+            if (resultMockFlag) {
+                mockResult(applicationCodeInfo);
+                return;
+            }
 
-        LOGGER.info("任务开始 : {}, {}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
-        //将相关文件从OCS下载到本地,分支统计需要下载历史数据
-        String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
-        folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getId());
-        LOGGER.info("文件下载完毕 : {} ,{}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
+            LOGGER.info("任务开始 : {}, {}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
+            //将相关文件从OCS下载到本地,分支统计需要下载历史数据
+            String projectName = GitUtil.getLastUrlString(applicationCodeInfo.getGitPath());
+            folderFileScanner.fileDownLoad(projectName, applicationCodeInfo.getId());
+            LOGGER.info("文件下载完毕 : {} ,{}", applicationCodeInfo.getId(), applicationCodeInfo.getApplicationID());
 
-        ReportGenerateTask task = new ReportGenerateTask(applicationCodeInfo);
-        addAppCodeCountMap(applicationCodeInfo.getApplicationID());
-        if (applicationCodeInfo.getIsTimerTask() == 1) {
-            timerTaskBiz.addTimerTask(task, applicationCodeInfo.getTimerInterval());
-            LOGGER.info("add timer task : {}", applicationCodeInfo.getId());
-            return;
+            ReportGenerateTask task = new ReportGenerateTask(applicationCodeInfo);
+            addAppCodeCountMap(applicationCodeInfo.getApplicationID());
+            if (applicationCodeInfo.getIsTimerTask() == 1) {
+                timerTaskBiz.addTimerTask(task, applicationCodeInfo.getTimerInterval());
+                LOGGER.info("add timer task : {}", applicationCodeInfo.getId());
+                return;
+            }
+            LOGGER.info("once task : {}", applicationCodeInfo.getId());
+            cacheThreadPool.submit(task);
+        } catch (Exception e) {
+            LOGGER.info("startCoverageTask fail : {}", applicationCodeInfo, e);
         }
-        LOGGER.info("once task : {}", applicationCodeInfo.getId());
-        cacheThreadPool.submit(task);
     }
 
     /**
