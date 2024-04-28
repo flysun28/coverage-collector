@@ -23,10 +23,10 @@ public class CoverageBackendApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(CoverageBackendApplication.class, args);
+		LOGGER.warn("CoverageBackendApplication start ok");
 
 		Optional<SystemConfig> configOptional = SpringContextUtils.getBean(context, SystemConfig.class);
 		configOptional.ifPresent(config -> HttpUtils.sendGet(config.getRecoverTimerTaskUrl()));
-		LOGGER.warn("CoverageBackendApplication start ok");
 	}
 
 }
