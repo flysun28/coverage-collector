@@ -1,7 +1,6 @@
 package com.oppo.test.coverage.backend.util;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -64,7 +63,7 @@ public class SystemConfig {
     public String transferDevIp;
 
     @Value("${atms.transfer.devUrl}")
-    public  String transferDevUrl;
+    public String transferDevUrl;
 
     @Value("${cort.ocs.downloadUrl}")
     private String cortOcsDownloadUrl;
@@ -136,11 +135,11 @@ public class SystemConfig {
         return transferUrl;
     }
 
-    public String getTransferDevIp(){
+    public String getTransferDevIp() {
         return transferDevIp;
     }
 
-    public String getTransferDevUrl(){
+    public String getTransferDevUrl() {
         return transferDevUrl;
     }
 

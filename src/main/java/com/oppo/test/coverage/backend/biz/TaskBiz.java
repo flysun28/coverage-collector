@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -66,7 +67,6 @@ public class TaskBiz {
     @PostConstruct
     public void init() {
         appCodeCount = new ConcurrentHashMap<>(256);
-
         taskExecutor = new ThreadPoolExecutor(heraclesConfig.getCoverageTaskCorePoolSize(),
                 heraclesConfig.getCoverageTaskMaxPoolSize(),
                 Constant.THREAD_POOL_KEEP_ALIVE_TIME,
@@ -74,6 +74,27 @@ public class TaskBiz {
                 new LinkedBlockingQueue<>(heraclesConfig.getCoverageTaskQueueSize()),
                 new CustomizableThreadFactory("coverage-task-threadExecutor"),
                 new ThreadPoolExecutor.AbortPolicy());
+
+        // initDir
+        initFileDir(systemConfig.getReportBasePath());
+        initFileDir(systemConfig.getCodePath());
+        initFileDir(systemConfig.getProjectCovPath());
+    }
+
+    private void initFileDir(String path) {
+        File fileDir = new File(path);
+        if (fileDir.exists()) {
+            LOGGER.info("create dir:{} already exists.", path);
+            return;
+        }
+
+        boolean created = fileDir.mkdirs();
+        if (created) {
+            LOGGER.warn("create dir:{} success", path);
+        } else {
+            LOGGER.error("create dir:{} fail.", path);
+            throw new RuntimeException("create dir:" + path + " fail");
+        }
     }
 
     public Data<String> addTaskToQueue(ApplicationCodeInfo applicationCodeInfo) {

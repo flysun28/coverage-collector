@@ -2,6 +2,7 @@ package com.oppo.test.coverage.backend.biz;
 
 import com.oppo.test.coverage.backend.CoverageBackendApplication;
 import com.oppo.test.coverage.backend.model.entity.ApplicationCodeInfo;
+import com.oppo.test.coverage.backend.util.SystemConfig;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.File;
 
 /**
  * description:
@@ -24,6 +27,8 @@ public class TaskBizTest {
 
     @Autowired
     TaskBiz taskBiz;
+    @Autowired
+    SystemConfig systemConfig;
 
     @Test
     @DisplayName("开始覆盖率任务测试")
@@ -46,6 +51,26 @@ public class TaskBizTest {
         applicationCodeInfo.setBasicCommitId("9dfe3dg354fg3sdfds");
         applicationCodeInfo.setVersionName("v5.0");
         return applicationCodeInfo;
+    }
+
+    @Test
+    @DisplayName("创建文件夹，测试")
+    public void createFileDirectoryTest() {
+        String projectName = "ci-demo";
+
+        createFileDir(systemConfig.getCodePath(), projectName);
+        createFileDir(systemConfig.getReportBasePath(), "taskID");
+        createFileDir(systemConfig.getProjectCovPath(), projectName);
+    }
+
+    private void createFileDir(String parent, String child) {
+        File file = new File(parent, child);
+        if (!file.exists()) {
+            boolean mkdirs = file.mkdirs();
+            LOGGER.info("create path:{}, result:{}", file.getPath(), mkdirs);
+        } else {
+            LOGGER.info("path:{} exists", file.getPath());
+        }
     }
 
 }
